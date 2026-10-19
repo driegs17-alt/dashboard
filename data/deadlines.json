@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-10-19T16:35:33Z",
+  "synced": "2026-10-19T21:15:06Z",
   "items": [
     {
       "id": "elc-6637-21874620",
@@ -21,6 +21,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/22343776/detailsview?ou=3949559#22343776",
       "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22531847",
+      "title": "3-1 Self-portrait/Artwork",
+      "course": "ARGD 4160",
+      "due": "2026-10-26T19:00:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22531847/detailsview?ou=3990441#22531847",
+      "firstSeen": "2026-10-19T21:15:06Z"
     },
     {
       "id": "elc-6637-22405345",
