@@ -8,6 +8,7 @@ A daily operating system for school and side business. Live at https://driegs17-
 |-----|---------------|---------------|
 | **Today** | The one thing to do first, Today's 3, your streak, and quick capture | "Eat the frog" (do the hardest, most urgent thing first), the Ivy Lee method (a short ordered list, done top to bottom), "don't break the chain" (a daily streak for consistency), and GTD-style capture (get it out of your head) |
 | **Week** | Two-week load strip, the Sunday weekly reset, and every deadline | GTD weekly review, plus Eisenhower-style triage: what's urgent now vs. what's handled for later |
+| **Apply** | One card per job/internship application: checklist with dates, how to send, notes, plus the master materials library | Treat applications like projects: one owner, dated steps, a clear finish line |
 | **Classes** | One card per course with its next deadline and an eLC link | Reference only |
 | **Business** | Product tests and Athens web leads | Protect focus: school first, then one focused business block |
 
@@ -25,6 +26,7 @@ A daily operating system for school and side business. Live at https://driegs17-
 | `data/courses.json` | Class cards |
 | `data/leads.csv` | Athens web leads (`website`: an address, `no`, or blank if unchecked) |
 | `data/products.json` | Product ideas |
+| `data/applications.json` | Applications (steps with dates show up in Today and Week) and the materials library |
 
 `data/done.json` and `data/plan.json` are written by the site. `index.html`, `css/` and `js/` are the design and logic.
 
