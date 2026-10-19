@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Dylan's Dashboard</title>
-  <meta name="description" content="Dylan Riegert's dashboard: what's due, classes, design projects, leads and shop ideas.">
+  <meta name="description" content="Dylan Riegert's daily operating system: today, this week, classes and business.">
   <meta name="theme-color" content="#f5f2eb" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#151412" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,17 +23,14 @@
 
   <header class="top">
     <div class="top-inner">
-      <a class="wordmark" href="#main" aria-label="Dylan Riegert, dashboard home">
+      <a class="wordmark" href="#today" aria-label="Dylan Riegert, go to Today">
         <span class="bracket">[</span>Dylan Riegert<span class="bracket">]</span>
       </a>
-      <nav aria-label="Sections">
-        <ul class="nav">
-          <li><a href="#deadlines">Due</a></li>
-          <li><a href="#classes">Classes</a></li>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#leads">Leads</a></li>
-          <li><a href="#shop">Shop</a></li>
-        </ul>
+      <nav class="tabs" aria-label="Views">
+        <a href="#today" data-tab="today">Today</a>
+        <a href="#week" data-tab="week">Week</a>
+        <a href="#classes" data-tab="classes">Classes</a>
+        <a href="#business" data-tab="business">Business</a>
       </nav>
       <button type="button" class="connect" id="connect-btn" aria-haspopup="dialog">
         <span class="dot" id="connect-dot" aria-hidden="true"></span>
@@ -43,31 +40,41 @@
   </header>
 
   <main id="main">
-    <section class="hero" aria-labelledby="brief-title">
-      <p class="eyebrow" id="today"></p>
+
+    <!-- ===================== TODAY ===================== -->
+    <section class="view" id="view-today" data-view="today" aria-labelledby="brief-title">
+      <p class="eyebrow" id="today-date"></p>
       <h1 id="brief-title" class="hero-title">One sec…</h1>
       <p class="brief" id="brief"></p>
 
-      <div class="focus" id="focus" aria-live="polite"></div>
+      <div class="reset-banner" id="reset-banner" hidden></div>
 
-      <div class="week" id="week" aria-label="Next 14 days"></div>
-    </section>
+      <div class="frog" id="frog" aria-live="polite"></div>
 
-    <section id="deadlines" class="block" aria-labelledby="deadlines-title">
-      <header class="block-head">
-        <p class="eyebrow">01 · Due</p>
-        <h2 id="deadlines-title">Deadlines</h2>
-        <p class="block-note" id="sync-note">Synced from eLC automatically.</p>
-      </header>
+      <div class="today-grid">
+        <section class="panel" aria-labelledby="three-title">
+          <header class="panel-head">
+            <h2 id="three-title">Today's 3</h2>
+            <p class="method" id="three-note">Do them in order. When all 3 are done, the day is a win.</p>
+          </header>
+          <ol class="three" id="three"></ol>
+        </section>
 
-      <div id="task-groups" class="task-groups"></div>
+        <section class="panel" aria-labelledby="streak-title">
+          <header class="panel-head">
+            <h2 id="streak-title">Streak</h2>
+            <p class="method">One check-off a day keeps the chain alive.</p>
+          </header>
+          <div id="streak"></div>
+        </section>
+      </div>
 
       <form class="add-task" id="add-task" autocomplete="off">
-        <p class="add-title">Add your own task</p>
+        <p class="add-title">Capture a task</p>
         <div class="add-row">
           <label class="field grow">
             <span class="sr-only">Task</span>
-            <input id="add-title" name="title" type="text" placeholder="What needs doing?" required maxlength="140">
+            <input id="add-title" name="title" type="text" placeholder="Get it out of your head…" required maxlength="140">
           </label>
           <label class="field">
             <span class="sr-only">Due date (optional)</span>
@@ -82,59 +89,75 @@
       </form>
     </section>
 
-    <section id="classes" class="block" aria-labelledby="classes-title">
-      <header class="block-head">
-        <p class="eyebrow">02 · Fall 2026</p>
-        <h2 id="classes-title">Classes</h2>
-        <p class="block-note"><a href="https://uga.view.usg.edu/d2l/le/worktodo/view">eLC due date tracker</a> · <a href="https://uga.view.usg.edu/d2l/home">eLC home</a></p>
+    <!-- ===================== WEEK ===================== -->
+    <section class="view" id="view-week" data-view="week" aria-labelledby="week-title" hidden>
+      <header class="view-head">
+        <p class="eyebrow">Plan</p>
+        <h1 id="week-title" class="view-title">This week</h1>
+        <p class="block-note" id="sync-note">Deadlines sync from eLC every 15 minutes.</p>
+      </header>
+
+      <div class="week" id="week-strip" aria-label="Next 14 days"></div>
+
+      <details class="panel reset" id="reset">
+        <summary class="panel-head">
+          <h2 id="reset-title">Weekly reset <span class="reset-count" id="reset-count"></span></h2>
+          <p class="method">Sunday, 15 minutes. Sets up the whole week.</p>
+        </summary>
+        <ul class="reset-list" id="reset-list"></ul>
+      </details>
+
+      <div id="task-groups" class="task-groups"></div>
+    </section>
+
+    <!-- ===================== CLASSES ===================== -->
+    <section class="view" id="view-classes" data-view="classes" aria-labelledby="classes-title" hidden>
+      <header class="view-head">
+        <p class="eyebrow">Fall 2026</p>
+        <h1 id="classes-title" class="view-title">Classes</h1>
+        <p class="block-note"><a href="https://uga.view.usg.edu/d2l/le/worktodo/view" target="_blank" rel="noopener">eLC due date tracker ↗</a> · <a href="https://uga.view.usg.edu/d2l/home" target="_blank" rel="noopener">eLC home ↗</a></p>
       </header>
       <div id="course-grid" class="course-grid"></div>
     </section>
 
-    <section id="projects" class="block" aria-labelledby="projects-title">
-      <header class="block-head">
-        <p class="eyebrow">03 · Design</p>
-        <h2 id="projects-title">Projects</h2>
+    <!-- ===================== BUSINESS ===================== -->
+    <section class="view" id="view-business" data-view="business" aria-labelledby="business-title" hidden>
+      <header class="view-head">
+        <p class="eyebrow">After Today's 3</p>
+        <h1 id="business-title" class="view-title">Business</h1>
+        <p class="block-note">School comes first. Come here once Today's 3 is done and give it one focused block.</p>
       </header>
-      <div id="project-grid" class="project-grid"></div>
-    </section>
 
-    <section id="leads" class="block" aria-labelledby="leads-title">
-      <header class="block-head">
-        <p class="eyebrow">04 · Side business</p>
-        <h2 id="leads-title">Athens web leads</h2>
-        <p class="block-note">Bars and venues that might want a website. Fill in the website and status columns in <code>data/leads.csv</code>.</p>
-      </header>
-      <div class="lead-tools">
-        <label class="search">
-          <span class="sr-only">Search leads</span>
-          <input id="lead-search" type="search" placeholder="Search venues" autocomplete="off">
-        </label>
-        <div class="chips" id="lead-filters" role="group" aria-label="Filter by neighborhood"></div>
-      </div>
-      <p class="lead-count muted" id="lead-count"></p>
-      <div class="lead-table-wrap">
-        <table class="lead-table">
-          <thead>
-            <tr><th scope="col">Venue</th><th scope="col">Area</th><th scope="col">Type</th><th scope="col">Website</th><th scope="col">Status</th></tr>
-          </thead>
-          <tbody id="lead-rows"></tbody>
-        </table>
-      </div>
-    </section>
+      <section class="sub" aria-labelledby="shop-title">
+        <h2 id="shop-title" class="sub-title">Products to test</h2>
+        <p class="block-note">Starter ideas. Edit them in <code>data/products.json</code>.</p>
+        <div id="product-grid" class="product-grid"></div>
+      </section>
 
-    <section id="shop" class="block" aria-labelledby="shop-title">
-      <header class="block-head">
-        <p class="eyebrow">05 · First e-commerce business</p>
-        <h2 id="shop-title">Products to try</h2>
-        <p class="block-note">Starter ideas to edit or replace in <code>data/products.json</code>.</p>
-      </header>
-      <div id="product-grid" class="product-grid"></div>
+      <section class="sub" aria-labelledby="leads-title">
+        <h2 id="leads-title" class="sub-title">Athens web leads</h2>
+        <p class="block-note">Fill in the website and status columns in <code>data/leads.csv</code>.</p>
+        <div class="lead-tools">
+          <label class="search">
+            <span class="sr-only">Search leads</span>
+            <input id="lead-search" type="search" placeholder="Search venues" autocomplete="off">
+          </label>
+          <div class="chips" id="lead-filters" role="group" aria-label="Filter by neighborhood"></div>
+        </div>
+        <p class="lead-count muted" id="lead-count"></p>
+        <div class="lead-table-wrap">
+          <table class="lead-table">
+            <thead>
+              <tr><th scope="col">Venue</th><th scope="col">Area</th><th scope="col">Type</th><th scope="col">Website</th><th scope="col">Status</th></tr>
+            </thead>
+            <tbody id="lead-rows"></tbody>
+          </table>
+        </div>
+      </section>
     </section>
   </main>
 
   <footer class="foot">
-    <p>Deadlines sync from eLC every 15 minutes. Check-offs save to GitHub instantly.</p>
     <p class="muted" id="updated"></p>
   </footer>
 
@@ -157,7 +180,7 @@
       <div class="modal-actions">
         <button type="button" class="btn" id="disconnect-btn" hidden>Disconnect this device</button>
         <span class="spacer"></span>
-        <button type="button" class="btn" value="cancel" id="connect-cancel">Close</button>
+        <button type="button" class="btn" id="connect-cancel">Close</button>
         <button type="submit" class="btn solid" id="connect-save">Save key</button>
       </div>
     </form>
