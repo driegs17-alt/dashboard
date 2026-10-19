@@ -29,6 +29,7 @@
       <nav class="tabs" aria-label="Views">
         <a href="#today" data-tab="today">Today</a>
         <a href="#week" data-tab="week">Week</a>
+        <a href="#apply" data-tab="apply">Apply</a>
         <a href="#classes" data-tab="classes">Classes</a>
         <a href="#business" data-tab="business">Business</a>
       </nav>
@@ -108,6 +109,25 @@
       </details>
 
       <div id="task-groups" class="task-groups"></div>
+    </section>
+
+    <!-- ===================== APPLY ===================== -->
+    <section class="view" id="view-apply" data-view="apply" aria-labelledby="apply-title" hidden>
+      <header class="view-head">
+        <p class="eyebrow">Career</p>
+        <h1 id="apply-title" class="view-title">Applications</h1>
+        <p class="block-note">Each step also shows up in Today and Week on its date. Add applications in <code>data/applications.json</code>.</p>
+      </header>
+
+      <div id="app-list" class="app-list"></div>
+
+      <section class="panel library" aria-labelledby="library-title">
+        <header class="panel-head">
+          <h2 id="library-title">Materials library</h2>
+          <p class="method">Build each master once in Documents → Applications → _Master. Every application is a trimmed copy.</p>
+        </header>
+        <ul class="lib-list" id="library"></ul>
+      </section>
     </section>
 
     <!-- ===================== CLASSES ===================== -->

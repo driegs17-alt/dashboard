@@ -6,6 +6,9 @@
              the chain), and quick capture so nothing lives in your head.
    WEEK      Two-week load strip, the Sunday weekly reset (GTD-style
              review) and every deadline, sorted by urgency.
+   APPLY     Job and internship applications: a checklist per
+             application (steps also show up in Today/Week), how to
+             send it, and the master materials library.
    CLASSES   Reference: one card per course.
    BUSINESS  Product tests and Athens leads, for after Today's 3.
 
@@ -14,6 +17,7 @@
      data/tasks.json      ← your own tasks
      data/done.json       ← what you've checked off (also weekly reset)
      data/plan.json       ← which items you pinned to Today's 3
+     data/applications.json ← applications and the materials library
      data/courses.json, leads.csv, products.json
 
    Without a key the page is read-only. With a key (Connect button),
@@ -54,6 +58,7 @@ const state = {
   tasks: [],
   done: {},
   plan: {},
+  apps: { library: [], applications: [] },
   courses: [],
   courseNames: {},
   token: storage.get(TOKEN_KEY) || "",
@@ -254,7 +259,18 @@ function allItems() {
     hasTime: false,
     dueDate: t.due ? new Date(`${t.due}T23:59:00`) : null,
   }));
-  return [...fromElc, ...mine].map((item) => ({ ...item, doneAt: done[item.id] || null }));
+  const steps = (state.apps.applications || []).flatMap((app) =>
+    (app.steps || []).map((s) => ({
+      ...s,
+      source: "app",
+      org: app.org,
+      course: "",
+      note: app.role,
+      hasTime: false,
+      dueDate: s.due ? new Date(`${s.due}T23:59:00`) : null,
+    }))
+  );
+  return [...fromElc, ...mine, ...steps].map((item) => ({ ...item, doneAt: done[item.id] || null }));
 }
 
 // Many small items due at the same moment for one class (like a week of
@@ -378,7 +394,7 @@ function renderFrog(three) {
     return;
   }
   const cd = countdown(item);
-  const course = state.courseNames[item.course] || item.course || "";
+  const course = state.courseNames[item.course] || item.org || item.course || "";
   const link = item.url ? `<a class="btn ghost-light" href="${escapeHtml(item.url)}" target="_blank" rel="noopener">Open in eLC ↗</a>` : "";
   const left = focusRemaining();
   const focus = left
@@ -412,7 +428,7 @@ function renderThree(three) {
   $("three").innerHTML = three.list.length
     ? three.list
         .map((item) => {
-          const course = state.courseNames[item.course];
+          const course = state.courseNames[item.course] || item.org;
           const pin = three.chosen
             ? `<button type="button" class="pin is-pinned" data-unpin="${escapeHtml(item.id)}" aria-label="Remove from Today's 3">★</button>`
             : "";
@@ -526,7 +542,7 @@ function checkButton(item) {
 
 function taskRow(item) {
   const cd = item.doneAt ? { cls: "done", text: "Done" } : countdown(item);
-  const course = state.courseNames[item.course];
+  const course = state.courseNames[item.course] || item.org;
   const tag = course ? `<span class="tag">${escapeHtml(course)}</span>` : "";
   const fresh = !item.doneAt && isNew(item) ? `<span class="new">New</span>` : "";
   const note = item.note ? `<p class="task-meta">${escapeHtml(item.note)}</p>` : "";
@@ -567,6 +583,101 @@ function renderDeadlines(c) {
       group("No date yet", c.undated, { open: false }),
       group("Done this week", c.recentDone, { open: false }),
     ].join("") || `<p class="muted">Nothing on the list.</p>`;
+}
+
+/* ---------- Rendering: Apply ---------- */
+
+function copyButton(text, label = "Copy") {
+  return `<button type="button" class="copy" data-copy="${escapeHtml(text)}">${label}</button>`;
+}
+
+function renderApps() {
+  const done = doneMap();
+  const apps = state.apps.applications || [];
+  $("app-list").innerHTML = apps.length
+    ? apps
+        .map((app) => {
+          const steps = app.steps || [];
+          const finished = steps.filter((s) => done[s.id]).length;
+          const pct = steps.length ? Math.round((finished / steps.length) * 100) : 0;
+          const next = steps.find((s) => !done[s.id]);
+          const target = app.target ? new Date(`${app.target}T12:00:00`) : null;
+          const mailto = `mailto:${app.sendTo}?subject=${encodeURIComponent(app.subject)}`;
+          const stepRows = steps
+            .map((s) => {
+              const isDone = Boolean(done[s.id]);
+              const due = s.due ? new Date(`${s.due}T23:59:00`) : null;
+              const cd = isDone ? { cls: "done", text: "Done" } : due ? countdown({ dueDate: due }) : { cls: "none", text: "" };
+              const pinned = pinnedIds().includes(s.id);
+              return `
+                <li class="${isDone ? "done" : ""}">
+                  ${isDone
+                    ? `<button type="button" class="check small is-done" data-undo="${s.id}" aria-label="Undo: ${escapeHtml(s.title)}">✓</button>`
+                    : `<button type="button" class="check small" data-done="${s.id}" aria-label="Done: ${escapeHtml(s.title)}"></button>`}
+                  <span class="step-title">${escapeHtml(s.title)}</span>
+                  <span class="step-due ${cd.cls}">${due ? escapeHtml(dayLabel(due)) : ""}</span>
+                  ${isDone ? "" : `<button type="button" class="pin${pinned ? " is-pinned" : ""}" data-${pinned ? "unpin" : "pin"}="${s.id}" aria-label="${pinned ? "Remove from" : "Add to"} Today's 3">${pinned ? "★" : "☆"}</button>`}
+                </li>`;
+            })
+            .join("");
+          return `
+            <article class="app">
+              <header class="app-head">
+                <div>
+                  <p class="app-org">${escapeHtml(app.org)}<span class="status">${escapeHtml(app.status)}</span></p>
+                  <h2 class="app-role">${escapeHtml(app.role)}</h2>
+                  <p class="app-meta">${escapeHtml(app.location)} · ${escapeHtml(app.terms)}</p>
+                </div>
+                <div class="app-target">
+                  <span class="label">${app.deadline ? "Deadline" : "Your target"}</span>
+                  <strong>${target ? escapeHtml(dayLabel(target)) : "Not set"}</strong>
+                </div>
+              </header>
+
+              <div class="progress" role="img" aria-label="${finished} of ${steps.length} steps done"><span style="width:${pct}%"></span></div>
+              <p class="progress-note">${finished} of ${steps.length} done${next ? ` · Next: ${escapeHtml(next.title)}` : " · Sent. Nice."}</p>
+
+              <div class="app-grid">
+                <section>
+                  <h3 class="mini">Checklist</h3>
+                  <ul class="steps-list">${stepRows}</ul>
+                </section>
+                <section class="send">
+                  <h3 class="mini">How to send</h3>
+                  <dl class="send-list">
+                    <div><dt>To</dt><dd>${escapeHtml(app.sendTo)} ${copyButton(app.sendTo)}</dd></div>
+                    <div><dt>Subject</dt><dd>${escapeHtml(app.subject)} ${copyButton(app.subject)}</dd></div>
+                    <div><dt>Attach</dt><dd><ul class="files">${(app.files || []).map((f) => `<li><code>${escapeHtml(f)}</code> ${copyButton(f.replace(/\.pdf$/, ""), "Copy name")}</li>`).join("")}</ul></dd></div>
+                  </dl>
+                  <h3 class="mini">Notes</h3>
+                  <ul class="app-notes">${(app.notes || []).map((n) => `<li>${escapeHtml(n)}</li>`).join("")}</ul>
+                  <div class="app-links">
+                    <a class="btn" href="${escapeHtml(app.posting)}" target="_blank" rel="noopener">Posting ↗</a>
+                    <a class="btn" href="${escapeHtml(mailto)}">Start email</a>
+                  </div>
+                </section>
+              </div>
+            </article>`;
+        })
+        .join("")
+    : `<p class="muted">No applications yet. Add one to data/applications.json.</p>`;
+
+  const lib = state.apps.library || [];
+  $("library").innerHTML = lib
+    .map((l) => {
+      const isDone = Boolean(done[l.id]);
+      return `
+        <li class="${isDone ? "done" : ""}">
+          ${isDone
+            ? `<button type="button" class="check small is-done" data-undo="${l.id}" aria-label="Mark not ready: ${escapeHtml(l.title)}">✓</button>`
+            : `<button type="button" class="check small" data-done="${l.id}" aria-label="Mark ready: ${escapeHtml(l.title)}"></button>`}
+          <div>
+            <p class="lib-title">${escapeHtml(l.title)} <span class="lib-state">${isDone ? "Ready" : "To build"}</span></p>
+            <p class="lib-note"><code>${escapeHtml(l.where)}</code> · ${escapeHtml(l.note)}</p>
+          </div>
+        </li>`;
+    })
+    .join("");
 }
 
 /* ---------- Rendering: Classes and Business ---------- */
@@ -708,7 +819,8 @@ async function setDone(id, isDone) {
   renderAll();
 
   const item = allItems().find((i) => i.id === ids[0]);
-  const label = id.startsWith("reset-") ? "weekly reset step" : id.startsWith("bundle:") ? `${ids.length} items` : item ? item.title : "task";
+  const libItem = (state.apps.library || []).find((l) => l.id === id);
+  const label = libItem ? libItem.title : id.startsWith("reset-") ? "weekly reset step" : id.startsWith("bundle:") ? `${ids.length} items` : item ? item.title : "task";
   try {
     state.done = await updateJson(
       "data/done.json",
@@ -877,7 +989,7 @@ async function saveToken(event) {
 
 /* ---------- Tabs ---------- */
 
-const TABS = ["today", "week", "classes", "business"];
+const TABS = ["today", "week", "apply", "classes", "business"];
 
 function showTab() {
   const tab = TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "today";
@@ -902,6 +1014,7 @@ function renderAll() {
   renderWeekStrip(c);
   renderReset();
   renderDeadlines(c);
+  renderApps();
   if (state.courses.length) renderCourses(c);
 }
 
@@ -915,12 +1028,14 @@ async function loadJson(path, fallback) {
 }
 
 async function refresh() {
-  const [deadlines, tasks, done, plan] = await Promise.all([
+  const [deadlines, tasks, done, plan, apps] = await Promise.all([
     loadJson("data/deadlines.json", { items: [] }),
     loadJson("data/tasks.json", []),
     loadJson("data/done.json", {}),
     loadJson("data/plan.json", {}),
+    loadJson("data/applications.json", { library: [], applications: [] }),
   ]);
+  state.apps = apps && typeof apps === "object" ? apps : { library: [], applications: [] };
   state.deadlines = deadlines.items || [];
   state.synced = deadlines.synced || null;
   state.tasks = Array.isArray(tasks) ? tasks : [];
@@ -938,7 +1053,17 @@ async function start() {
   showTab();
   window.addEventListener("hashchange", showTab);
 
-  document.addEventListener("click", (e) => {
+  document.addEventListener("click", async (e) => {
+    const copy = e.target.closest("[data-copy]");
+    if (copy) {
+      try {
+        await navigator.clipboard.writeText(copy.dataset.copy);
+        toast("Copied");
+      } catch {
+        toast("Couldn't copy. Long-press to select instead.", true);
+      }
+      return;
+    }
     const t = e.target.closest("[data-done],[data-undo],[data-pin],[data-unpin],[data-focus]");
     if (!t) return;
     if (t.dataset.focus) return toggleFocus(t.dataset.focus);

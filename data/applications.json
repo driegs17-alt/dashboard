@@ -1,0 +1,107 @@
+{
+  "library": [
+    {
+      "id": "lib-cv",
+      "title": "Master CV",
+      "where": "Applications/_Master/CV",
+      "note": "One full version. Trim a copy for each application."
+    },
+    {
+      "id": "lib-portfolio",
+      "title": "Master portfolio (InDesign)",
+      "where": "Applications/_Master/Portfolio",
+      "note": "Every finished project laid out once. Each application exports a curated PDF from it."
+    },
+    {
+      "id": "lib-letter",
+      "title": "Letter of interest template",
+      "where": "Applications/_Master/Letters",
+      "note": "Your story in 3 paragraphs. Swap the middle one per studio."
+    },
+    {
+      "id": "lib-images",
+      "title": "Project images + one-line captions",
+      "where": "Applications/_Master/Project images",
+      "note": "High-res mockups, one folder per project, with a captions.txt."
+    },
+    {
+      "id": "lib-references",
+      "title": "Two references",
+      "where": "Applications/_Master/References.txt",
+      "note": "Ask before listing them. Professors from Pro Practices or Type & Image are a good start."
+    }
+  ],
+  "applications": [
+    {
+      "id": "app-2x4-environments",
+      "org": "2x4",
+      "role": "Design Intern, Environments",
+      "status": "Preparing",
+      "location": "New York (in studio, 180 Varick St)",
+      "terms": "12 weeks, full-time, paid $800/week. Must be in the New York area the whole time.",
+      "deadline": null,
+      "target": "2026-11-06",
+      "posting": "https://2x4.org/about/jobs/environments-internship/",
+      "sendTo": "internships@2x4.org",
+      "subject": "Design Intern / Environments – Dylan Riegert",
+      "files": [
+        "Dylan_Riegert_Internship_CV.pdf",
+        "Dylan_Riegert_Internship_Portfolio.pdf",
+        "Dylan_Riegert_Internship_Letter.pdf"
+      ],
+      "notes": [
+        "No deadline is posted, so it's likely rolling. Earlier is better.",
+        "The written instructions say internships@2x4.org; the Apply button opens jobinquiries@2x4.org. Send to internships@2x4.org.",
+        "Georgie Stout, who visited Pro Practices on Oct 6, is a 2x4 co-founder. Mention the visit in your letter.",
+        "Environments sits between graphic design, architecture and experience design. Show at least one project applied in a space."
+      ],
+      "steps": [
+        {
+          "id": "a2x4-1",
+          "title": "Confirm you can be in NYC for 12 weeks full-time, and pick the term",
+          "due": "2026-10-21"
+        },
+        {
+          "id": "a2x4-2",
+          "title": "Study 2x4 Environments projects; note 2–3 you'd reference",
+          "due": "2026-10-28"
+        },
+        {
+          "id": "a2x4-3",
+          "title": "Update your CV and export it as a PDF",
+          "due": "2026-10-29"
+        },
+        {
+          "id": "a2x4-4",
+          "title": "Pick 6–8 projects for the portfolio, systems work first",
+          "due": "2026-10-30"
+        },
+        {
+          "id": "a2x4-5",
+          "title": "Mock up one project in a physical space (signage, exhibit wall, storefront)",
+          "due": "2026-11-01"
+        },
+        {
+          "id": "a2x4-6",
+          "title": "Lay out the portfolio PDF and get it under 10 MB",
+          "due": "2026-11-04"
+        },
+        {
+          "id": "a2x4-7",
+          "title": "Write the letter of interest and export it as a PDF",
+          "due": "2026-11-05"
+        },
+        {
+          "id": "a2x4-8",
+          "title": "Final check (file names, subject line), then send",
+          "due": "2026-11-06"
+        },
+        {
+          "id": "a2x4-9",
+          "title": "Follow up if you haven't heard back",
+          "due": "2026-11-20"
+        }
+      ]
+    }
+  ]
+}
