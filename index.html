@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dylan's Dashboard</title>
+  <meta name="description" content="Dylan Riegert's personal dashboard: deadlines, classes, design projects, leads and shop ideas.">
+  <meta name="theme-color" content="#f5f2eb" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#151412" media="(prefers-color-scheme: dark)">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Dashboard">
+  <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="assets/img/icon-180.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <a class="skip" href="#main">Skip to content</a>
+
+  <header class="top">
+    <div class="top-inner">
+      <a class="wordmark" href="#main" aria-label="Dylan Riegert, dashboard home">
+        <span class="bracket">[</span>Dylan Riegert<span class="bracket">]</span>
+      </a>
+      <nav aria-label="Sections">
+        <ul class="nav">
+          <li><a href="#tasks">Tasks</a></li>
+          <li><a href="#classes">Classes</a></li>
+          <li><a href="#projects">Projects</a></li>
+          <li><a href="#leads">Leads</a></li>
+          <li><a href="#shop">Shop</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero" aria-labelledby="hero-title">
+      <p class="eyebrow" id="today"></p>
+      <h1 id="hero-title" class="hero-title">What's next.</h1>
+      <div class="next" id="next-up" aria-live="polite">
+        <p class="muted">Loading your tasks…</p>
+      </div>
+      <dl class="stats" id="stats"></dl>
+    </section>
+
+    <section id="tasks" class="block" aria-labelledby="tasks-title">
+      <header class="block-head">
+        <p class="eyebrow">01 · Tasks</p>
+        <h2 id="tasks-title">Deadlines</h2>
+        <p class="block-note">Pulled from eLC. Edit <code>TASKS.md</code> to change this list.</p>
+      </header>
+      <div id="task-groups" class="task-groups"></div>
+    </section>
+
+    <section id="classes" class="block" aria-labelledby="classes-title">
+      <header class="block-head">
+        <p class="eyebrow">02 · Fall 2026</p>
+        <h2 id="classes-title">Classes</h2>
+        <p class="block-note"><a href="https://uga.view.usg.edu/d2l/le/worktodo/view">eLC due date tracker</a> · <a href="https://uga.view.usg.edu/d2l/home">eLC home</a></p>
+      </header>
+      <div id="course-grid" class="course-grid"></div>
+    </section>
+
+    <section id="projects" class="block" aria-labelledby="projects-title">
+      <header class="block-head">
+        <p class="eyebrow">03 · Design</p>
+        <h2 id="projects-title">Projects</h2>
+      </header>
+      <div id="project-grid" class="project-grid"></div>
+    </section>
+
+    <section id="leads" class="block" aria-labelledby="leads-title">
+      <header class="block-head">
+        <p class="eyebrow">04 · Side business</p>
+        <h2 id="leads-title">Athens web leads</h2>
+        <p class="block-note">Bars and venues that might want a website. Fill in the website and status columns in <code>data/leads.csv</code>.</p>
+      </header>
+      <div class="lead-tools">
+        <label class="search">
+          <span class="sr-only">Search leads</span>
+          <input id="lead-search" type="search" placeholder="Search venues" autocomplete="off">
+        </label>
+        <div class="chips" id="lead-filters" role="group" aria-label="Filter by neighborhood"></div>
+      </div>
+      <p class="lead-count muted" id="lead-count"></p>
+      <div class="lead-table-wrap">
+        <table class="lead-table">
+          <thead>
+            <tr><th scope="col">Venue</th><th scope="col">Area</th><th scope="col">Type</th><th scope="col">Website</th><th scope="col">Status</th></tr>
+          </thead>
+          <tbody id="lead-rows"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="shop" class="block" aria-labelledby="shop-title">
+      <header class="block-head">
+        <p class="eyebrow">05 · First e-commerce business</p>
+        <h2 id="shop-title">Products to try</h2>
+        <p class="block-note">Starter ideas to edit or replace in <code>data/products.json</code>.</p>
+      </header>
+      <div id="product-grid" class="product-grid"></div>
+    </section>
+  </main>
+
+  <footer class="foot">
+    <p>Edit in VS Code, push to GitHub, and this page updates in about a minute.</p>
+    <p class="muted" id="updated"></p>
+  </footer>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

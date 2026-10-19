@@ -1,0 +1,48 @@
+[
+  {
+    "title": "Stuff They Don't Want You To Know",
+    "kind": "Podcast identity · Type & Image",
+    "status": "In progress",
+    "summary": "Logotype and show cover for a conspiracy-history podcast. The redaction bar does the talking; the Pacific Northwest forest sets the mood.",
+    "next": "Apply the identity in context and build basic brand guidelines.",
+    "image": "assets/img/podcast-cover-final.jpg",
+    "gallery": [
+      "assets/img/podcast-cover-option-1.jpg",
+      "assets/img/podcast-cover-option-2.jpg",
+      "assets/img/podcast-cover-option-3.jpg"
+    ],
+    "links": []
+  },
+  {
+    "title": "Visual Codes for Milk",
+    "kind": "Case study · Packaging system",
+    "status": "Case study done",
+    "summary": "Judge a milk by its carton: a color and pattern code that tells you the fat content at a glance. First piece for the portfolio.",
+    "next": "Lay it out for the portfolio website.",
+    "image": "assets/img/milk-case-study-1.jpg",
+    "gallery": [],
+    "links": [
+      { "label": "Read the case study (PDF)", "url": "assets/files/visual-codes-for-milk-case-study.pdf" }
+    ]
+  },
+  {
+    "title": "Portfolio website",
+    "kind": "Personal site · Job search",
+    "status": "In progress",
+    "summary": "Home, Work, Services and Contact pages. Pentagram-style case studies: clean, concise, visually led.",
+    "next": "Add the Milk case study, then the podcast identity once it's final.",
+    "image": "",
+    "gallery": [],
+    "links": []
+  },
+  {
+    "title": "After Hours Athens",
+    "kind": "Nightlife guide website",
+    "status": "In progress",
+    "summary": "A curated guide to 30 Athens bars and venues, sorted by vibe, music and neighborhood.",
+    "next": "Separate pages for restaurants, bars and live music.",
+    "image": "",
+    "gallery": [],
+    "links": []
+  }
+]

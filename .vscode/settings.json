@@ -1,0 +1,5 @@
+{
+  "liveServer.settings.root": "/",
+  "files.trimTrailingWhitespace": false,
+  "[markdown]": { "editor.wordWrap": "on" }
+}
