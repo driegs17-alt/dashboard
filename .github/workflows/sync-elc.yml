@@ -1,0 +1,45 @@
+name: Sync eLC deadlines
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # every 15 minutes (GitHub may run it a few minutes late)
+  workflow_dispatch:          # lets you run it by hand from the Actions tab
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-elc
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Pull deadlines from the eLC calendar feed
+        env:
+          ELC_FEED_URL: ${{ secrets.ELC_FEED_URL }}
+        run: python scripts/sync_elc.py
+
+      - name: Save changes
+        run: |
+          if git diff --quiet -- data/deadlines.json; then
+            echo "Nothing new."
+            exit 0
+          fi
+          git config user.name "deadline-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/deadlines.json
+          git commit -m "Sync eLC deadlines"
+          for attempt in 1 2 3; do
+            git pull --rebase --quiet && git push && exit 0
+            sleep 5
+          done
+          exit 1

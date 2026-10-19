@@ -2,15 +2,17 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Dylan's Dashboard</title>
-  <meta name="description" content="Dylan Riegert's personal dashboard: deadlines, classes, design projects, leads and shop ideas.">
+  <meta name="description" content="Dylan Riegert's dashboard: what's due, classes, design projects, leads and shop ideas.">
   <meta name="theme-color" content="#f5f2eb" media="(prefers-color-scheme: light)">
   <meta name="theme-color" content="#151412" media="(prefers-color-scheme: dark)">
   <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="Dashboard">
   <link rel="icon" href="assets/img/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="assets/img/icon-180.png">
+  <link rel="manifest" href="manifest.webmanifest">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
@@ -26,33 +28,58 @@
       </a>
       <nav aria-label="Sections">
         <ul class="nav">
-          <li><a href="#tasks">Tasks</a></li>
+          <li><a href="#deadlines">Due</a></li>
           <li><a href="#classes">Classes</a></li>
           <li><a href="#projects">Projects</a></li>
           <li><a href="#leads">Leads</a></li>
           <li><a href="#shop">Shop</a></li>
         </ul>
       </nav>
+      <button type="button" class="connect" id="connect-btn" aria-haspopup="dialog">
+        <span class="dot" id="connect-dot" aria-hidden="true"></span>
+        <span id="connect-label">Connect</span>
+      </button>
     </div>
   </header>
 
   <main id="main">
-    <section class="hero" aria-labelledby="hero-title">
+    <section class="hero" aria-labelledby="brief-title">
       <p class="eyebrow" id="today"></p>
-      <h1 id="hero-title" class="hero-title">What's next.</h1>
-      <div class="next" id="next-up" aria-live="polite">
-        <p class="muted">Loading your tasks…</p>
-      </div>
-      <dl class="stats" id="stats"></dl>
+      <h1 id="brief-title" class="hero-title">One sec…</h1>
+      <p class="brief" id="brief"></p>
+
+      <div class="focus" id="focus" aria-live="polite"></div>
+
+      <div class="week" id="week" aria-label="Next 14 days"></div>
     </section>
 
-    <section id="tasks" class="block" aria-labelledby="tasks-title">
+    <section id="deadlines" class="block" aria-labelledby="deadlines-title">
       <header class="block-head">
-        <p class="eyebrow">01 · Tasks</p>
-        <h2 id="tasks-title">Deadlines</h2>
-        <p class="block-note">Pulled from eLC. Edit <code>TASKS.md</code> to change this list.</p>
+        <p class="eyebrow">01 · Due</p>
+        <h2 id="deadlines-title">Deadlines</h2>
+        <p class="block-note" id="sync-note">Synced from eLC automatically.</p>
       </header>
+
       <div id="task-groups" class="task-groups"></div>
+
+      <form class="add-task" id="add-task" autocomplete="off">
+        <p class="add-title">Add your own task</p>
+        <div class="add-row">
+          <label class="field grow">
+            <span class="sr-only">Task</span>
+            <input id="add-title" name="title" type="text" placeholder="What needs doing?" required maxlength="140">
+          </label>
+          <label class="field">
+            <span class="sr-only">Due date (optional)</span>
+            <input id="add-due" name="due" type="date">
+          </label>
+          <label class="field">
+            <span class="sr-only">Class (optional)</span>
+            <select id="add-course" name="course"><option value="">No class</option></select>
+          </label>
+          <button type="submit" class="btn solid">Add</button>
+        </div>
+      </form>
     </section>
 
     <section id="classes" class="block" aria-labelledby="classes-title">
@@ -107,9 +134,36 @@
   </main>
 
   <footer class="foot">
-    <p>Edit in VS Code, push to GitHub, and this page updates in about a minute.</p>
+    <p>Deadlines sync from eLC every 15 minutes. Check-offs save to GitHub instantly.</p>
     <p class="muted" id="updated"></p>
   </footer>
+
+  <dialog class="modal" id="connect-modal" aria-labelledby="connect-title">
+    <form method="dialog" class="modal-inner" id="connect-form">
+      <h2 id="connect-title">Turn on check-offs for this device</h2>
+      <p class="muted">Do this once on each phone or computer. The key stays on this device only.</p>
+      <ol class="steps">
+        <li><a id="token-link" href="#" target="_blank" rel="noopener">Open GitHub's key page ↗</a> (sign in if asked).</li>
+        <li>Name it <b>Dashboard</b>, set expiration to <b>1 year</b>.</li>
+        <li>Under <b>Repository access</b>, pick <b>Only select repositories</b> → <b id="repo-name">dashboard</b>.</li>
+        <li>Under <b>Permissions → Repository permissions</b>, set <b>Contents</b> to <b>Read and write</b>.</li>
+        <li>Click <b>Generate token</b>, copy it, paste it below.</li>
+      </ol>
+      <label class="field">
+        <span class="field-label">GitHub key</span>
+        <input id="token-input" type="password" placeholder="github_pat_…" autocomplete="off" spellcheck="false">
+      </label>
+      <p class="form-msg" id="connect-msg" role="status"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="disconnect-btn" hidden>Disconnect this device</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" value="cancel" id="connect-cancel">Close</button>
+        <button type="submit" class="btn solid" id="connect-save">Save key</button>
+      </div>
+    </form>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <script src="js/app.js"></script>
 </body>

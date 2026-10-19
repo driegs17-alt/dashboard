@@ -1,0 +1,226 @@
+{
+  "source": "eLC calendar feed",
+  "synced": "2026-10-19T16:35:33Z",
+  "items": [
+    {
+      "id": "elc-6637-21874620",
+      "title": "Final PGDA Submission",
+      "course": "ARGD 3060",
+      "due": "2026-10-25T16:00:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/21874620/detailsview?ou=3949559#21874620",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22343776",
+      "title": "(re)Brand Podcast 3 (for display)",
+      "course": "ARGD 3060",
+      "due": "2026-10-26T03:59:59Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/22343776/detailsview?ou=3949559#22343776",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22405345",
+      "title": "Case Study Final",
+      "course": "ARGD 4115",
+      "due": "2026-10-27T13:00:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22405345/detailsview?ou=3953780#22405345",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901767",
+      "title": "Ch 11. LearningCurve: Unemployment",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901767/detailsview?ou=3957191#21901767",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901793",
+      "title": "Ch. 11 Decision Point: Unemployment",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901793/detailsview?ou=3957191#21901793",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901753",
+      "title": "Ch. 11 Graded Homework: Unemployment",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901753/detailsview?ou=3957191#21901753",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901791",
+      "title": "Ch. 11 Podcast Assignment: Unemployment",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901791/detailsview?ou=3957191#21901791",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901788",
+      "title": "Ch. 11 Problem Video Walkthrough: Unemployment",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901788/detailsview?ou=3957191#21901788",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901792",
+      "title": "Ch. 12 Decision Point: Inflation",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901792/detailsview?ou=3957191#21901792",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901754",
+      "title": "Ch. 12 Graded Homework: Inflation and Money",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901754/detailsview?ou=3957191#21901754",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901760",
+      "title": "Ch. 12 LearningCurve: Inflation",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901760/detailsview?ou=3957191#21901760",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901790",
+      "title": "Ch. 12 Podcast Assignment: Inflation",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901790/detailsview?ou=3957191#21901790",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901796",
+      "title": "Ch. 12 Problem Video Walkthrough: Inflation",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901796/detailsview?ou=3957191#21901796",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901795",
+      "title": "Ch. 17 Decision Point: Business Cycles",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901795/detailsview?ou=3957191#21901795",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901757",
+      "title": "Ch. 17 Graded Homework: Tracking the Business Cycle",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901757/detailsview?ou=3957191#21901757",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901761",
+      "title": "Ch. 17 LearningCurve: Business Cycles",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901761/detailsview?ou=3957191#21901761",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901794",
+      "title": "Ch. 17 Podcast Assignment: Business Cycles",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901794/detailsview?ou=3957191#21901794",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901797",
+      "title": "Ch. 17 Problem Video Walkthrough: Business Cycles",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901797/detailsview?ou=3957191#21901797",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22187113",
+      "title": "Guided Reading: Chapter 12 Inflation and Money",
+      "course": "ECON 2105",
+      "due": "2026-11-03T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/22187113/detailsview?ou=3957191#22187113",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22490956",
+      "title": "Final Project First Draft!",
+      "course": "ARGD 4115",
+      "due": "2026-11-03T14:30:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22490956/detailsview?ou=3953780#22490956",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22060528",
+      "title": "Outline/Context",
+      "course": "HIST 2112",
+      "due": "2026-11-03T19:55:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3960738/event/22060528/detailsview?ou=3960738#22060528",
+      "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22060525",
+      "title": "Oral History Paper",
+      "course": "HIST 2112",
+      "due": "2026-11-19T19:55:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3960738/event/22060525/detailsview?ou=3960738#22060525",
+      "firstSeen": null
+    }
+  ]
+}
