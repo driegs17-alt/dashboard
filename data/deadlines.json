@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-10-21T19:17:54Z",
+  "synced": "2026-10-26T19:39:22Z",
   "items": [
     {
       "id": "elc-6637-21874620",
@@ -51,6 +51,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22545938/detailsview?ou=3990441#22545938",
       "firstSeen": "2026-10-21T19:17:54Z"
+    },
+    {
+      "id": "elc-6637-22568376",
+      "title": "3-3 Generative Design",
+      "course": "ARGD 4160",
+      "due": "2026-11-02T20:00:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22568376/detailsview?ou=3990441#22568376",
+      "firstSeen": "2026-10-26T19:39:22Z"
     },
     {
       "id": "elc-6637-21901767",
