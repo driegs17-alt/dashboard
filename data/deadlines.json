@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-10-26T19:39:22Z",
+  "synced": "2026-10-27T13:44:23Z",
   "items": [
     {
       "id": "elc-6637-21874620",
@@ -241,6 +241,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3960738/event/22060528/detailsview?ou=3960738#22060528",
       "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22571808",
+      "title": "Reading assignment and Quiz: Freelance and Business and Stuff",
+      "course": "ARGD 4115",
+      "due": "2026-11-10T14:30:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22571808/detailsview?ou=3953780#22571808",
+      "firstSeen": "2026-10-27T13:44:23Z"
     },
     {
       "id": "elc-6637-22060525",
