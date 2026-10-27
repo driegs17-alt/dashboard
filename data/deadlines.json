@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-10-27T13:44:23Z",
+  "synced": "2026-10-27T18:59:21Z",
   "items": [
-    {
-      "id": "elc-6637-21874620",
-      "title": "Final PGDA Submission",
-      "course": "ARGD 3060",
-      "due": "2026-10-25T16:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/21874620/detailsview?ou=3949559#21874620",
-      "firstSeen": null
-    },
     {
       "id": "elc-6637-22343776",
       "title": "(re)Brand Podcast 3 (for display)",
@@ -51,6 +41,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22545938/detailsview?ou=3990441#22545938",
       "firstSeen": "2026-10-21T19:17:54Z"
+    },
+    {
+      "id": "elc-6637-22573400",
+      "title": "Design Process: Mini Magic Booklet",
+      "course": "ARGD 3060",
+      "due": "2026-11-02T04:59:59Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/22573400/detailsview?ou=3949559#22573400",
+      "firstSeen": "2026-10-27T18:59:21Z"
     },
     {
       "id": "elc-6637-22568376",
