@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-10-29T16:03:50Z",
+  "synced": "2026-10-29T21:05:07Z",
   "items": [
     {
       "id": "elc-6637-22545938",
@@ -226,7 +226,7 @@
       "id": "elc-6637-22579855",
       "title": "3-4 Data Sketch",
       "course": "ARGD 4160",
-      "due": "2026-11-04T20:00:00Z",
+      "due": "2026-11-06T20:00:00Z",
       "hasTime": true,
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22579855/detailsview?ou=3990441#22579855",
