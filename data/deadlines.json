@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-10-28T19:52:25Z",
+  "synced": "2026-10-29T16:03:50Z",
   "items": [
-    {
-      "id": "elc-6637-22405345",
-      "title": "Case Study Final",
-      "course": "ARGD 4115",
-      "due": "2026-10-27T13:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22405345/detailsview?ou=3953780#22405345",
-      "firstSeen": null
-    },
     {
       "id": "elc-6637-22545938",
       "title": "3-2 Generative PatternsUntitled",
