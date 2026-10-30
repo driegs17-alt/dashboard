@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-10-29T21:05:07Z",
+  "synced": "2026-10-30T22:43:06Z",
   "items": [
-    {
-      "id": "elc-6637-22545938",
-      "title": "3-2 Generative PatternsUntitled",
-      "course": "ARGD 4160",
-      "due": "2026-10-28T19:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22545938/detailsview?ou=3990441#22545938",
-      "firstSeen": "2026-10-21T19:17:54Z"
-    },
     {
       "id": "elc-6637-22580571",
       "title": "Practice for Midterm - 3- Requires Respondus LockDown Browser",
