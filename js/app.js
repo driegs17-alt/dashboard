@@ -58,6 +58,14 @@ const AGENT_TYPES = {
   custom: { label: "Something else", hint: "Describe exactly what you want below." },
 };
 const AGENT_LIVE = ["queued", "working", "needs-you"];
+// Where a job's finished files go (agent/RUNNER.md → Deliverables).
+const DELIVER = {
+  auto: { label: "Best fit (Claude picks)", hint: "Writing → Google Doc, lists and numbers → Google Sheet, talks → Google Slides, visual design → Adobe Express (with a PDF copy in Drive). All in Drive › Claude Agents, one folder per job." },
+  drive: { label: "Google Drive", hint: "Everything as Google Docs, Sheets, Slides and PDFs in Drive › Claude Agents. Designs come as PDF + PNG." },
+  adobe: { label: "Adobe Creative Cloud", hint: "Designs and documents as editable Adobe Express files. Spreadsheets still go to Google Drive (Adobe has no sheets)." },
+  both: { label: "Both", hint: "The main file in its best home plus a copy in the other (Doc ⇄ Express/PDF)." },
+};
+const DELIVER_KEY = "dashboard.deliver";
 
 // One-tap business jobs (Business tab). Each opens the hand-off dialog pre-filled.
 const BIZ_JOBS = [
@@ -1566,6 +1574,10 @@ function openHandoff(itemOrTitle, preset = null) {
     .join("");
   $("hand-type").value = preset ? preset.type : isClass ? "prep" : "research";
   $("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint;
+  const lastDeliver = storage.get(DELIVER_KEY);
+  $("hand-deliver").innerHTML = Object.entries(DELIVER).map(([key, d]) => `<option value="${key}">${escapeHtml(d.label)}</option>`).join("");
+  $("hand-deliver").value = (preset && preset.deliver) || (DELIVER[lastDeliver] ? lastDeliver : "auto");
+  $("hand-deliver-hint").textContent = DELIVER[$("hand-deliver").value].hint;
   $("hand-ask").value = preset ? preset.ask : "";
   $("hand-files").value = "";
   $("hand-links").value = "";
@@ -1584,9 +1596,11 @@ async function queueJob(event) {
     type: $("hand-type").value,
     item: target,
     ask: $("hand-ask").value.trim(),
+    deliver: DELIVER[$("hand-deliver").value] ? $("hand-deliver").value : "auto",
     status: "queued",
     requested: new Date().toISOString(),
   };
+  storage.set(DELIVER_KEY, job.deliver);
   const button = $("hand-save");
   button.disabled = true;
   try {
@@ -1627,6 +1641,7 @@ async function askClaude(event) {
     type: "advise",
     item: { id: `ask-${Date.now().toString(36)}`, title, course: "", due: null, url: "", note: "" },
     ask: text,
+    deliver: "auto",
     status: "queued",
     requested: new Date().toISOString(),
   };
@@ -1833,9 +1848,12 @@ function ago(iso) {
 // kind → short label on the badge, longer label in text, filter group.
 const OUT_KINDS = {
   report: { badge: "Report", label: "Report", group: "reports" },
-  doc: { badge: "Doc", label: "Document", group: "files" },
-  sheet: { badge: "Sheet", label: "Spreadsheet", group: "files" },
-  deck: { badge: "Deck", label: "Slides", group: "files" },
+  folder: { badge: "Folder", label: "Drive folder", group: "files" },
+  doc: { badge: "Doc", label: "Google Doc", group: "files" },
+  sheet: { badge: "Sheet", label: "Google Sheet", group: "files" },
+  deck: { badge: "Slides", label: "Google Slides", group: "files" },
+  adobe: { badge: "Adobe", label: "Adobe Express design", group: "files" },
+  image: { badge: "Image", label: "Image", group: "files" },
   pdf: { badge: "PDF", label: "PDF", group: "files" },
   file: { badge: "File", label: "File", group: "files" },
   draft: { badge: "Draft", label: "Gmail draft", group: "drafts" },
@@ -2412,6 +2430,7 @@ async function start() {
   $("gkey-done").addEventListener("click", () => { state.newGradesKey = ""; renderGrades(); });
   $("hand-cancel").addEventListener("click", () => $("hand-modal").close());
   $("hand-type").addEventListener("change", () => ($("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint));
+  $("hand-deliver").addEventListener("change", () => ($("hand-deliver-hint").textContent = DELIVER[$("hand-deliver").value].hint));
   $("result-close").addEventListener("click", () => $("result-modal").close());
   $("agent-new").addEventListener("submit", (e) => {
     e.preventDefault();

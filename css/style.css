@@ -818,6 +818,9 @@ details.group[open] > summary::before { content: "–"; }
 .out-kind.k-doc, .out-kind.k-pdf, .out-kind.k-file, .out-kind.k-deck, .out-kind.k-sheet { background: color-mix(in srgb, var(--later) 22%, var(--surface)); }
 .out-kind.k-draft, .out-kind.k-calendar { background: color-mix(in srgb, var(--gold) 30%, var(--surface)); }
 .out-kind.k-link, .out-kind.k-figma { background: color-mix(in srgb, var(--accent) 16%, var(--surface)); }
+.out-kind.k-adobe { background: color-mix(in srgb, #eb1000 20%, var(--surface)); }
+.out-kind.k-folder { background: color-mix(in srgb, var(--later) 38%, var(--surface)); }
+.out-kind.k-image { background: color-mix(in srgb, var(--later) 22%, var(--surface)); }
 .out-lock { font-size: 0.8em; }
 .out-row > .out-kind { justify-self: start; }
 .out-filter { margin-bottom: 18px; }

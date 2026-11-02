@@ -285,8 +285,8 @@
           <li><b>Working</b>: Claude has split it across subagents. Progress lines show up here live. <b>Tell Claude</b> redirects it before its next step; <b>Stop</b> makes it wrap up and save what it has; <b>Open live session</b> lets you watch or step in directly.</li>
           <li><b>Files &amp; links</b>: encrypted on your device before saving, so they stay private even though the repo is public. Results from jobs with files are private too.</li>
           <li><b>Needs you</b>: it hit a login, a connector to approve, or a choice only you can make. Answer here and it goes back in the queue. You also get a push notification.</li>
-          <li><b>Done</b>: the job's outputs show on its card and in <b>Outputs</b>.</li>
-          <li><b>Outputs</b>: every report, Google Doc or Sheet, Gmail draft, calendar event and file a job made, grouped by job, newest first. 🔒 means private: unlock it with your grades key (Grades tab). <b>Clear</b> only tidies the Jobs list; outputs stay here.</li>
+          <li><b>Done</b>: the full work lands as real files in your <b>Google Drive › Claude Agents</b> (Docs, Sheets, Slides, PDFs, one folder per job, sorted into Classes / Portfolio &amp; Design / Applications / Business / Plans) or <b>Adobe Express</b> (posters, social graphics, portfolio layouts, design decks). Claude picks the format that fits the work unless you choose under <b>Where the files go</b>. The card links straight to each file and the job folder.</li>
+          <li><b>Outputs</b>: every report, Drive folder, Google Doc, Sheet or Slides, Adobe Express design, PDF, Gmail draft and calendar event a job made, grouped by job, newest first. 🔒 means private: unlock it with your grades key (Grades tab). <b>Clear</b> only tidies the Jobs list; outputs stay here.</li>
           <li><b>Class work</b>: Claude preps you (crash sheets, outlines, feedback on your drafts, practice problems). It won't do graded work or submit anything as you.</li>
           <li>This repo is public. Titles, instructions, mid-run notes and results of jobs without files are public, so put anything private in a file or the links box. Never attach passwords.</li>
         </ul>
@@ -334,6 +334,11 @@
         <select id="hand-type"></select>
       </label>
       <p class="hand-hint" id="hand-hint"></p>
+      <label class="field">
+        <span class="field-label">Where the files go</span>
+        <select id="hand-deliver"></select>
+      </label>
+      <p class="hand-hint" id="hand-deliver-hint"></p>
       <label class="field">
         <span class="field-label">Instructions (optional)</span>
         <textarea id="hand-ask" rows="4" maxlength="1500" placeholder="What done looks like, what to skip… (this text is public)"></textarea>
