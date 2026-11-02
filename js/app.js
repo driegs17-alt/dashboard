@@ -11,6 +11,9 @@
              send it, and the master materials library.
    CLASSES   Reference: one card per course.
    BUSINESS  Product tests and Athens leads, for after Today's 3.
+   AGENTS    Hand tasks to Claude. Jobs queue in data/agent.json; an
+             hourly Claude run works them with subagents (see
+             agent/RUNNER.md) and writes results to agent/results/.
 
    Data lives in the repo:
      data/deadlines.json  ← written by the eLC sync robot (don't edit)
@@ -18,6 +21,7 @@
      data/done.json       ← what you've checked off (also weekly reset)
      data/plan.json       ← which items you pinned to Today's 3
      data/applications.json ← applications and the materials library
+     data/agent.json      ← jobs handed to Claude (status, results)
      data/courses.json, leads.csv, products.json
 
    Without a key the page is read-only. With a key (Connect button),
@@ -36,6 +40,18 @@ const MAX_TODAY = 3;
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 const IS_LOCAL = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname) || location.protocol === "file:";
+
+const AGENT_TYPES = {
+  prep: {
+    label: "Study prep",
+    hint: "A crash sheet: key ideas, formulas, worked examples and quick self-checks, so you get through it faster. You still do and submit the graded work.",
+  },
+  research: { label: "Research", hint: "Look things up and come back with a short, sourced answer or list." },
+  draft: { label: "First draft", hint: "Write a first draft for you to edit: an email, a write-up, copy, an outline. Not for graded assignments." },
+  plan: { label: "Break it down", hint: "Turn a big task into small dated steps you can check off, with time estimates." },
+  custom: { label: "Something else", hint: "Describe exactly what you want below." },
+};
+const AGENT_LIVE = ["queued", "working", "needs-you"];
 
 const RESET_STEPS = [
   "Skim eLC announcements for anything the robot can't see (in-class changes, new instructions).",
@@ -61,6 +77,8 @@ const state = {
   apps: { library: [], applications: [] },
   courses: [],
   courseNames: {},
+  agent: { jobs: [] },
+  handTarget: null,
   token: storage.get(TOKEN_KEY) || "",
 };
 
@@ -552,6 +570,8 @@ function taskRow(item) {
     ? ""
     : `<button type="button" class="pin${pinned ? " is-pinned" : ""}" data-${pinned ? "unpin" : "pin"}="${escapeHtml(item.id)}" aria-label="${pinned ? "Remove from" : "Add to"} Today's 3">${pinned ? "★" : "☆"}</button>`;
 
+  const hand = item.doneAt ? "" : handButton(item);
+
   return `
     <article class="task${item.doneAt ? " done" : ""}">
       ${checkButton(item)}
@@ -561,7 +581,7 @@ function taskRow(item) {
         ${note}
         ${partsList(item)}
       </div>
-      <div class="row-actions">${pin}${link}</div>
+      <div class="row-actions">${hand}${pin}${link}</div>
     </article>`;
 }
 
@@ -926,6 +946,275 @@ function tickFocus() {
   }
 }
 
+
+/* ---------- Agents: hand tasks to Claude ---------- */
+
+function jobsFor(itemId) {
+  return (state.agent.jobs || []).filter((j) => j.item && j.item.id === itemId && j.status !== "archived");
+}
+
+function liveJob(itemId) {
+  const jobs = jobsFor(itemId);
+  return jobs.find((j) => AGENT_LIVE.includes(j.status)) || jobs.find((j) => j.status === "done") || null;
+}
+
+const STATUS_TEXT = { queued: "Queued", working: "Working", "needs-you": "Needs you", done: "Done", failed: "Didn't finish", cancelled: "Cancelled" };
+
+function handButton(item) {
+  const job = liveJob(item.id);
+  if (job) {
+    return `<a class="hand is-${job.status}" href="#agents" title="Claude: ${escapeHtml(STATUS_TEXT[job.status] || job.status)}" aria-label="Claude job: ${escapeHtml(STATUS_TEXT[job.status] || job.status)}">${job.status === "done" ? "✓" : job.status === "needs-you" ? "!" : "…"}</a>`;
+  }
+  return `<button type="button" class="hand" data-hand="${escapeHtml(item.id)}" aria-label="Hand off to Claude: ${escapeHtml(item.title)}" title="Hand off to Claude">⇢</button>`;
+}
+
+function itemSnapshot(item) {
+  return {
+    id: item.id,
+    title: item.title,
+    course: item.course || "",
+    due: item.dueDate ? item.dueDate.toISOString() : null,
+    url: item.url || "",
+    note: item.note || "",
+    parts: item.parts ? item.parts.map((p) => ({ id: p.id, title: p.title, url: p.url || "" })) : undefined,
+  };
+}
+
+function openHandoff(itemOrTitle) {
+  if (needsKey("Connect this device to hand tasks to Claude.")) return;
+  const isItem = typeof itemOrTitle === "object";
+  const item = isItem ? itemOrTitle : { id: `free-${Date.now().toString(36)}`, title: itemOrTitle, course: "" };
+  state.handTarget = isItem ? itemSnapshot(item) : { id: item.id, title: item.title, course: "", due: null, url: "", note: "" };
+  const course = state.courseNames[item.course] || item.org || "";
+  $("hand-title").textContent = item.title;
+  $("hand-meta").textContent = [course, isItem && item.dueDate ? `Due ${whenSentence(item)}` : "", item.parts ? `${item.parts.length} parts` : ""].filter(Boolean).join(" · ");
+  const isClass = Boolean(item.course);
+  $("hand-type").innerHTML = Object.entries(AGENT_TYPES)
+    .filter(([key]) => !(isClass && key === "draft"))
+    .map(([key, t]) => `<option value="${key}">${escapeHtml(t.label)}</option>`)
+    .join("");
+  $("hand-type").value = isClass ? "prep" : "research";
+  $("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint;
+  $("hand-ask").value = "";
+  $("hand-msg").textContent = "";
+  const modal = $("hand-modal");
+  if (typeof modal.showModal === "function") modal.showModal();
+  else modal.setAttribute("open", "");
+}
+
+async function queueJob(event) {
+  event.preventDefault();
+  const target = state.handTarget;
+  if (!target) return;
+  const job = {
+    id: `job-${Date.now().toString(36)}`,
+    type: $("hand-type").value,
+    item: target,
+    ask: $("hand-ask").value.trim(),
+    status: "queued",
+    requested: new Date().toISOString(),
+  };
+  const button = $("hand-save");
+  button.disabled = true;
+  try {
+    state.agent = await updateJson(
+      "data/agent.json",
+      (data) => ({ ...data, jobs: [...(data.jobs || []), job] }),
+      `Hand off to Claude: ${target.title}`
+    );
+    $("hand-modal").close();
+    toast("Queued. Claude picks it up within the hour.");
+    renderAll();
+  } catch (error) {
+    $("hand-msg").textContent = error.message === "bad-key" ? "Your GitHub key stopped working. Reconnect to save." : `Didn't save: ${error.message}`;
+    $("hand-msg").className = "form-msg error-text";
+  } finally {
+    button.disabled = false;
+  }
+}
+
+async function changeJob(id, change, message, done) {
+  if (needsKey("Connect this device to manage Claude jobs.")) return;
+  try {
+    state.agent = await updateJson(
+      "data/agent.json",
+      (data) => ({ ...data, jobs: (data.jobs || []).map((j) => (j.id === id ? change({ ...j }) : j)) }),
+      message
+    );
+    if (done) toast(done);
+  } catch (error) {
+    saveError(error);
+  }
+  renderAll();
+}
+
+function answerJob(id, form) {
+  const text = form.querySelector("textarea").value.trim();
+  if (!text) return;
+  changeJob(
+    id,
+    (j) => ({ ...j, status: "queued", replies: [...(j.replies || []), { at: new Date().toISOString(), text }] }),
+    "Answer Claude's question",
+    "Sent. It's back in the queue."
+  );
+}
+
+/* Small, safe Markdown → HTML for results. Escapes first, then formats. */
+function inlineMd(text) {
+  return escapeHtml(text)
+    .replace(/`([^`]+)`/g, "<code>$1</code>")
+    .replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>")
+    .replace(/(^|[^*])\*([^*\s][^*]*)\*/g, "$1<em>$2</em>")
+    .replace(/\[([^\]]+)\]\((https?:\/\/[^)\s]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+}
+
+function renderMd(md) {
+  const lines = md.replace(/\r/g, "").split("\n");
+  const out = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    if (/^```/.test(line)) {
+      const code = [];
+      i++;
+      while (i < lines.length && !/^```/.test(lines[i])) code.push(lines[i++]);
+      i++;
+      out.push(`<pre><code>${escapeHtml(code.join("\n"))}</code></pre>`);
+      continue;
+    }
+    const h = line.match(/^(#{1,4})\s+(.*)/);
+    if (h) { out.push(`<h${h[1].length + 1}>${inlineMd(h[2])}</h${h[1].length + 1}>`); i++; continue; }
+    if (/^\s*(---|\*\*\*)\s*$/.test(line)) { out.push("<hr>"); i++; continue; }
+    if (/^\s*\|/.test(line)) {
+      const rows = [];
+      while (i < lines.length && /^\s*\|/.test(lines[i])) rows.push(lines[i++]);
+      const cells = (r) => r.trim().replace(/^\||\|$/g, "").split("|").map((c) => c.trim());
+      const body = rows.filter((r) => !/^\s*\|?\s*:?-{2,}/.test(r));
+      const [head, ...rest] = body;
+      out.push(`<div class="md-table"><table><thead><tr>${cells(head).map((c) => `<th>${inlineMd(c)}</th>`).join("")}</tr></thead><tbody>${rest
+        .map((r) => `<tr>${cells(r).map((c) => `<td>${inlineMd(c)}</td>`).join("")}</tr>`)
+        .join("")}</tbody></table></div>`);
+      continue;
+    }
+    if (/^\s*([-*]|\d+\.)\s+/.test(line)) {
+      const ordered = /^\s*\d+\./.test(line);
+      const items = [];
+      while (i < lines.length && /^\s*([-*]|\d+\.)\s+/.test(lines[i])) {
+        const check = lines[i].match(/^\s*[-*]\s+\[( |x)\]\s+(.*)/i);
+        items.push(check ? `<li class="md-check">${check[1].trim() ? "☑" : "☐"} ${inlineMd(check[2])}</li>` : `<li>${inlineMd(lines[i].replace(/^\s*([-*]|\d+\.)\s+/, ""))}</li>`);
+        i++;
+      }
+      out.push(ordered ? `<ol>${items.join("")}</ol>` : `<ul>${items.join("")}</ul>`);
+      continue;
+    }
+    if (/^>\s?/.test(line)) {
+      const quote = [];
+      while (i < lines.length && /^>\s?/.test(lines[i])) quote.push(lines[i++].replace(/^>\s?/, ""));
+      out.push(`<blockquote>${inlineMd(quote.join(" "))}</blockquote>`);
+      continue;
+    }
+    if (!line.trim()) { i++; continue; }
+    const para = [];
+    while (i < lines.length && lines[i].trim() && !/^(#{1,4}\s|```|\s*([-*]|\d+\.)\s|\s*\||>)/.test(lines[i])) para.push(lines[i++]);
+    if (!para.length) para.push(lines[i++]);
+    out.push(`<p>${inlineMd(para.join(" "))}</p>`);
+  }
+  return out.join("");
+}
+
+async function openResult(id) {
+  const job = (state.agent.jobs || []).find((j) => j.id === id);
+  if (!job || !job.result) return;
+  $("result-kind").textContent = `${AGENT_TYPES[job.type]?.label || "Result"} · ${STATUS_TEXT[job.status] || ""}`;
+  $("result-title").textContent = job.item.title;
+  $("result-body").innerHTML = `<p class="muted">Loading…</p>`;
+  $("result-raw").href = `https://github.com/${OWNER}/${REPO}/blob/${BRANCH}/${job.result}`;
+  const modal = $("result-modal");
+  if (typeof modal.showModal === "function") modal.showModal();
+  else modal.setAttribute("open", "");
+  try {
+    $("result-body").innerHTML = renderMd(await readFile(job.result));
+  } catch {
+    $("result-body").innerHTML = `<p class="error-text">Couldn't load the result yet. GitHub's copy can lag a minute; try again shortly.</p>`;
+  }
+}
+
+function ago(iso) {
+  if (!iso) return "";
+  const mins = Math.round((Date.now() - new Date(iso)) / 60000);
+  if (mins < 1) return "just now";
+  if (mins < 60) return `${mins} min ago`;
+  const hrs = Math.round(mins / 60);
+  if (hrs < 24) return `${hrs} hr${hrs === 1 ? "" : "s"} ago`;
+  return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+}
+
+function jobCard(job) {
+  const course = state.courseNames[job.item.course] || "";
+  const type = AGENT_TYPES[job.type]?.label || job.type;
+  const when =
+    job.status === "done" ? `Finished ${ago(job.finished)}` :
+    job.status === "working" ? `Started ${ago(job.started)}` :
+    job.status === "needs-you" ? `Asked ${ago(job.asked || job.started)}` :
+    `Queued ${ago(job.requested)}`;
+  const replies = (job.replies || []).map((r) => `<p class="job-reply"><b>You:</b> ${escapeHtml(r.text)}</p>`).join("");
+  const question = job.status === "needs-you" && job.question
+    ? `<div class="job-question"><p><b>Claude asks:</b> ${inlineMd(job.question)}</p>
+         <form class="job-answer" data-answer="${escapeHtml(job.id)}">
+           <label class="sr-only" for="ans-${escapeHtml(job.id)}">Your answer</label>
+           <textarea id="ans-${escapeHtml(job.id)}" rows="2" placeholder="Answer, or say “approved”…" required></textarea>
+           <button type="submit" class="btn solid">Send</button>
+         </form></div>`
+    : "";
+  const actions = [
+    job.result ? `<button type="button" class="btn ${job.status === "done" ? "solid" : ""}" data-result="${escapeHtml(job.id)}">Read</button>` : "",
+    job.status === "queued" ? `<button type="button" class="btn" data-cancel-job="${escapeHtml(job.id)}">Cancel</button>` : "",
+    ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-requeue="${escapeHtml(job.id)}">Run again</button>` : "",
+    ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-archive="${escapeHtml(job.id)}">Clear</button>` : "",
+  ].join("");
+  return `
+    <article class="job is-${escapeHtml(job.status)}">
+      <span class="job-status">${escapeHtml(STATUS_TEXT[job.status] || job.status)}</span>
+      <div class="job-body">
+        <h3 class="task-title">${course ? `<span class="tag">${escapeHtml(course)}</span>` : ""}${escapeHtml(job.item.title)}</h3>
+        <p class="task-meta">${escapeHtml(type)} · ${escapeHtml(when)}${job.agents ? ` · ${plural(job.agents, "subagent")}` : ""}</p>
+        ${job.ask ? `<p class="job-ask">“${escapeHtml(job.ask)}”</p>` : ""}
+        ${replies}
+        ${job.summary ? `<p class="job-summary">${inlineMd(job.summary)}</p>` : ""}
+        ${question}
+        ${actions ? `<div class="job-actions">${actions}</div>` : ""}
+      </div>
+    </article>`;
+}
+
+function renderAgents() {
+  const jobs = (state.agent.jobs || []).filter((j) => j.status !== "archived");
+  const by = (s) => jobs.filter((j) => s.includes(j.status)).sort((a, b) => new Date(b.finished || b.requested) - new Date(a.finished || a.requested));
+  const needs = by(["needs-you"]);
+  const live = by(["working", "queued"]);
+  const finished = by(["done", "failed", "cancelled"]);
+  const section = (title, list, note = "") =>
+    list.length ? `<div class="group"><h3 class="group-title"><span>${title}</span> <span class="count">${list.length}</span>${note ? `<span class="group-note">${note}</span>` : ""}</h3>${list.map(jobCard).join("")}</div>` : "";
+  $("agent-list").innerHTML =
+    [section("Needs you", needs), section("In progress", live, "Runs hourly, 8 AM to midnight."), section("Done", finished)].join("") ||
+    `<p class="muted">Nothing handed off yet. Tap ⇢ on any task in Week.</p>`;
+
+  const badge = $("agent-badge");
+  badge.hidden = !needs.length;
+  badge.textContent = needs.length ? String(needs.length) : "";
+
+  const strip = $("agent-strip");
+  const freshDone = finished.filter((j) => j.status === "done" && Date.now() - new Date(j.finished) < 24 * 3600000);
+  const bits = [
+    needs.length ? `${plural(needs.length, "job")} need${needs.length === 1 ? "s" : ""} you` : "",
+    live.length ? `${live.length} working` : "",
+    freshDone.length ? `${freshDone.length} ready to read` : "",
+  ].filter(Boolean);
+  strip.hidden = !bits.length;
+  strip.classList.toggle("is-needs", Boolean(needs.length));
+  strip.textContent = bits.length ? `Claude: ${bits.join(" · ")} →` : "";
+}
+
 /* ---------- Connect (GitHub key) ---------- */
 
 function tokenPageUrl() {
@@ -989,7 +1278,7 @@ async function saveToken(event) {
 
 /* ---------- Tabs ---------- */
 
-const TABS = ["today", "week", "apply", "classes", "business"];
+const TABS = ["today", "week", "apply", "classes", "business", "agents"];
 
 function showTab() {
   const tab = TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "today";
@@ -1015,6 +1304,7 @@ function renderAll() {
   renderReset();
   renderDeadlines(c);
   renderApps();
+  renderAgents();
   if (state.courses.length) renderCourses(c);
 }
 
@@ -1028,13 +1318,15 @@ async function loadJson(path, fallback) {
 }
 
 async function refresh() {
-  const [deadlines, tasks, done, plan, apps] = await Promise.all([
+  const [deadlines, tasks, done, plan, apps, agent] = await Promise.all([
     loadJson("data/deadlines.json", { items: [] }),
     loadJson("data/tasks.json", []),
     loadJson("data/done.json", {}),
     loadJson("data/plan.json", {}),
     loadJson("data/applications.json", { library: [], applications: [] }),
+    loadJson("data/agent.json", { jobs: [] }),
   ]);
+  state.agent = agent && Array.isArray(agent.jobs) ? agent : { jobs: [] };
   state.apps = apps && typeof apps === "object" ? apps : { library: [], applications: [] };
   state.deadlines = deadlines.items || [];
   state.synced = deadlines.synced || null;
@@ -1064,6 +1356,17 @@ async function start() {
       }
       return;
     }
+    const a = e.target.closest("[data-hand],[data-result],[data-cancel-job],[data-requeue],[data-archive]");
+    if (a) {
+      if (a.dataset.hand) {
+        const item = classify().items.find((i) => i.id === a.dataset.hand);
+        if (item) openHandoff(item);
+      } else if (a.dataset.result) openResult(a.dataset.result);
+      else if (a.dataset.cancelJob) changeJob(a.dataset.cancelJob, (j) => ({ ...j, status: "cancelled" }), "Cancel Claude job", "Cancelled");
+      else if (a.dataset.requeue) changeJob(a.dataset.requeue, (j) => ({ ...j, status: "queued", requested: new Date().toISOString(), question: null }), "Run Claude job again", "Queued again");
+      else if (a.dataset.archive) changeJob(a.dataset.archive, (j) => ({ ...j, status: "archived" }), "Clear Claude job");
+      return;
+    }
     const t = e.target.closest("[data-done],[data-undo],[data-pin],[data-unpin],[data-focus]");
     if (!t) return;
     if (t.dataset.focus) return toggleFocus(t.dataset.focus);
@@ -1074,6 +1377,23 @@ async function start() {
     else if (t.dataset.unpin) setPinned(t.dataset.unpin, false);
   });
   $("add-task").addEventListener("submit", addTask);
+  $("hand-form").addEventListener("submit", queueJob);
+  $("hand-cancel").addEventListener("click", () => $("hand-modal").close());
+  $("hand-type").addEventListener("change", () => ($("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint));
+  $("result-close").addEventListener("click", () => $("result-modal").close());
+  $("agent-new").addEventListener("submit", (e) => {
+    e.preventDefault();
+    const title = $("agent-new-title").value.trim();
+    if (!title) return;
+    openHandoff(title);
+    if (state.token) $("agent-new-title").value = "";
+  });
+  document.addEventListener("submit", (e) => {
+    const form = e.target.closest("[data-answer]");
+    if (!form) return;
+    e.preventDefault();
+    answerJob(form.dataset.answer, form);
+  });
   $("connect-btn").addEventListener("click", () => openConnect());
   $("connect-form").addEventListener("submit", saveToken);
   $("connect-cancel").addEventListener("click", () => $("connect-modal").close());

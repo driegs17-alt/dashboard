@@ -32,6 +32,7 @@
         <a href="#apply" data-tab="apply">Apply</a>
         <a href="#classes" data-tab="classes">Classes</a>
         <a href="#business" data-tab="business">Business</a>
+        <a href="#agents" data-tab="agents">Agents<span class="tab-badge" id="agent-badge" hidden></span></a>
       </nav>
       <button type="button" class="connect" id="connect-btn" aria-haspopup="dialog">
         <span class="dot" id="connect-dot" aria-hidden="true"></span>
@@ -51,6 +52,8 @@
       <div class="reset-banner" id="reset-banner" hidden></div>
 
       <div class="frog" id="frog" aria-live="polite"></div>
+
+      <a class="agent-strip" id="agent-strip" href="#agents" hidden></a>
 
       <div class="today-grid">
         <section class="panel" aria-labelledby="three-title">
@@ -175,6 +178,40 @@
         </div>
       </section>
     </section>
+
+    <!-- ===================== AGENTS ===================== -->
+    <section class="view" id="view-agents" data-view="agents" aria-labelledby="agents-title" hidden>
+      <header class="view-head">
+        <p class="eyebrow">Delegate</p>
+        <h1 id="agents-title" class="view-title">Agents</h1>
+        <p class="block-note">Hand a task to Claude with the ⇢ button on any item in Week, or add one below. Every hour a Claude run picks up the queue, splits it across subagents and posts the result here. If a job needs a login, a connector or a decision, it stops and asks you.</p>
+      </header>
+
+      <form class="add-task agent-new" id="agent-new" autocomplete="off">
+        <p class="add-title">New job</p>
+        <div class="add-row">
+          <label class="field grow">
+            <span class="sr-only">What should Claude do?</span>
+            <input id="agent-new-title" type="text" placeholder="e.g. Find 10 Athens bars with no website" required maxlength="160">
+          </label>
+          <button type="submit" class="btn solid">Next</button>
+        </div>
+      </form>
+
+      <div id="agent-list" class="task-groups agent-list"></div>
+
+      <details class="panel agent-how">
+        <summary class="panel-head"><h2>How it works</h2></summary>
+        <ul class="how-list">
+          <li><b>Queued</b>: saved to <code>data/agent.json</code>. The next hourly run picks it up (between 8 AM and midnight).</li>
+          <li><b>Working</b>: Claude has split it across subagents.</li>
+          <li><b>Needs you</b>: it hit a login, a connector to approve, or a choice only you can make. Answer here and it goes back in the queue. You also get a push notification.</li>
+          <li><b>Done</b>: tap Read to see the result. Results live in <code>agent/results/</code>.</li>
+          <li><b>Class work</b>: Claude preps you (crash sheets, outlines, feedback on your drafts, practice problems). It won't do graded work or submit anything as you.</li>
+          <li>This repo is public, so results are too. Don't put grades, passwords or anything private in a job.</li>
+        </ul>
+      </details>
+    </section>
   </main>
 
   <footer class="foot">
@@ -204,6 +241,43 @@
         <button type="submit" class="btn solid" id="connect-save">Save key</button>
       </div>
     </form>
+  </dialog>
+
+
+  <dialog class="modal" id="hand-modal" aria-labelledby="hand-title">
+    <form method="dialog" class="modal-inner" id="hand-form">
+      <p class="eyebrow">Hand off to Claude</p>
+      <h2 id="hand-title">Task</h2>
+      <p class="muted" id="hand-meta"></p>
+      <label class="field">
+        <span class="field-label">What kind of help</span>
+        <select id="hand-type"></select>
+      </label>
+      <p class="hand-hint" id="hand-hint"></p>
+      <label class="field">
+        <span class="field-label">Instructions (optional)</span>
+        <textarea id="hand-ask" rows="4" maxlength="1500" placeholder="Anything Claude should know: links, what done looks like, what to skip…"></textarea>
+      </label>
+      <p class="form-msg" id="hand-msg" role="status"></p>
+      <div class="modal-actions">
+        <span class="spacer"></span>
+        <button type="button" class="btn" id="hand-cancel">Cancel</button>
+        <button type="submit" class="btn solid" id="hand-save">Queue it</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog class="modal wide" id="result-modal" aria-labelledby="result-title">
+    <div class="modal-inner">
+      <p class="eyebrow" id="result-kind">Result</p>
+      <h2 id="result-title">Result</h2>
+      <div class="md" id="result-body"></div>
+      <div class="modal-actions">
+        <a class="btn" id="result-raw" href="#" target="_blank" rel="noopener">Open file ↗</a>
+        <span class="spacer"></span>
+        <button type="button" class="btn solid" id="result-close">Close</button>
+      </div>
+    </div>
   </dialog>
 
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
