@@ -253,7 +253,7 @@
       <header class="view-head">
         <p class="eyebrow">Delegate</p>
         <h1 id="agents-title" class="view-title">Agents</h1>
-        <p class="block-note">Hand a task to Claude with the ⇢ button on any item in Week, or add one below. Every hour a Claude run picks up the queue, splits it across subagents and posts the result here. If a job needs a login, a connector or a decision, it stops and asks you.</p>
+        <p class="block-note">Hand a task to Claude with the ⇢ button on any item in Week, or add one below. A Claude run starts within a minute, splits it across subagents and posts progress here as it goes. Attach files or links and Claude works from them. While it runs you can redirect it or stop it; if it needs a login, a connector or a decision, it asks you.</p>
       </header>
 
       <form class="add-task agent-new" id="agent-new" autocomplete="off">
@@ -272,12 +272,13 @@
       <details class="panel agent-how">
         <summary class="panel-head"><h2>How it works</h2></summary>
         <ul class="how-list">
-          <li><b>Queued</b>: saved to <code>data/agent.json</code>. The next hourly run picks it up (between 8 AM and midnight).</li>
-          <li><b>Working</b>: Claude has split it across subagents.</li>
+          <li><b>Queued</b>: saved to <code>data/agent.json</code>. A run starts within a minute or two (an hourly run, 8 AM to midnight, catches anything missed).</li>
+          <li><b>Working</b>: Claude has split it across subagents. Progress lines show up here live. <b>Tell Claude</b> redirects it before its next step; <b>Stop</b> makes it wrap up and save what it has; <b>Open live session</b> lets you watch or step in directly.</li>
+          <li><b>Files &amp; links</b>: encrypted on your device before saving, so they stay private even though the repo is public. Results from jobs with files are private too.</li>
           <li><b>Needs you</b>: it hit a login, a connector to approve, or a choice only you can make. Answer here and it goes back in the queue. You also get a push notification.</li>
           <li><b>Done</b>: tap Read to see the result. Results live in <code>agent/results/</code>.</li>
           <li><b>Class work</b>: Claude preps you (crash sheets, outlines, feedback on your drafts, practice problems). It won't do graded work or submit anything as you.</li>
-          <li>This repo is public, so results are too. Don't put grades, passwords or anything private in a job.</li>
+          <li>This repo is public. Titles, instructions, mid-run notes and results of jobs without files are public, so put anything private in a file or the links box. Never attach passwords.</li>
         </ul>
       </details>
     </section>
@@ -325,8 +326,17 @@
       <p class="hand-hint" id="hand-hint"></p>
       <label class="field">
         <span class="field-label">Instructions (optional)</span>
-        <textarea id="hand-ask" rows="4" maxlength="1500" placeholder="Anything Claude should know: links, what done looks like, what to skip…"></textarea>
+        <textarea id="hand-ask" rows="4" maxlength="1500" placeholder="What done looks like, what to skip… (this text is public)"></textarea>
       </label>
+      <div class="field">
+        <span class="field-label">Files for Claude (optional)</span>
+        <label class="file-pick"><span>📎 Choose files</span><input id="hand-files" type="file" multiple></label>
+      </div>
+      <label class="field">
+        <span class="field-label">Links for Claude to read (optional)</span>
+        <textarea id="hand-links" rows="2" maxlength="2000" placeholder="One per line: Google Docs, articles, Figma… Pages behind a school login won't work."></textarea>
+      </label>
+      <p class="hand-hint">Files and links are encrypted on this device before they're saved. Only the Claude run can open them, and the result comes back private (read it with your grades key). Max 15 MB a file.</p>
       <p class="form-msg" id="hand-msg" role="status"></p>
       <div class="modal-actions">
         <span class="spacer"></span>

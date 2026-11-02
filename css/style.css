@@ -795,6 +795,20 @@ details.group[open] > summary::before { content: "–"; }
   resize: vertical;
 }
 .job-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.job-progress { margin-top: 6px; font-weight: 500; }
+.job-live { margin-top: 8px; }
+.job-log { list-style: none; margin: 8px 0 0; padding: 8px 10px; background: var(--paper-2); border-radius: var(--radius); font-size: 0.88rem; max-width: 70ch; }
+.job-log li { padding: 2px 0; }
+.job-log time { font-family: var(--mono); font-size: 0.78rem; color: var(--muted); margin-right: 6px; }
+.job-steer { display: flex; gap: 8px; margin-top: 8px; max-width: 70ch; }
+.job-steer input { flex: 1; min-width: 0; font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: inherit; }
+.job-answer { flex-wrap: wrap; }
+.job-answer textarea { flex: 1 1 100%; }
+.job-attach { display: flex; flex-wrap: wrap; gap: 8px; flex: 1 1 auto; align-items: center; }
+.job-attach [data-links] { flex: 1; min-width: 160px; font: inherit; padding: 8px 10px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); color: inherit; }
+.file-pick { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; font-size: 0.9rem; }
+.file-pick input[type=file] { font: inherit; font-size: 0.85rem; max-width: 100%; }
+.file-pick > span { white-space: nowrap; }
 .job-actions .btn { min-height: 36px; padding: 6px 12px; }
 
 .agent-how > summary { list-style: none; cursor: pointer; margin-bottom: 0; }

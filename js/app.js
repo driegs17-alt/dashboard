@@ -32,6 +32,10 @@ const OWNER = "driegs17-alt";
 const REPO = "dashboard";
 const BRANCH = "main";
 const REFRESH_MS = 3 * 60 * 1000;
+const LIVE_REFRESH_MS = 20 * 1000; // while a Claude job is queued or working
+const FILE_LIMIT = 15 * 1024 * 1024; // per attached file
+const FILES_INFO = "dashboard-agent-files-v1";
+const RESULT_INFO = "dashboard-agent-result-v1";
 const TOKEN_KEY = "dashboard.githubKey";
 const GRADES_KEY = "dashboard.gradesKey";
 const PENDING_KEY = "dashboard.pendingDone";
@@ -114,6 +118,8 @@ const state = {
   courses: [],
   courseNames: {},
   agent: { jobs: [] },
+  runs: [],
+  agentPub: null,
   gradesKey: storage.get(GRADES_KEY) || "",
   grades: null,
   gradesError: "",
@@ -993,6 +999,11 @@ function tickFocus() {
 const b64uBytes = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(s.length / 4) * 4, "=")), (c) => c.charCodeAt(0));
 
 async function decryptGrades(enc, pubJwk, deviceKey) {
+  return JSON.parse(new TextDecoder().decode(await openSealed(enc, pubJwk, deviceKey, "dashboard-grades-v1")));
+}
+
+// Decrypt something sealed to Dylan's key (grades, private agent results). Returns bytes.
+async function openSealed(enc, pubJwk, deviceKey, info) {
   const d = deviceKey.trim().replace(/^gk1-/, "");
   const ecdh = { name: "ECDH", namedCurve: "P-256" };
   const priv = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: pubJwk.x, y: pubJwk.y, d, ext: true }, ecdh, false, ["deriveBits"]);
@@ -1000,11 +1011,10 @@ async function decryptGrades(enc, pubJwk, deviceKey) {
   const bits = await crypto.subtle.deriveBits({ name: "ECDH", public: epk }, priv, 256);
   const hk = await crypto.subtle.importKey("raw", bits, "HKDF", false, ["deriveKey"]);
   const aes = await crypto.subtle.deriveKey(
-    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(32), info: new TextEncoder().encode("dashboard-grades-v1") },
+    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(32), info: new TextEncoder().encode(info) },
     hk, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
   );
-  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64uBytes(enc.iv) }, aes, b64uBytes(enc.ct));
-  return JSON.parse(new TextDecoder().decode(plain));
+  return new Uint8Array(await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64uBytes(enc.iv) }, aes, b64uBytes(enc.ct)));
 }
 
 const ECDH = { name: "ECDH", namedCurve: "P-256" };
@@ -1423,6 +1433,89 @@ async function saveOverride(clear = false) {
   }
 }
 
+/* ---------- Private attachments for Claude jobs ----------
+   Files and links are encrypted HERE, to the agent's public key
+   (data/agent-files-key.json), before they reach the public repo.
+   Only the agent run holds the private half. Format matches
+   scripts/agent_files.py. */
+
+function bytesToB64(bytes) {
+  let s = "";
+  for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode.apply(null, bytes.subarray(i, i + 0x8000));
+  return btoa(s);
+}
+const bytesToB64u = (bytes) => bytesToB64(bytes).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+
+async function sealFor(pub, plain, info) {
+  const eph = await crypto.subtle.generateKey(ECDH, true, ["deriveBits"]);
+  const pubKey = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: pub.x, y: pub.y, ext: true }, ECDH, false, []);
+  const bits = await crypto.subtle.deriveBits({ name: "ECDH", public: pubKey }, eph.privateKey, 256);
+  const hk = await crypto.subtle.importKey("raw", bits, "HKDF", false, ["deriveKey"]);
+  const aes = await crypto.subtle.deriveKey(
+    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(32), info: new TextEncoder().encode(info) },
+    hk, { name: "AES-GCM", length: 256 }, false, ["encrypt"]
+  );
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, aes, plain));
+  const epk = await crypto.subtle.exportKey("jwk", eph.publicKey);
+  return { v: 1, kid: pub.x.slice(0, 12), epk: { kty: "EC", crv: "P-256", x: epk.x, y: epk.y }, iv: bytesToB64u(iv), ct: bytesToB64u(ct) };
+}
+
+function packAttachment(meta, body) {
+  const head = new TextEncoder().encode(JSON.stringify(meta));
+  const out = new Uint8Array(4 + head.length + body.length);
+  new DataView(out.buffer).setUint32(0, head.length);
+  out.set(head, 4);
+  out.set(body, 4 + head.length);
+  return out;
+}
+
+async function putNewFile(path, b64, message) {
+  const r = await fetch(`https://api.github.com/repos/${OWNER}/${REPO}/contents/${path}`, {
+    method: "PUT",
+    headers: { ...apiHeaders(), "Content-Type": "application/json" },
+    body: JSON.stringify({ message, content: b64, branch: BRANCH }),
+  });
+  if (r.status === 401 || r.status === 403) { markTokenBad(); throw new Error("bad-key"); }
+  if (!r.ok) throw new Error(`GitHub said ${r.status} while uploading`);
+}
+
+function pickedFiles(input) {
+  const files = Array.from((input && input.files) || []);
+  const big = files.find((f) => f.size > FILE_LIMIT);
+  if (big) throw new Error(`${big.name} is over 15 MB. Share it as a Google Drive link instead.`);
+  return files;
+}
+
+// Encrypt and upload files + links for a job. Returns [{path, kind, size}].
+async function uploadAttachments(jobId, files, linksText, firstIndex, onStep) {
+  const links = (linksText || "").trim();
+  if (!files.length && !links) return [];
+  if (!state.agentPub) state.agentPub = await loadJson("data/agent-files-key.json", null);
+  if (!state.agentPub || !state.agentPub.x) throw new Error("the agent's file key is missing from the repo");
+  const parts = files.map((f) => ({ f }));
+  if (links) parts.push({ links });
+  const saved = [];
+  for (let i = 0; i < parts.length; i++) {
+    const { f, links: l } = parts[i];
+    if (onStep) onStep(i + 1, parts.length);
+    const body = f ? new Uint8Array(await f.arrayBuffer()) : new TextEncoder().encode(l + "\n");
+    const meta = f ? { name: f.name, type: f.type || "", size: f.size, kind: "file" } : { name: "links.txt", type: "text/plain", size: body.length, kind: "links" };
+    const sealed = await sealFor(state.agentPub, packAttachment(meta, body), FILES_INFO);
+    const path = `data/uploads/${jobId}/${String(firstIndex + i + 1).padStart(2, "0")}.enc.json`;
+    await putNewFile(path, btoa(JSON.stringify(sealed) + "\n"), `Private attachment for ${jobId}`);
+    saved.push({ path, kind: meta.kind, size: meta.size });
+  }
+  return saved;
+}
+
+function attachmentNote(files) {
+  if (!files || !files.length) return "";
+  const n = files.filter((f) => f.kind === "file").length;
+  const links = files.some((f) => f.kind === "links");
+  return [n ? plural(n, "private file") : "", links ? "private links" : ""].filter(Boolean).join(" + ");
+}
+
 /* ---------- Agents: hand tasks to Claude ---------- */
 
 function jobsFor(itemId) {
@@ -1472,6 +1565,8 @@ function openHandoff(itemOrTitle, preset = null) {
   $("hand-type").value = preset ? preset.type : isClass ? "prep" : "research";
   $("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint;
   $("hand-ask").value = preset ? preset.ask : "";
+  $("hand-files").value = "";
+  $("hand-links").value = "";
   $("hand-msg").textContent = "";
   const modal = $("hand-modal");
   if (typeof modal.showModal === "function") modal.showModal();
@@ -1493,19 +1588,29 @@ async function queueJob(event) {
   const button = $("hand-save");
   button.disabled = true;
   try {
+    const files = pickedFiles($("hand-files"));
+    const attached = await uploadAttachments(job.id, files, $("hand-links").value, 0, (i, n) => {
+      button.textContent = `Encrypting ${i}/${n}…`;
+    });
+    if (attached.length) { job.files = attached; job.private = true; }
+    button.textContent = "Queueing…";
     state.agent = await updateJson(
       "data/agent.json",
       (data) => ({ ...data, jobs: [...(data.jobs || []), job] }),
       `Hand off to Claude: ${target.title}`
     );
     $("hand-modal").close();
-    toast("Queued. Claude picks it up within the hour.");
+    $("hand-files").value = "";
+    $("hand-links").value = "";
+    toast("Queued. Claude starts on it within a minute or two.");
+    scheduleRefresh(true);
     renderAll();
   } catch (error) {
     $("hand-msg").textContent = error.message === "bad-key" ? "Your GitHub key stopped working. Reconnect to save." : `Didn't save: ${error.message}`;
     $("hand-msg").className = "form-msg error-text";
   } finally {
     button.disabled = false;
+    button.textContent = "Queue it";
   }
 }
 
@@ -1563,15 +1668,61 @@ async function changeJob(id, change, message, done) {
   renderAll();
 }
 
-function answerJob(id, form) {
+async function answerJob(id, form) {
+  if (needsKey("Connect this device to answer Claude.")) return;
   const text = form.querySelector("textarea").value.trim();
+  const fileInput = form.querySelector("input[type=file]");
+  const linkInput = form.querySelector("[data-links]");
+  const button = form.querySelector("button[type=submit]");
+  const job = (state.agent.jobs || []).find((j) => j.id === id);
+  if (!text && !(fileInput && fileInput.files.length) && !(linkInput && linkInput.value.trim())) return;
+  button.disabled = true;
+  try {
+    const files = pickedFiles(fileInput);
+    const attached = await uploadAttachments(id, files, linkInput ? linkInput.value : "", ((job && job.files) || []).length, (i, n) => {
+      button.textContent = `Encrypting ${i}/${n}…`;
+    });
+    const reply = { at: new Date().toISOString(), text: text || "(attached files)" };
+    if (attached.length) reply.files = attached.length;
+    await changeJob(
+      id,
+      (j) => ({
+        ...j,
+        status: "queued",
+        replies: [...(j.replies || []), reply],
+        ...(attached.length ? { files: [...(j.files || []), ...attached], private: true } : {}),
+      }),
+      "Answer Claude's question",
+      "Sent. Claude picks it back up within a minute or two."
+    );
+    scheduleRefresh(true);
+  } catch (error) {
+    saveError(error);
+  } finally {
+    button.disabled = false;
+    button.textContent = "Send";
+  }
+}
+
+// Mid-run: a note the running Claude reads between steps, or a stop request.
+function steerJob(id, form) {
+  const input = form.querySelector("input[type=text]");
+  const text = input.value.trim();
   if (!text) return;
-  changeJob(
-    id,
-    (j) => ({ ...j, status: "queued", replies: [...(j.replies || []), { at: new Date().toISOString(), text }] }),
-    "Answer Claude's question",
-    "Sent. It's back in the queue."
-  );
+  input.value = "";
+  changeJob(id, (j) => ({ ...j, steer: [...(j.steer || []), { at: new Date().toISOString(), text }] }), "Note to running Claude job", "Sent. Claude reads it before its next step.");
+}
+
+function runFor(job) {
+  return (state.runs || []).find((r) => Array.isArray(r.jobs) && r.jobs.includes(job.id) && r.url) || null;
+}
+
+function logLines(job) {
+  const log = (job.log || []).slice(-6);
+  if (!log.length) return "";
+  return `<ol class="job-log" aria-label="Live progress">${log
+    .map((l) => `<li><time>${escapeHtml(new Date(l.at).toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" }))}</time> ${inlineMd(l.msg || "")}</li>`)
+    .join("")}</ol>`;
 }
 
 /* Small, safe Markdown → HTML for results. Escapes first, then formats. */
@@ -1643,11 +1794,22 @@ async function openResult(id) {
   $("result-kind").textContent = `${AGENT_TYPES[job.type]?.label || "Result"} · ${STATUS_TEXT[job.status] || ""}`;
   $("result-title").textContent = job.item.title;
   $("result-body").innerHTML = `<p class="muted">Loading…</p>`;
+  const isPrivate = /\.enc\.json$/.test(job.result);
   $("result-raw").href = `https://github.com/${OWNER}/${REPO}/blob/${BRANCH}/${job.result}`;
+  $("result-raw").hidden = isPrivate;
   const modal = $("result-modal");
   if (typeof modal.showModal === "function") modal.showModal();
   else modal.setAttribute("open", "");
   try {
+    if (isPrivate) {
+      if (!state.gradesKey || !state.gradesPub) {
+        $("result-body").innerHTML = `<p>This result is private (it uses files you attached). Unlock it on this device with your grades key in the <a href="#grades">Grades</a> tab.</p>`;
+        return;
+      }
+      const enc = JSON.parse(await readFile(job.result));
+      $("result-body").innerHTML = renderMd(new TextDecoder().decode(await openSealed(enc, state.gradesPub, state.gradesKey, RESULT_INFO)));
+      return;
+    }
     $("result-body").innerHTML = renderMd(await readFile(job.result));
   } catch {
     $("result-body").innerHTML = `<p class="error-text">Couldn't load the result yet. GitHub's copy can lag a minute; try again shortly.</p>`;
@@ -1672,18 +1834,37 @@ function jobCard(job) {
     job.status === "working" ? `Started ${ago(job.started)}` :
     job.status === "needs-you" ? `Asked ${ago(job.asked || job.started)}` :
     `Queued ${ago(job.requested)}`;
-  const replies = (job.replies || []).map((r) => `<p class="job-reply"><b>You:</b> ${escapeHtml(r.text)}</p>`).join("");
+  const replies = (job.replies || []).map((r) => `<p class="job-reply"><b>You:</b> ${escapeHtml(r.text)}${r.files ? ` <span class="muted">· 📎 ${plural(r.files, "attachment")}</span>` : ""}</p>`).join("");
+  const steers = (job.steer || []).slice(-3).map((r) => `<p class="job-reply"><b>You, mid-run:</b> ${escapeHtml(r.text)}${r.seen ? ` <span class="muted">· seen</span>` : ""}</p>`).join("");
+  const attach = attachmentNote(job.files);
+  const run = runFor(job);
+  const live = ["queued", "working"].includes(job.status)
+    ? `<div class="job-live">
+         ${logLines(job)}
+         ${job.status === "working" ? `<form class="job-steer" data-steer="${escapeHtml(job.id)}">
+           <label class="sr-only" for="steer-${escapeHtml(job.id)}">Tell Claude while it works</label>
+           <input id="steer-${escapeHtml(job.id)}" type="text" maxlength="500" placeholder="Redirect it: “skip X”, “focus on Y”…">
+           <button type="submit" class="btn">Tell Claude</button>
+         </form>` : ""}
+       </div>`
+    : logLines(job);
   const question = job.status === "needs-you" && job.question
     ? `<div class="job-question"><p><b>Claude asks:</b> ${inlineMd(job.question)}</p>
          <form class="job-answer" data-answer="${escapeHtml(job.id)}">
            <label class="sr-only" for="ans-${escapeHtml(job.id)}">Your answer</label>
-           <textarea id="ans-${escapeHtml(job.id)}" rows="2" placeholder="Answer, or say “approved”…" required></textarea>
+           <textarea id="ans-${escapeHtml(job.id)}" rows="2" placeholder="Answer, or say “approved”…"></textarea>
+           <div class="job-attach">
+             <label class="file-pick"><span>📎 Attach files</span><input type="file" multiple></label>
+             <input type="text" data-links maxlength="2000" placeholder="Private links (kept encrypted)">
+           </div>
            <button type="submit" class="btn solid">Send</button>
          </form></div>`
     : "";
   const actions = [
     job.result ? `<button type="button" class="btn ${job.status === "done" ? "solid" : ""}" data-result="${escapeHtml(job.id)}">Read</button>` : "",
     job.status === "queued" ? `<button type="button" class="btn" data-cancel-job="${escapeHtml(job.id)}">Cancel</button>` : "",
+    run && ["working", "needs-you", "queued"].includes(job.status) ? `<a class="btn" href="${escapeHtml(run.url)}" target="_blank" rel="noopener">Open live session ↗</a>` : "",
+    job.status === "working" && !job.stop ? `<button type="button" class="btn" data-stop-job="${escapeHtml(job.id)}">Stop</button>` : "",
     ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-requeue="${escapeHtml(job.id)}">Run again</button>` : "",
     ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-archive="${escapeHtml(job.id)}">Clear</button>` : "",
   ].join("");
@@ -1692,9 +1873,11 @@ function jobCard(job) {
       <span class="job-status">${escapeHtml(STATUS_TEXT[job.status] || job.status)}</span>
       <div class="job-body">
         <h3 class="task-title">${course ? `<span class="tag">${escapeHtml(course)}</span>` : ""}${escapeHtml(job.item.title)}</h3>
-        <p class="task-meta">${escapeHtml(type)} · ${escapeHtml(when)}${job.agents ? ` · ${plural(job.agents, "subagent")}` : ""}</p>
+        <p class="task-meta">${escapeHtml(type)} · ${escapeHtml(when)}${job.agents ? ` · ${plural(job.agents, "subagent")}` : ""}${attach ? ` · 📎 ${escapeHtml(attach)}` : ""}${job.stop && job.status === "working" ? " · stopping…" : ""}</p>
+        ${job.progress && job.status === "working" ? `<p class="job-progress">${inlineMd(job.progress)}</p>` : ""}
         ${job.ask ? `<p class="job-ask">“${escapeHtml(job.ask)}”</p>` : ""}
-        ${replies}
+        ${replies}${steers}
+        ${live}
         ${job.summary ? `<p class="job-summary">${inlineMd(job.summary)}</p>` : ""}
         ${question}
         ${actions ? `<div class="job-actions">${actions}</div>` : ""}
@@ -1711,7 +1894,7 @@ function renderAgents() {
   const section = (title, list, note = "") =>
     list.length ? `<div class="group"><h3 class="group-title"><span>${title}</span> <span class="count">${list.length}</span>${note ? `<span class="group-note">${note}</span>` : ""}</h3>${list.map(jobCard).join("")}</div>` : "";
   $("agent-list").innerHTML =
-    [section("Needs you", needs), section("In progress", live, "Runs hourly, 8 AM to midnight."), section("Done", finished)].join("") ||
+    [section("Needs you", needs), section("In progress", live, "Starts within a minute; live updates every 20 s."), section("Done", finished)].join("") ||
     `<p class="muted">Nothing handed off yet. Tap ⇢ on any task in Week.</p>`;
 
   const badge = $("agent-badge");
@@ -1833,6 +2016,35 @@ async function loadJson(path, fallback) {
   }
 }
 
+// Agents tab stays live: poll fast while any job is queued or working.
+async function refreshAgents() {
+  const [agent, runs] = await Promise.all([loadJson("data/agent.json", null), loadJson("data/agent-runs.json", { runs: [] })]);
+  if (agent && Array.isArray(agent.jobs)) state.agent = agent;
+  state.runs = (runs && runs.runs) || [];
+  renderAgents();
+  renderBizJobs();
+}
+
+function agentsBusy() {
+  return (state.agent.jobs || []).some((j) => ["queued", "working"].includes(j.status));
+}
+
+function scheduleRefresh(soon = false) {
+  clearTimeout(scheduleRefresh.timer);
+  const fast = soon || agentsBusy();
+  scheduleRefresh.timer = setTimeout(async () => {
+    if (!document.hidden) {
+      if (fast) await refreshAgents().catch(() => {});
+      if (Date.now() - (scheduleRefresh.full || 0) >= REFRESH_MS) {
+        scheduleRefresh.full = Date.now();
+        await refresh().catch(() => {});
+        loadGrades();
+      }
+    }
+    scheduleRefresh();
+  }, fast ? LIVE_REFRESH_MS : REFRESH_MS);
+}
+
 async function refresh() {
   const [deadlines, tasks, done, plan, apps, agent] = await Promise.all([
     loadJson("data/deadlines.json", { items: [] }),
@@ -1843,6 +2055,7 @@ async function refresh() {
     loadJson("data/agent.json", { jobs: [] }),
   ]);
   state.agent = agent && Array.isArray(agent.jobs) ? agent : { jobs: [] };
+  state.runs = ((await loadJson("data/agent-runs.json", { runs: [] })) || {}).runs || [];
   state.apps = apps && typeof apps === "object" ? apps : { library: [], applications: [] };
   state.deadlines = deadlines.items || [];
   state.synced = deadlines.synced || null;
@@ -1891,7 +2104,7 @@ async function start() {
       }
       return;
     }
-    const a = e.target.closest("[data-hand],[data-result],[data-cancel-job],[data-requeue],[data-archive]");
+    const a = e.target.closest("[data-hand],[data-result],[data-cancel-job],[data-requeue],[data-archive],[data-stop-job]");
     if (a) {
       if (a.dataset.hand) {
         const item = classify().items.find((i) => i.id === a.dataset.hand);
@@ -1899,6 +2112,7 @@ async function start() {
       } else if (a.dataset.result) openResult(a.dataset.result);
       else if (a.dataset.cancelJob) changeJob(a.dataset.cancelJob, (j) => ({ ...j, status: "cancelled" }), "Cancel Claude job", "Cancelled");
       else if (a.dataset.requeue) changeJob(a.dataset.requeue, (j) => ({ ...j, status: "queued", requested: new Date().toISOString(), question: null }), "Run Claude job again", "Queued again");
+      else if (a.dataset.stopJob) changeJob(a.dataset.stopJob, (j) => ({ ...j, stop: true }), "Stop running Claude job", "Stop sent. Claude wraps up and saves what it has.");
       else if (a.dataset.archive) changeJob(a.dataset.archive, (j) => ({ ...j, status: "archived" }), "Clear Claude job");
       return;
     }
@@ -1934,6 +2148,8 @@ async function start() {
     if (state.token) $("agent-new-title").value = "";
   });
   document.addEventListener("submit", (e) => {
+    const steer = e.target.closest("[data-steer]");
+    if (steer) { e.preventDefault(); steerJob(steer.dataset.steer, steer); return; }
     const form = e.target.closest("[data-answer]");
     if (!form) return;
     e.preventDefault();
@@ -1961,7 +2177,8 @@ async function start() {
 
   await refresh();
   loadGrades();
-  setInterval(() => { if (!document.hidden) { refresh(); loadGrades(); } }, REFRESH_MS);
+  scheduleRefresh.full = Date.now();
+  scheduleRefresh();
   document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
   setInterval(tickFocus, 1000);
   setInterval(renderAll, 60 * 1000); // keep countdowns honest

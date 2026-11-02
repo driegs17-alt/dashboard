@@ -10,12 +10,18 @@ The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Cla
   "type": "prep | research | draft | plan | advise | custom",
   "item": { "id": "…", "title": "…", "course": "ECON 2105", "due": "ISO date or null", "url": "eLC link", "note": "…", "parts": [{ "id": "…", "title": "…" }] },
   "ask": "Dylan's instructions (may be empty)",
-  "replies": [{ "at": "ISO", "text": "Dylan's answer to an earlier question" }],
+  "replies": [{ "at": "ISO", "text": "Dylan's answer to an earlier question", "files": 2 }],
+  "files": [{ "path": "data/uploads/<id>/01.enc.json", "kind": "file | links", "size": 12345 }],
+  "private": true,
+  "steer": [{ "at": "ISO", "text": "a note Dylan sent while the job was running", "seen": "ISO, set by Claude" }],
+  "stop": true,
+  "progress": "one line: what's happening right now",
+  "log": [{ "at": "ISO", "msg": "short progress line" }],
   "status": "queued | working | needs-you | done | failed | cancelled | archived",
   "requested": "ISO", "started": "ISO", "asked": "ISO", "finished": "ISO",
   "question": "what Claude needs from Dylan (needs-you only)",
   "summary": "one or two lines shown on the card",
-  "result": "agent/results/<id>.md",
+  "result": "agent/results/<id>.md  (or <id>.enc.json when private)",
   "agents": 3
 }
 ```
@@ -24,20 +30,24 @@ The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Cla
 
 1. **Get the repo.** Clone `driegs17-alt/dashboard` (shallow is fine). If the session doesn't have it, attach it with push access first.
 2. **Pick jobs.** Take `status: "queued"` jobs, oldest `requested` first, up to 6. Nothing queued → stop quietly (no commit, no notification).
-3. **Claim them.** Set `status: "working"`, `started: now`. Commit `Claude: started N jobs` and push right away, so the dashboard shows they're moving.
-4. **Fan out.** Start one subagent per job, all in parallel. A job with `parts` (a bundle, e.g. a chapter's worth of modules) may get one subagent per natural chunk (e.g. per chapter); the lead merges their output into one result. Give each subagent: the job JSON, the matching course from `data/courses.json`, today's date, the rules below, and the result file path. Record the number of subagents used in `agents`.
+3. **Claim them.** Set `status: "working"`, `started: now`, `progress: "Starting"`, and a first `log` line. Commit `Claude: started N jobs` and push right away, so the dashboard shows they're moving. Two runs can overlap (an instant run and the hourly one): if after `pull --rebase` a job is no longer `queued`, another run owns it; drop it from yours.
+   - **Open attachments.** For each claimed job with `files`, run `python3 scripts/agent_files.py open <id> /tmp/agent-files/<id>` with `AGENT_FILES_KEY` set (the key is in the scheduled task's instructions; never write it anywhere). Decrypted files must stay in `/tmp`, never in the repo, a commit, a log line or a notification. Read them with the fitting skill (`file-reading`, `pdf-reading`, `docx`, `xlsx`, `pptx`; images with Read). `links.txt` holds links to read: fetch public pages with WebFetch, Google Docs/Sheets/Drive links with the Google Drive/Sheets connectors, Figma links with Figma. Links behind a school login (eLC, Achieve) are off limits per the rules below; say so in the result.
+4. **Fan out.** Start one subagent per job, all in parallel. A job with `parts` (a bundle, e.g. a chapter's worth of modules) may get one subagent per natural chunk (e.g. per chapter); the lead merges their output into one result. Give each subagent: the job JSON, the matching course from `data/courses.json`, today's date, the rules below, and the result file path. Record the number of subagents used in `agents`. Hand each subagent the paths of its job's decrypted files.
+   - **Live updates.** The Agents tab polls every 20 s while a job is working. The lead (not the subagents) keeps it current: update `progress` and append a short `log` line (max ~12 kept per job) when a subagent starts, finishes a meaningful chunk, or hits a problem, then commit `Claude: progress` and push (pull --rebase first). At most one progress push every ~2 minutes; batch lines across jobs. Log lines are public: no private file contents, names from attachments, emails or calendar details.
+   - **Steering and stop.** Before each new step and before writing a result, `git pull --rebase` and re-read the job. New `steer` entries (no `seen`) are Dylan redirecting the work mid-run: pass them to the job's subagent (SendMessage), set `seen: now`, and log "Got your note: …" in a few words. `stop: true` means wrap up now: stop that job's subagent, save what exists as the result, set `status: "cancelled"` with a summary of what got done.
+   - **Urgent blocker.** If a subagent hits something only Dylan can fix (a login, a missing connector, a decision) and other work can continue, set that job to `needs-you` right away with its question, push, and send a push notification then; don't wait for the end of the run.
 5. **Finish each job.**
    - Success → write `agent/results/<id>.md`, set `status: "done"`, `finished: now`, `result`, and a 1–2 line `summary` (what's in it, the one thing to do next).
+   - **Private jobs** (`private: true`, i.e. Dylan attached files or links): write the Markdown to `/tmp/agent-files/<id>/result.md`, then `python3 scripts/agent_files.py seal-result <id> /tmp/agent-files/<id>/result.md`, which writes `agent/results/<id>.enc.json`, encrypted to Dylan's key. Set `result` to that path. Never commit the plain Markdown. Keep the `summary`, `question` and `log` free of anything from the attachments (they're public).
    - Blocked → `status: "needs-you"`, `asked: now`, a short, specific `question` (what's needed and why, with a yes/no or a choice where possible). Write any partial work to the result file and set `result` too.
    - Broken → `status: "failed"` with a `summary` that says why in plain words.
-6. **Save.** Validate `data/agent.json` parses. Commit `Claude: finished N jobs` (pull --rebase first; the site and the eLC robot also write to this repo; retry up to 3 times). Only touch `data/agent.json` and `agent/results/`.
+6. **Save.** Validate `data/agent.json` parses. Commit `Claude: finished N jobs` (pull --rebase first; the site and the eLC robot also write to this repo; retry up to 3 times). Only touch `data/agent.json` and `agent/results/`. Delete `/tmp/agent-files/<id>` when a job is done, failed or cancelled.
 7. **Tell Dylan.** One push notification if anything finished or needs him: e.g. "2 Claude jobs done (Macro Ch. 11 crash sheet, Athens leads). 1 needs you: approve Google Drive?" Link: https://driegs17-alt.github.io/dashboard/#agents
 
 ## Rules for every job
 
 - **Public repo.** Results are visible to anyone. Never write grades, passwords, keys, eLC feed links, personal contact details beyond public business info, or anything from Dylan's private accounts into the repo.
-- **Busy Work** For anything with a `course`, Claude helps Dylan learn and work faster: crash sheets, concept explanations, worked examples of *similar* problems, outlines, feedback on his own drafts, practice questions with answers.  
-
+- **Class work is prep, not doing.** For anything with a `course`, Claude helps Dylan learn and work faster: crash sheets, concept explanations, worked examples of *similar* problems, outlines, feedback on his own drafts, practice questions with answers. Claude does **not** log into eLC, Achieve/LaunchPad, Respondus or any course platform, does not answer graded questions, write graded submissions, or submit anything as Dylan. If a job asks for that, do the prep version and say so in the `summary`.
 - **Connectors and logins.** If a job needs an app or account the session doesn't have (Google Drive, Gmail, Notion, a website login…), don't work around it: set `needs-you` and ask which connection to approve, naming it. Dylan has said he'll approve connectors when asked.
 - **Anything outward-facing waits for approval.** Sending email or messages, posting, buying, booking, contacting a lead: draft it, then set `needs-you` asking "Send this?" Never send on the first pass.
 - **Research gets sources.** End research results with a `Sources` list of links.
