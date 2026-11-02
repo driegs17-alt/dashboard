@@ -1,1 +1,7 @@
-{}
+{
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "bS5rqhfnOYCt78H_dRFEn2iybs1ZIns9aYmPMUOepWo",
+  "y": "OmLljsTcigQJJCgxKXZ7W5vTCPYGPBe5R4mUSMtq6EM",
+  "created": "2026-11-02T17:43:15.167Z"
+}
