@@ -14,6 +14,21 @@
       "ask": "https://achieve.macmillanlearning.com/courses/9c588f34-da71-4a42-b0c0-807690472829/mycourse. this is the website logged into my account with all of the upcoming due assignments.  I need all of these assignments done as soon as possible",
       "status": "archived",
       "requested": "2026-11-02T20:20:06.422Z"
+    },
+    {
+      "id": "job-mvzplr3m",
+      "type": "draft",
+      "item": {
+        "id": "free-mvzpkq93",
+        "title": "Ok i need to write or complete this outline for my history essay. tell me what files and info you need from me and get this done.",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "i need an outline built for my oral history essay project from history class. ask for any necessary files and information required to complete this and follow Dr. Wolf's instructions as closely as possible.",
+      "status": "queued",
+      "requested": "2026-11-02T20:26:23.986Z"
     }
   ]
 }
