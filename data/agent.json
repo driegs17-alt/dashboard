@@ -27,14 +27,14 @@
         "note": ""
       },
       "ask": "i need an outline built for my oral history essay project from history class. ask for any necessary files and information required to complete this and follow Dr. Wolf's instructions as closely as possible.",
-      "status": "queued",
+      "status": "needs-you",
       "requested": "2026-11-02T20:26:23.986Z",
       "started": "2026-11-02T20:44:44.000Z",
-      "asked": "2026-11-02T21:52:22.000Z",
+      "asked": "2026-11-02T22:10:00.000Z",
       "agents": 1,
       "result": "agent/results/job-mvzplr3m.md",
       "summary": "Generic oral history outline template + era context bank is ready to fill in. Outline/Context is due Tue Nov 3, 2:55 PM ET.",
-      "question": "I can't open your attachments yet: paste the agent key into the Dashboard agents scheduled task (see the dashboard README).",
+      "question": "The attachment key was reset, so the file you sent earlier can't be opened. Attach it again here (or paste the text), and I'll pick it up on the next run.",
       "replies": [
         {
           "at": "2026-11-02T21:48:42.530Z",
@@ -46,13 +46,7 @@
           "text": "find a better way to get the media."
         }
       ],
-      "files": [
-        {
-          "path": "data/uploads/job-mvzplr3m/01.enc.json",
-          "kind": "file",
-          "size": 6258
-        }
-      ],
+      "files": [],
       "private": true,
       "log": [
         {
@@ -97,7 +91,7 @@
         "note": ""
       },
       "ask": "First draft is due Tue 9:30 AM. Get me to a solid first draft tonight: (1) find the final project brief/rubric (Google Drive) or ask me for it right away, plus a link to whatever I've started (Figma or files); (2) break the draft into steps with time boxes for tonight, working back from 9:30 AM, and propose focus blocks around my calendar; (3) once you have my work, give specific design feedback against the rubric (what's missing, what to fix first). I make and submit the draft myself.",
-      "status": "queued",
+      "status": "needs-you",
       "requested": "2026-11-02T21:41:06.000Z",
       "started": "2026-11-02T21:45:18.000Z",
       "progress": "Waiting on your brief + Figma link",
@@ -111,11 +105,11 @@
           "msg": "Drive and Calendar refused access; Figma works. Wrote tonight's plan."
         }
       ],
-      "asked": "2026-11-02T21:52:11.000Z",
+      "asked": "2026-11-02T22:10:00.000Z",
       "agents": 1,
       "result": "agent/results/job-propractice-1103.md",
       "summary": "Time-boxed plan for tonight + tomorrow morning (after Macro), ending with submit by 9:15 AM. Rubric feedback comes once I have the brief.",
-      "question": "I couldn't reach the brief: Google Drive and Calendar are missing permissions. Reply here with the brief/rubric text and a Figma link to your draft (Figma is connected), and I'll send rubric-ordered feedback.",
+      "question": "The attachment key was reset, so the file you sent earlier can't be opened. Attach it again here (or paste the text), and I'll pick it up on the next run.",
       "replies": [
         {
           "at": "2026-11-02T21:56:56.835Z",
@@ -123,13 +117,7 @@
           "files": 1
         }
       ],
-      "files": [
-        {
-          "path": "data/uploads/job-propractice-1103/01.enc.json",
-          "kind": "links",
-          "size": 57
-        }
-      ],
+      "files": [],
       "private": true
     },
     {
@@ -137,7 +125,7 @@
       "type": "advise",
       "item": {
         "id": "ask-mvzsekqp",
-        "title": "alright i need the outline and final project draft to be worked on while im…",
+        "title": "alright i need the outline and final project draft to be worked on while im\u2026",
         "course": "",
         "due": null,
         "url": "",
