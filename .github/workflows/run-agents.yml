@@ -38,6 +38,10 @@ jobs:
           ROUTINE_FIRE_URL: ${{ secrets.ROUTINE_FIRE_URL }}
           ROUTINE_FIRE_TOKEN: ${{ secrets.ROUTINE_FIRE_TOKEN }}
         run: |
+          if [ -z "$ROUTINE_FIRE_URL" ] || [ -z "$ROUTINE_FIRE_TOKEN" ]; then
+            echo "::warning::Secrets ROUTINE_FIRE_URL / ROUTINE_FIRE_TOKEN not set yet; the hourly run will pick this job up."
+            exit 0
+          fi
           curl -fsS -X POST "$ROUTINE_FIRE_URL" \
             -H "Authorization: Bearer $ROUTINE_FIRE_TOKEN" \
             -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
