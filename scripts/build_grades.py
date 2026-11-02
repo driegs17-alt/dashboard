@@ -288,6 +288,7 @@ def encrypt(payload: dict, jwk: dict) -> dict:
     nums = eph.public_key().public_numbers()
     return {
         "v": 1,
+        "kid": jwk["x"][:12],
         "updated": payload["scraped"],
         "epk": {"kty": "EC", "crv": "P-256", "x": b64u(nums.x.to_bytes(32, "big")), "y": b64u(nums.y.to_bytes(32, "big"))},
         "iv": b64u(iv),
@@ -305,6 +306,8 @@ def main():
     raw = json.load(open(raw_path))
     courses = json.load(open(os.path.join(ROOT, "data/courses.json")))
     jwk = json.load(open(os.path.join(ROOT, "data/grades-key.json")))
+    if not jwk.get("x"):
+        sys.exit("No grades key yet: Dylan needs to tap 'Create key' in the Grades tab first.")
     built = build(raw, courses)
     if "--print" in sys.argv:
         print(json.dumps(built, indent=1))

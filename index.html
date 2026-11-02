@@ -165,7 +165,27 @@
           <button type="submit" class="btn solid">Unlock</button>
         </div>
         <p class="form-msg" id="grades-msg" role="status"></p>
+        <div class="gkey-new" id="gkey-new">
+          <p class="method"><b>First device?</b> Create your key here instead. It's made on this device and never leaves it unless you copy it.</p>
+          <button type="button" class="btn" data-gkey="ask">Create key on this device</button>
+          <div class="gkey-confirm" id="gkey-confirm" hidden>
+            <p class="method">Do this only once. Any other device will need this new key pasted in.</p>
+            <button type="button" class="btn solid" data-gkey="make">Yes, create my key</button>
+          </div>
+        </div>
       </form>
+      <div class="panel gkey-show" id="gkey-show" hidden>
+        <header class="panel-head">
+          <h2>Your grades key</h2>
+          <p class="method">It's saved on this device. Copy it somewhere safe, like your password manager, and paste it into the Grades tab on your phone and other devices. Anyone with it can read your grades.</p>
+        </header>
+        <p class="gkey-value"><code id="gkey-value"></code></p>
+        <div class="modal-actions">
+          <button type="button" class="btn solid" id="gkey-copy">Copy key</button>
+          <button type="button" class="btn" id="gkey-done">I saved it</button>
+        </div>
+      </div>
+      <p class="panel gkey-wait" id="gkey-wait" hidden>Your key is set on this device. Your grades show up after the next refresh: daily at 7:37 AM, or ask Claude to "refresh my grades" any time.</p>
 
       <div class="chips grade-tabs" id="grade-tabs" role="tablist" aria-label="Classes"></div>
       <div id="grades-body"></div>

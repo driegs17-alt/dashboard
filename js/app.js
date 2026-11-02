@@ -972,12 +972,38 @@ async function decryptGrades(enc, pubJwk, deviceKey) {
   return JSON.parse(new TextDecoder().decode(plain));
 }
 
+const ECDH = { name: "ECDH", namedCurve: "P-256" };
+
+// Does this private key belong to the public key in the repo? (ECDH both ways must agree.)
+async function keyMatches(deviceKey, pub) {
+  try {
+    const d = deviceKey.trim().replace(/^gk1-/, "");
+    const priv = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: pub.x, y: pub.y, d, ext: true }, ECDH, false, ["deriveBits"]);
+    const pubKey = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: pub.x, y: pub.y, ext: true }, ECDH, false, []);
+    const eph = await crypto.subtle.generateKey(ECDH, false, ["deriveBits"]);
+    const a = new Uint8Array(await crypto.subtle.deriveBits({ name: "ECDH", public: eph.publicKey }, priv, 256));
+    const b = new Uint8Array(await crypto.subtle.deriveBits({ name: "ECDH", public: pubKey }, eph.privateKey, 256));
+    return a.every((v, i) => v === b[i]);
+  } catch {
+    return false;
+  }
+}
+
 async function loadGrades() {
+  state.gradesPending = false;
+  const [enc, pub] = await Promise.all([loadJson("data/grades.enc.json", null), loadJson("data/grades-key.json", null)]);
+  state.gradesPub = pub && pub.x ? pub : null;
   if (!state.gradesKey) { state.grades = null; renderGrades(); return; }
   try {
-    const [enc, pub] = await Promise.all([loadJson("data/grades.enc.json", null), loadJson("data/grades-key.json", null)]);
-    if (!enc || !enc.ct) { state.grades = { scraped: null, courses: [] }; state.gradesError = ""; }
-    else { state.grades = await decryptGrades(enc, pub, state.gradesKey); state.gradesError = ""; }
+    if (!state.gradesPub || !enc || !enc.ct || (enc.kid && enc.kid !== state.gradesPub.x.slice(0, 12))) {
+      // Key exists but the grades haven't been locked to it yet.
+      state.grades = null;
+      state.gradesPending = true;
+      state.gradesError = "";
+    } else {
+      state.grades = await decryptGrades(enc, state.gradesPub, state.gradesKey);
+      state.gradesError = "";
+    }
   } catch (error) {
     console.warn(error);
     state.grades = null;
@@ -990,15 +1016,41 @@ async function unlockGrades(event) {
   event.preventDefault();
   const value = $("grades-key-input").value.trim();
   if (!value) return;
+  if (state.gradesPub && !(await keyMatches(value, state.gradesPub))) {
+    state.gradesError = "That isn't your grades key. Check you copied all of it.";
+    renderGrades();
+    return;
+  }
   state.gradesKey = value;
   await loadGrades();
-  if (state.grades) {
+  if (state.grades || state.gradesPending) {
     storage.set(GRADES_KEY, value);
-    toast("Grades unlocked on this device.");
+    toast(state.grades ? "Grades unlocked on this device." : "Key saved. Grades show up after the next refresh.");
   } else {
     state.gradesKey = "";
   }
   renderGrades();
+}
+
+async function createGradesKey(button) {
+  if (needsKey("Connect this device first so it can save your new key's public half.")) return;
+  button.disabled = true;
+  try {
+    const pair = await crypto.subtle.generateKey(ECDH, true, ["deriveBits"]);
+    const jwk = await crypto.subtle.exportKey("jwk", pair.privateKey);
+    const deviceKey = `gk1-${jwk.d}`;
+    await updateJson("data/grades-key.json", () => ({ kty: "EC", crv: "P-256", x: jwk.x, y: jwk.y, created: new Date().toISOString() }), "New grades key (public half)");
+    storage.set(GRADES_KEY, deviceKey);
+    state.gradesKey = deviceKey;
+    state.gradesPub = { x: jwk.x, y: jwk.y };
+    state.newGradesKey = deviceKey;
+    $("gkey-confirm").hidden = true;
+    await loadGrades();
+  } catch (error) {
+    saveError(error);
+  } finally {
+    button.disabled = false;
+  }
 }
 
 const GRADE_STATUS = {
@@ -1072,7 +1124,10 @@ function gradeCardHtml(c) {
 
 function renderGrades() {
   const locked = !state.gradesKey || !state.grades;
-  $("grades-lock").hidden = !locked;
+  $("grades-lock").hidden = !locked || state.gradesPending || Boolean(state.newGradesKey);
+  $("gkey-show").hidden = !state.newGradesKey;
+  if (state.newGradesKey) $("gkey-value").textContent = state.newGradesKey;
+  $("gkey-wait").hidden = !state.gradesPending || Boolean(state.newGradesKey);
   $("grades-msg").textContent = state.gradesError;
   $("grades-msg").className = `form-msg${state.gradesError ? " error-text" : ""}`;
   const badge = $("grades-badge");
@@ -1555,6 +1610,12 @@ async function start() {
       }
       return;
     }
+    const gk = e.target.closest("[data-gkey]");
+    if (gk) {
+      if (gk.dataset.gkey === "ask") $("gkey-confirm").hidden = false;
+      else createGradesKey(gk);
+      return;
+    }
     const g = e.target.closest("[data-gtab]");
     if (g) { state.gradeTab = g.dataset.gtab; renderGrades(); return; }
     const a = e.target.closest("[data-hand],[data-result],[data-cancel-job],[data-requeue],[data-archive]");
@@ -1580,6 +1641,11 @@ async function start() {
   $("add-task").addEventListener("submit", addTask);
   $("hand-form").addEventListener("submit", queueJob);
   $("grades-lock").addEventListener("submit", unlockGrades);
+  $("gkey-copy").addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(state.newGradesKey); toast("Key copied"); }
+    catch { toast("Couldn't copy. Select the key and copy it by hand.", true); }
+  });
+  $("gkey-done").addEventListener("click", () => { state.newGradesKey = ""; renderGrades(); });
   $("hand-cancel").addEventListener("click", () => $("hand-modal").close());
   $("hand-type").addEventListener("change", () => ($("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint));
   $("result-close").addEventListener("click", () => $("result-modal").close());

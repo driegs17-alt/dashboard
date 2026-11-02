@@ -1,6 +1,6 @@
 # Grades refresh: how Claude updates the Grades tab
 
-The Grades tab reads `data/grades.enc.json`, which is **encrypted** to the public key in `data/grades-key.json`. Only devices where Dylan pasted his grades key (`gk1-…`) can read it. The repo is public, so **plain grades never go in the repo**, not even for a moment.
+The Grades tab reads `data/grades.enc.json`, which is **encrypted** to the public key in `data/grades-key.json`. Only devices holding Dylan's grades key (`gk1-…`) can read it. The key is created on his device (Grades tab → Create key); only its public half is in the repo. Claude never has the private key. The repo is public, so **plain grades never go in the repo**, not even for a moment.
 
 Runs on the scheduled task "Grades refresh" (needs Dylan's computer for the built-in browser) or by hand ("refresh my grades").
 

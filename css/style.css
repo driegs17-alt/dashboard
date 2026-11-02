@@ -819,6 +819,11 @@ details.group[open] > summary::before { content: "–"; }
 
 .grades-lock { margin-bottom: 24px; }
 .grade-tabs { margin-bottom: 22px; }
+.gkey-new { margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--soft-line); display: grid; gap: 10px; justify-items: start; }
+.gkey-confirm { display: grid; gap: 8px; justify-items: start; }
+.gkey-show { margin-bottom: 24px; border-color: var(--gold); display: grid; gap: 12px; }
+.gkey-value code { display: block; font-size: 0.95rem; padding: 12px; word-break: break-all; user-select: all; }
+.gkey-wait { margin-bottom: 24px; }
 .grade-cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-bottom: 30px; }
 .grade-card {
   display: grid; gap: 4px; text-align: left; font: inherit; color: inherit; cursor: pointer;
