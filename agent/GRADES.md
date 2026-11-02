@@ -22,3 +22,7 @@ See the docstring at the top of `scripts/build_grades.py`. Short version: *missi
 ## Overall grade
 
 Worked out from each class's gradebook setup in eLC: weighted classes use category weights and drop-lowest rules, points classes use earned / possible, and custom-formula classes (Type & Image) aren't estimated. Three numbers: **current** (graded work only), **floor** (if nothing else is turned in) and **ceiling** (if everything left is perfect), plus how much of the class has been graded so far.
+
+## Dylan's own entries
+
+`data/grade-overrides.enc.json` holds scores Dylan entered himself (✎ on any grade row), encrypted to the same key. The Grades tab applies them in the browser and redoes the class grade with `gradeCalc()` in `js/app.js` (a mirror of `overall()` in `scripts/build_grades.py`, keep them in step). eLC's grade wins as soon as it has a real one. Refresh runs never touch this file.

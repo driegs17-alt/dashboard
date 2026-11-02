@@ -32,10 +32,16 @@ Overall grade, three numbers per class:
   ceiling    if everything left is a perfect score
   plus how much of the course (by weight) has been graded so far.
 Drop-lowest rules are applied the way eLC does. Bonus items add on top.
+
+Each class also carries a compact "calc" block so the Grades tab can redo
+the same math in the browser when Dylan enters his own score for an item
+(data/grade-overrides.enc.json, encrypted the same way; Claude never needs
+to read it). Keep overall() here and gradeCalc() in js/app.js in step.
 """
 
 import base64
 import json
+import math
 import os
 import sys
 from datetime import datetime, timezone
@@ -185,12 +191,12 @@ def overall(course, items):
         if not g.get("single"):
             cats.append({
                 "name": g["name"],
-                "weight": round(100 * g["weight"] / total_w, 1),
-                "pct": round(cur, 1) if cur is not None else None,
+                "weight": rnd(100 * g["weight"] / total_w),
+                "pct": rnd(cur),
                 "graded": n_graded,
                 "total": len(g["items"]),
                 "dropLow": g["dropLow"],
-                "earned": round(g["weight"] * cur / total_w, 2) if cur is not None else None,
+                "earned": rnd(g["weight"] * cur / total_w, 2) if cur is not None else None,
             })
     cur = cur_num / cur_den if cur_den else None
     single_items = len([g for g in groups if g.get("single")])
@@ -213,8 +219,16 @@ def overall(course, items):
     }
 
 
+def rnd(x, places=1):
+    # Half-up, same as Math.round in js/app.js, so both sides agree exactly.
+    if x is None:
+        return None
+    f = 10 ** places
+    return math.floor(x * f + 0.5) / f
+
+
 def r1(x):
-    return None if x is None else round(x, 1)
+    return rnd(x, 1)
 
 
 def build(raw, courses_meta):
@@ -259,7 +273,9 @@ def build(raw, courses_meta):
         order = ["flagged", "missing", "check", "submitted", "upcoming", "cleared", "graded", "info"]
         shown.sort(key=lambda i: (order.index(i["status"]), i["due"] or "9999", i["name"]))
         m = meta.get(course["code"], {})
+        calc_items = [[i["name"], i["cat"], i["max"], i["weight"], i["got"], (1 if i["bonus"] else 0) + (2 if i["excluded"] else 0)] for i in items]
         out.append({
+            "calc": {"sys": course["sys"], "cats": course["cats"], "items": calc_items},
             "code": course["code"],
             "short": m.get("short", course["code"]),
             "url": f'https://uga.view.usg.edu/d2l/lms/grades/my_grades/main.d2l?ou={m.get("elc", "").rstrip("/").split("/")[-1]}' if m.get("elc") else "",

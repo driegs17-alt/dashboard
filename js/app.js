@@ -1001,7 +1001,9 @@ async function loadGrades() {
       state.gradesPending = true;
       state.gradesError = "";
     } else {
-      state.grades = await decryptGrades(enc, state.gradesPub, state.gradesKey);
+      state.gradesRaw = await decryptGrades(enc, state.gradesPub, state.gradesKey);
+      await loadOverrides();
+      state.grades = state.gradesRaw;
       state.gradesError = "";
     }
   } catch (error) {
@@ -1061,6 +1063,7 @@ const GRADE_STATUS = {
   upcoming: { label: "Not due yet", cls: "none" },
   cleared: { label: "Done · eLC still says overdue", cls: "good" },
   graded: { label: "Graded", cls: "good" },
+  yours: { label: "Your entry", cls: "mine" },
   info: { label: "Not graded yet", cls: "none" },
 };
 const ISSUE = ["flagged", "missing", "check"];
@@ -1069,7 +1072,7 @@ function pctText(n) {
   return n == null ? "–" : `${Number(n).toFixed(1)}%`;
 }
 
-function gradeRow(item, course) {
+function gradeRow(item, course, code) {
   const s = GRADE_STATUS[item.status] || GRADE_STATUS.info;
   const due = item.due ? new Date(item.due) : null;
   const meta = [
@@ -1082,7 +1085,11 @@ function gradeRow(item, course) {
   const hint =
     item.status === "flagged" ? "You submitted this, but eLC shows a zero or still lists it as overdue. It may just need grading. If it stays like this, email your instructor." :
     item.status === "check" ? "Done outside eLC (like Achieve or InQuizitive). eLC can't see whether you did it, so check there." :
-    item.status === "missing" ? "Past due and nothing turned in. Check whether late work is accepted." : "";
+    item.status === "missing" ? "Past due and nothing turned in. Check whether late work is accepted." :
+    item.status === "yours" ? `You entered this${item.mine.note ? ` (${item.mine.note})` : ""}. eLC still shows ${item.elcScore || "no grade"}; it switches back once eLC has a real grade.` :
+    item.overrideStale != null ? `eLC has a grade now, so your entry (${item.overrideStale}) is ignored.` : "";
+  const editCode = code || (course && course.code);
+  const edit = editCode ? `<button type="button" class="gedit" data-gedit="${escapeHtml(editCode)}" data-gname="${escapeHtml(item.name)}" aria-label="Enter your own score for ${escapeHtml(item.name)}" title="Enter your own score">✎</button>` : "";
   return `
     <article class="grade-row is-${escapeHtml(item.status)}">
       <span class="gstatus ${s.cls}">${escapeHtml(s.label)}</span>
@@ -1092,6 +1099,7 @@ function gradeRow(item, course) {
         ${hint ? `<p class="grade-hint">${escapeHtml(hint)}</p>` : ""}
       </div>
       <span class="gscore">${escapeHtml(item.score || "–")}${item.pct != null ? `<small>${escapeHtml(Math.round(item.pct))}%</small>` : ""}</span>
+      ${edit}
     </article>`;
 }
 
@@ -1137,7 +1145,7 @@ function renderGrades() {
     badge.hidden = true;
     return;
   }
-  const courses = state.grades.courses || [];
+  const courses = applyOverrides(state.gradesRaw || state.grades).courses || [];
   $("grades-note").textContent = state.grades.scraped
     ? `From eLC, checked ${ago(state.grades.scraped)}. Encrypted, so only your devices can read this.`
     : "No grades pulled yet. The first eLC check fills this in.";
@@ -1177,6 +1185,7 @@ function renderGrades() {
     ["Needs attention", c.items.filter((i) => ISSUE.includes(i.status)), true],
     ["Submitted, waiting on a grade", c.items.filter((i) => i.status === "submitted"), true],
     ["Coming up", c.items.filter((i) => i.status === "upcoming"), true],
+    ["Your entries", c.items.filter((i) => i.status === "yours"), true],
     ["Graded", c.items.filter((i) => i.status === "graded"), false],
     ["eLC says overdue, but it's done", c.items.filter((i) => i.status === "cleared"), false],
     ["Not graded yet", c.items.filter((i) => i.status === "info"), false],
@@ -1188,17 +1197,195 @@ function renderGrades() {
         <h2 class="grade-course">${escapeHtml(c.short)}</h2>
         <p class="task-meta">${escapeHtml(g.note || "")}</p>
       </div>
-      <div class="grade-final big">${g.current != null ? `${pctText(g.current)}<em>${escapeHtml(g.letter)}</em>` : "See eLC"}<small>${g.current != null ? `On graded work · ${Math.round(g.gradedShare)}% of class graded` : "Custom formula"}</small></div>
+      <div class="grade-final big">${g.current != null ? `${pctText(g.current)}<em>${escapeHtml(g.letter)}</em>` : "See eLC"}<small>${g.current != null ? `On graded work${g.withYours ? " + your entries" : ""} · ${Math.round(g.gradedShare)}% of class graded` : "Custom formula"}</small></div>
     </div>
     ${rangeBar(g)}
     ${cats}
     ${groups.map(([title, list, open]) => {
       if (!list.length) return "";
       const head = `<span>${title}</span> <span class="count">${list.length}</span>`;
-      const rows = list.map((i) => gradeRow(i)).join("");
+      const rows = list.map((i) => gradeRow(i, null, c.code)).join("");
       return open ? `<div class="group"><h3 class="group-title">${head}</h3>${rows}</div>` : `<details class="group"><summary class="group-title">${head}</summary>${rows}</details>`;
     }).join("")}
     ${c.url ? `<p class="block-note"><a href="${escapeHtml(c.url)}" target="_blank" rel="noopener">Open grades in eLC ↗</a></p>` : ""}`;
+}
+
+
+/* ---------- Grade math (mirror of overall() in scripts/build_grades.py) ----------
+   Only used when you've entered your own score for an item, so the class
+   grade can be redone in the browser. Keep the two in step. */
+
+const LETTERS = [[93, "A"], [90, "A-"], [87, "B+"], [83, "B"], [80, "B-"], [77, "C+"], [73, "C"], [70, "C-"], [60, "D"], [0, "F"]];
+const letterFor = (p) => (p == null ? null : LETTERS.find(([cut]) => p >= cut - 1e-9)[1]);
+const round1 = (x) => (x == null ? null : Math.round(x * 10) / 10);
+
+function categoryPct(items, dropLow, dropHigh, fill = null) {
+  let rows = [];
+  for (const it of items) {
+    if (it.max <= 0) continue;
+    if (it.got == null) { if (fill == null) continue; rows.push([fill, it.weight || it.max]); }
+    else rows.push([it.got / it.max, it.weight || it.max]);
+  }
+  if (!rows.length) return null;
+  rows.sort((a, b) => a[0] - b[0]);
+  rows = rows.slice(Math.min(dropLow, Math.max(rows.length - 1, 0)));
+  if (dropHigh) rows = rows.slice(0, Math.max(rows.length - dropHigh, 1));
+  const tw = rows.reduce((n, r) => n + r[1], 0);
+  return tw ? (100 * rows.reduce((n, r) => n + r[0] * r[1], 0)) / tw : null;
+}
+
+function gradeCalc(calc) {
+  const items = calc.items.map(([name, cat, max, weight, got, flags]) => ({ name, cat, max: max || 0, weight, got, bonus: Boolean(flags & 1), excluded: Boolean(flags & 2) }));
+  const counted = items.filter((i) => !i.excluded && !i.bonus);
+  const bonus = items.filter((i) => i.bonus && i.got != null);
+  if (calc.sys === "Formula") return null;
+  if (calc.sys === "Points" || (!calc.cats.length && calc.sys !== "Weighted")) {
+    const got = counted.filter((i) => i.got != null).reduce((n, i) => n + i.got, 0);
+    const gradedMax = counted.filter((i) => i.got != null).reduce((n, i) => n + i.max, 0);
+    const allMax = counted.reduce((n, i) => n + i.max, 0);
+    const extra = bonus.reduce((n, i) => n + i.got, 0);
+    const cur = gradedMax ? (100 * (got + extra)) / gradedMax : null;
+    return {
+      current: round1(cur), floor: round1(allMax ? (100 * (got + extra)) / allMax : null),
+      ceiling: round1(allMax ? Math.min((100 * (got + extra + allMax - gradedMax)) / allMax, 100) : null),
+      gradedShare: round1(allMax ? (100 * gradedMax) / allMax : null), letter: letterFor(cur), categories: [],
+    };
+  }
+  const groups = [];
+  const catIds = new Set(calc.cats.map((c) => c[0]));
+  for (const [cid, name, weight, dropLow, dropHigh, excluded] of calc.cats) {
+    if (excluded) continue;
+    const members = counted.filter((i) => i.cat === cid);
+    if (members.length) groups.push({ name, weight, dropLow, dropHigh, items: members });
+  }
+  const loose = counted.filter((i) => i.cat == null || !catIds.has(i.cat));
+  if (loose.length) {
+    const even = loose.every((i) => Math.abs((i.weight || 0) - (loose[0].weight || 0)) < 1e-6);
+    for (const i of loose) groups.push({ name: i.name, weight: (even ? 1 : i.weight) || 0, dropLow: 0, dropHigh: 0, items: [i], single: true });
+  }
+  const totalW = groups.reduce((n, g) => n + g.weight, 0) || 1;
+  let curNum = 0, curDen = 0, floNum = 0, ceiNum = 0, share = 0;
+  const cats = [];
+  for (const g of groups) {
+    const cur = categoryPct(g.items, g.dropLow, g.dropHigh);
+    const flo = categoryPct(g.items, g.dropLow, g.dropHigh, 0);
+    const cei = categoryPct(g.items, g.dropLow, g.dropHigh, 1);
+    const nGraded = g.items.filter((i) => i.got != null).length;
+    share += (g.weight * nGraded) / g.items.length;
+    if (cur != null) { curNum += g.weight * cur; curDen += g.weight; }
+    floNum += g.weight * (flo || 0);
+    ceiNum += g.weight * (cei != null ? cei : 100);
+    if (!g.single) cats.push({ name: g.name, weight: round1((100 * g.weight) / totalW), pct: round1(cur), graded: nGraded, total: g.items.length, dropLow: g.dropLow, earned: cur != null ? Math.round((g.weight * cur / totalW) * 100) / 100 : null });
+  }
+  const cur = curDen ? curNum / curDen : null;
+  return { current: round1(cur), floor: round1(floNum / totalW), ceiling: round1(ceiNum / totalW), gradedShare: round1((100 * share) / totalW), letter: letterFor(cur), categories: cats };
+}
+
+/* ---------- Your own scores (encrypted overrides) ---------- */
+
+async function encryptForGrades(payload, pub) {
+  const eph = await crypto.subtle.generateKey(ECDH, true, ["deriveBits"]);
+  const pubKey = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: pub.x, y: pub.y, ext: true }, ECDH, false, []);
+  const bits = await crypto.subtle.deriveBits({ name: "ECDH", public: pubKey }, eph.privateKey, 256);
+  const hk = await crypto.subtle.importKey("raw", bits, "HKDF", false, ["deriveKey"]);
+  const aes = await crypto.subtle.deriveKey(
+    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(32), info: new TextEncoder().encode("dashboard-grades-v1") },
+    hk, { name: "AES-GCM", length: 256 }, false, ["encrypt"]
+  );
+  const iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = new Uint8Array(await crypto.subtle.encrypt({ name: "AES-GCM", iv }, aes, new TextEncoder().encode(JSON.stringify(payload))));
+  const epk = await crypto.subtle.exportKey("jwk", eph.publicKey);
+  const b64u = (bytes) => btoa(String.fromCharCode(...bytes)).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+  return { v: 1, kid: pub.x.slice(0, 12), epk: { kty: "EC", crv: "P-256", x: epk.x, y: epk.y }, iv: b64u(iv), ct: b64u(ct) };
+}
+
+const overrideKey = (code, name) => `${code}|${name}`;
+
+function applyOverrides(grades) {
+  const list = state.gradeOverrides || [];
+  if (!list.length) return grades;
+  const by = new Map(list.map((o) => [overrideKey(o.code, o.name), o]));
+  const courses = grades.courses.map((c) => {
+    const mine = c.items.filter((i) => by.has(overrideKey(c.code, i.name)));
+    if (!mine.length) return c;
+    let changed = false;
+    const items = c.items.map((i) => {
+      const o = by.get(overrideKey(c.code, i.name));
+      if (!o) return i;
+      const elcGot = i.score ? Number(i.score.split(" / ")[0]) : null;
+      if (elcGot) return { ...i, overrideStale: o.got }; // eLC has a real grade now; it wins
+      changed = true;
+      const max = i.score ? Number(i.score.split(" / ")[1]) : o.max;
+      return { ...i, status: "yours", elcScore: i.score, score: `${o.got} / ${max}`, pct: max ? Math.round((1000 * o.got) / max) / 10 : null, mine: o };
+    });
+    if (!changed || !c.calc) return { ...c, items };
+    const calc = {
+      ...c.calc,
+      items: c.calc.items.map((row) => {
+        const o = by.get(overrideKey(c.code, row[0]));
+        return o && !row[4] ? [row[0], row[1], row[2], row[3], o.got, row[5]] : row;
+      }),
+    };
+    const g = gradeCalc(calc);
+    const counts = { ...c.counts };
+    items.forEach((i, n) => { if (i.status === "yours") { counts[c.items[n].status] = Math.max(0, (counts[c.items[n].status] || 0) - 1); } });
+    return g ? { ...c, items, counts, grade: { ...c.grade, ...g, floorLetter: letterFor(g.floor), ceilingLetter: letterFor(g.ceiling), withYours: true } } : { ...c, items, counts };
+  });
+  return { ...grades, courses };
+}
+
+async function loadOverrides() {
+  state.gradeOverrides = [];
+  if (!state.gradesKey || !state.gradesPub) return;
+  const enc = await loadJson("data/grade-overrides.enc.json", null);
+  if (!enc || !enc.ct || (enc.kid && enc.kid !== state.gradesPub.x.slice(0, 12))) return;
+  try {
+    const data = await decryptGrades(enc, state.gradesPub, state.gradesKey);
+    state.gradeOverrides = Array.isArray(data.overrides) ? data.overrides : [];
+  } catch (error) {
+    console.warn("overrides", error);
+  }
+}
+
+function openOverride(code, name) {
+  const c = (state.gradesRaw?.courses || []).find((x) => x.code === code);
+  const item = c && c.items.find((i) => i.name === name);
+  if (!item) return;
+  const current = (state.gradeOverrides || []).find((o) => o.code === code && o.name === name);
+  const max = item.score ? Number(item.score.split(" / ")[1]) : (c.calc?.items.find((r) => r[0] === name) || [])[2] || 100;
+  state.overrideTarget = { code, name, max };
+  $("ov-title").textContent = name;
+  $("ov-meta").textContent = `${c.short} · eLC shows ${item.score || "no grade"}`;
+  $("ov-max").textContent = `/ ${max}`;
+  $("ov-got").value = current ? current.got : "";
+  $("ov-note").value = current ? current.note || "" : "";
+  $("ov-clear").hidden = !current;
+  $("ov-msg").textContent = "";
+  $("override-modal").showModal();
+}
+
+async function saveOverride(clear = false) {
+  if (needsKey("Connect this device to save your own scores.")) return;
+  const t = state.overrideTarget;
+  const got = Number($("ov-got").value);
+  if (!clear && (!Number.isFinite(got) || $("ov-got").value === "" || got < 0)) {
+    $("ov-msg").textContent = "Enter the points you got.";
+    $("ov-msg").className = "form-msg error-text";
+    return;
+  }
+  const list = (state.gradeOverrides || []).filter((o) => !(o.code === t.code && o.name === t.name));
+  if (!clear) list.push({ code: t.code, name: t.name, got, max: t.max, note: $("ov-note").value.trim(), at: new Date().toISOString() });
+  try {
+    const enc = await encryptForGrades({ overrides: list }, state.gradesPub);
+    await updateJson("data/grade-overrides.enc.json", () => enc, clear ? "Clear a grade entry" : "Update a grade entry");
+    state.gradeOverrides = list;
+    $("override-modal").close();
+    toast(clear ? "Back to eLC's score." : "Saved. Your grade is updated.");
+    renderGrades();
+  } catch (error) {
+    $("ov-msg").textContent = error.message === "bad-key" ? "Your GitHub key stopped working. Reconnect to save." : `Didn't save: ${error.message}`;
+    $("ov-msg").className = "form-msg error-text";
+  }
 }
 
 /* ---------- Agents: hand tasks to Claude ---------- */
@@ -1610,6 +1797,8 @@ async function start() {
       }
       return;
     }
+    const ge = e.target.closest("[data-gedit]");
+    if (ge) { openOverride(ge.dataset.gedit, ge.dataset.gname); return; }
     const gk = e.target.closest("[data-gkey]");
     if (gk) {
       if (gk.dataset.gkey === "ask") $("gkey-confirm").hidden = false;
@@ -1641,6 +1830,9 @@ async function start() {
   $("add-task").addEventListener("submit", addTask);
   $("hand-form").addEventListener("submit", queueJob);
   $("grades-lock").addEventListener("submit", unlockGrades);
+  $("ov-form").addEventListener("submit", (e) => { e.preventDefault(); saveOverride(false); });
+  $("ov-clear").addEventListener("click", () => saveOverride(true));
+  $("ov-cancel").addEventListener("click", () => $("override-modal").close());
   $("gkey-copy").addEventListener("click", async () => {
     try { await navigator.clipboard.writeText(state.newGradesKey); toast("Key copied"); }
     catch { toast("Couldn't copy. Select the key and copy it by hand.", true); }

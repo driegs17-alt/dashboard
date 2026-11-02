@@ -1,0 +1,13 @@
+{
+  "v": 1,
+  "kid": "bS5rqhfnOYCt",
+  "updated": "2026-11-02T17:45:46.631Z",
+  "epk": {
+    "kty": "EC",
+    "crv": "P-256",
+    "x": "Vzimj0nGx1-GXIaF_rvxGh1wN9CGAMShpmVmemibwgQ",
+    "y": "-IYZi4vFQjPi8DEs9nzZau9AJsNY73E3lByXAfm2ycY"
+  },
+  "iv": "rHq2z6x1D0Xdd6dg",
+  "ct": "bXIKiL5EbKunL3dy6voWHCQoymID8XQJ12vQB5d5pbF4fnaIyglq4bSDyldoUZ_YPcqX1nS1I8hwFJWGlTQK05H6M7RfPOefF398grArwthC9oKCvJEhP-W9f_0w2m8MzYG_5W2MO_8WmyIpyBluI5xrs_b49Nrrff9GcZYC_8fdrwbvCnhTmskE3Hnv1Ols4PDDwQoCMnTUzjVbfRrlEVBMsJb23zhoe8by967bHx3uW2Pr9Ti9iNCBXo3p"
+}

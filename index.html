@@ -328,6 +328,30 @@
     </div>
   </dialog>
 
+  <dialog class="modal" id="override-modal" aria-labelledby="ov-title">
+    <form method="dialog" class="modal-inner" id="ov-form">
+      <p class="eyebrow">Enter your own score</p>
+      <h2 id="ov-title">Item</h2>
+      <p class="muted" id="ov-meta"></p>
+      <p class="method">For when you know the real score before eLC does. It only changes your dashboard, never eLC, and eLC's grade takes over once it has one.</p>
+      <label class="field">
+        <span class="field-label">Points</span>
+        <span class="ov-row"><input id="ov-got" type="number" step="any" min="0" inputmode="decimal"> <span id="ov-max" class="muted"></span></span>
+      </label>
+      <label class="field">
+        <span class="field-label">Note (optional)</span>
+        <input id="ov-note" type="text" maxlength="120" placeholder="e.g. Instructor emailed the grade">
+      </label>
+      <p class="form-msg" id="ov-msg" role="status"></p>
+      <div class="modal-actions">
+        <button type="button" class="btn" id="ov-clear" hidden>Use eLC's score</button>
+        <span class="spacer"></span>
+        <button type="button" class="btn" id="ov-cancel">Cancel</button>
+        <button type="submit" class="btn solid">Save</button>
+      </div>
+    </form>
+  </dialog>
+
   <div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
 
   <script src="js/app.js"></script>
