@@ -27,13 +27,13 @@
         "note": ""
       },
       "ask": "i need an outline built for my oral history essay project from history class. ask for any necessary files and information required to complete this and follow Dr. Wolf's instructions as closely as possible.",
-      "status": "working",
+      "status": "done",
       "requested": "2026-11-02T20:26:23.986Z",
       "started": "2026-11-02T22:17:28.000Z",
       "asked": "2026-11-02T22:10:00.000Z",
       "agents": 1,
-      "result": "agent/results/job-mvzplr3m.md",
-      "summary": "Generic oral history outline template + era context bank is ready to fill in. Outline/Context is due Tue Nov 3, 2:55 PM ET.",
+      "result": "agent/results/job-mvzplr3m.enc.json",
+      "summary": "Full Outline/Context draft from your interview notes: field notes, research question + reflection, sharper thesis options, 4 context paragraphs, paper outline, sources. Next: paste Dr. Wolf’s prompt to check the parts, add real quotes, rewrite in your voice. Due Tue 2:55 PM.",
       "replies": [
         {
           "at": "2026-11-02T21:48:42.530Z",
@@ -59,9 +59,14 @@
         {
           "at": "2026-11-02T22:17:28.000Z",
           "msg": "Got your notes and thesis: building the outline now"
+        },
+        {
+          "at": "2026-11-02T22:21:02.000Z",
+          "msg": "Done: outline, context paragraphs and sources ready"
         }
       ],
-      "progress": "Building your outline from your interview notes"
+      "progress": "Done",
+      "finished": "2026-11-02T22:21:02.000Z"
     },
     {
       "id": "job-mvzrp3o4",
@@ -98,10 +103,10 @@
         "note": ""
       },
       "ask": "First draft is due Tue 9:30 AM. Get me to a solid first draft tonight: (1) find the final project brief/rubric (Google Drive) or ask me for it right away, plus a link to whatever I've started (Figma or files); (2) break the draft into steps with time boxes for tonight, working back from 9:30 AM, and propose focus blocks around my calendar; (3) once you have my work, give specific design feedback against the rubric (what's missing, what to fix first). I make and submit the draft myself.",
-      "status": "working",
+      "status": "needs-you",
       "requested": "2026-11-02T21:41:06.000Z",
       "started": "2026-11-02T22:17:28.000Z",
-      "progress": "Reviewing the carousel brief",
+      "progress": "Waiting on your Figma link",
       "log": [
         {
           "at": "2026-11-02T21:45:18.000Z",
@@ -114,12 +119,16 @@
         {
           "at": "2026-11-02T22:17:28.000Z",
           "msg": "Got the brief: building a rubric checklist + content plan"
+        },
+        {
+          "at": "2026-11-02T22:21:02.000Z",
+          "msg": "Plan + slide copy ready; need your Figma link for feedback"
         }
       ],
-      "asked": "2026-11-02T22:10:00.000Z",
+      "asked": "2026-11-02T22:21:02.000Z",
       "agents": 1,
-      "result": "agent/results/job-propractice-1103.md",
-      "summary": "Time-boxed plan for tonight + tomorrow morning (after Macro), ending with submit by 9:15 AM. Rubric feedback comes once I have the brief.",
+      "result": "agent/results/job-propractice-1103.enc.json",
+      "summary": "Rubric checklist, 10-slide structure, starter copy, design spec and a time-boxed plan around Macro. Drive worked (found the class links sheet); Calendar still blocked.",
       "replies": [
         {
           "at": "2026-11-02T21:56:56.835Z",
@@ -132,7 +141,8 @@
         }
       ],
       "files": [],
-      "private": true
+      "private": true,
+      "question": "Reply with a Figma view link to your carousel file (even empty frames) so I can give slide-by-slide feedback against the brief before your 7:30 AM polish block."
     },
     {
       "id": "job-mvzsekqp",
