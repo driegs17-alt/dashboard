@@ -73,6 +73,21 @@
       "ask": "First draft is due Tue 9:30 AM. Get me to a solid first draft tonight: (1) find the final project brief/rubric (Google Drive) or ask me for it right away, plus a link to whatever I've started (Figma or files); (2) break the draft into steps with time boxes for tonight, working back from 9:30 AM, and propose focus blocks around my calendar; (3) once you have my work, give specific design feedback against the rubric (what's missing, what to fix first). I make and submit the draft myself.",
       "status": "queued",
       "requested": "2026-11-02T21:41:06.000Z"
+    },
+    {
+      "id": "job-mvzsekqp",
+      "type": "advise",
+      "item": {
+        "id": "ask-mvzsekqp",
+        "title": "alright i need the outline and final project draft to be worked on while im…",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "alright i need the outline and final project draft to be worked on while im doing macro homework. get whatever you need from me and then get to work while im doing these assignments.",
+      "status": "queued",
+      "requested": "2026-11-02T21:44:48.001Z"
     }
   ]
 }
