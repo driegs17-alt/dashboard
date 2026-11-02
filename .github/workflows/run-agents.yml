@@ -1,5 +1,6 @@
-# Starts the "Dashboard agents" scheduled task the moment a job is queued.
-# Put this file in the repo at: .github/workflows/run-agents.yml
+# Starts the "Dashboard agents" scheduled task the moment a job is queued,
+# and records the run's live session link in data/agent-runs.json so the
+# Agents tab can show "Open live session".
 # Needs two repo secrets: ROUTINE_FIRE_URL and ROUTINE_FIRE_TOKEN
 # (the token is private: it lives only in GitHub Secrets, never in the site or repo files).
 
@@ -11,6 +12,9 @@ on:
     paths: ['data/agent.json']
   workflow_dispatch: {}
 
+permissions:
+  contents: write
+
 # One start at a time, so two quick hand-offs don't race each other.
 concurrency:
   group: agent-queue
@@ -19,20 +23,24 @@ concurrency:
 jobs:
   fire:
     runs-on: ubuntu-latest
+    timeout-minutes: 5
     steps:
       - uses: actions/checkout@v4
 
-      # Only start a run if something is actually waiting. The agent's own
-      # commits (marking jobs working/done) leave nothing queued, so they
-      # don't set off another run.
+      # Only start a run if something is waiting that no run has claimed yet.
+      # The agent's own commits (marking jobs working/done) leave nothing
+      # queued, so they don't set off another run.
       - name: Any queued jobs?
         id: check
         run: |
-          n=$(jq '[.jobs[]? | select(.status == "queued")] | length' data/agent.json)
-          echo "Queued jobs: $n"
+          ids=$(jq -c '[.jobs[]? | select(.status == "queued") | .id]' data/agent.json)
+          n=$(echo "$ids" | jq 'length')
+          echo "Queued jobs: $n $ids"
           echo "queued=$n" >> "$GITHUB_OUTPUT"
+          echo "ids=$ids" >> "$GITHUB_OUTPUT"
 
       - name: Start Dashboard agents now
+        id: fire
         if: steps.check.outputs.queued != '0'
         env:
           ROUTINE_FIRE_URL: ${{ secrets.ROUTINE_FIRE_URL }}
@@ -42,9 +50,35 @@ jobs:
             echo "::warning::Secrets ROUTINE_FIRE_URL / ROUTINE_FIRE_TOKEN not set yet; the hourly run will pick this job up."
             exit 0
           fi
-          curl -fsS -X POST "$ROUTINE_FIRE_URL" \
+          resp=$(curl -fsS -X POST "$ROUTINE_FIRE_URL" \
             -H "Authorization: Bearer $ROUTINE_FIRE_TOKEN" \
             -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
             -H "anthropic-version: 2023-06-01" \
             -H "Content-Type: application/json" \
-            -d '{}'
+            -d '{}')
+          url=$(echo "$resp" | jq -r '.claude_code_session_url // empty')
+          echo "Started: ${url:-no session link returned}"
+          echo "url=$url" >> "$GITHUB_OUTPUT"
+
+      # Commits made with GITHUB_TOKEN don't start workflows, so this can't loop.
+      - name: Record the live session link
+        if: steps.fire.outputs.url != ''
+        env:
+          URL: ${{ steps.fire.outputs.url }}
+          IDS: ${{ steps.check.outputs.ids }}
+        run: |
+          git config user.name "dashboard-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3; do
+            git pull -q --rebase origin main
+            [ -f data/agent-runs.json ] || echo '{"runs":[]}' > data/agent-runs.json
+            jq --arg url "$URL" --argjson ids "$IDS" --arg at "$(date -u +%Y-%m-%dT%H:%M:%SZ)" \
+              '.runs = ([{at: $at, url: $url, jobs: $ids, via: "instant"}] + (.runs // []))[:20]' \
+              data/agent-runs.json > /tmp/runs.json && mv /tmp/runs.json data/agent-runs.json
+            git add data/agent-runs.json
+            git commit -q -m "Agent run started for $(echo "$IDS" | jq -r 'join(", ")')"
+            git push -q origin HEAD:main && exit 0
+            git reset -q --hard origin/main
+            sleep $((attempt * 3))
+          done
+          echo "::warning::Couldn't record the session link (the run itself started fine)."

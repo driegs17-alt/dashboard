@@ -1,0 +1,8 @@
+{
+  "kty": "EC",
+  "crv": "P-256",
+  "x": "f9tCTkUR-sGipf5Wxa6U0lHbO5f_QRwLre_YQNS6m20",
+  "y": "fpQSKg1_zIfAMwhxCXx1Qd-nQioJlW89fH92yg8RXRs",
+  "created": "2026-11-02T20:54:26+00:00",
+  "note": "Public half only. Browser encrypts job uploads to this; the agent run holds the private half."
+}
