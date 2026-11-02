@@ -42,6 +42,20 @@ The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Cla
 - **Research gets sources.** End research results with a `Sources` list of links.
 - **Replies.** If `replies` exist, the latest reply answers the previous `question`. Pick up where the partial result left off.
 
+## Skills and connectors to use
+
+Before starting a job, the subagent loads the skills that fit (Skill tool) and uses connected apps instead of rebuilding things by hand. If a connector below isn't connected yet, the job goes to `needs-you` naming it.
+
+| Job | Skills | Connectors |
+|---|---|---|
+| Research (leads, products, competitors, jobs) | `deep-research`; `marketing:competitive-brief` for product/market questions | Google Sheets for the Athens leads / product trackers |
+| Lead outreach, application emails, instructor emails | `marketing:content-creation`, `marketing:email-sequence` | Gmail (drafts only, never sends) |
+| Plan / break it down | `productivity:task-management` | Google Calendar (proposes focus blocks; adds them only after Dylan says yes) |
+| Study prep | `xlsx`/`docx`/`pdf` only if a file helps | Google Drive for Dylan's own notes |
+| Portfolio, case studies, design feedback | `design:design-critique`, `design:ux-copy`, `design-superpowers:design-review` | Figma, Adobe |
+| E-commerce | `marketing:campaign-plan`, `liquid-dev:theme-dev` once a store exists | Shopify (once a store exists) |
+| Anything producing a spreadsheet, doc or deck | `xlsx`, `docx`, `pptx`, `pdf` | Google Drive to save it where Dylan asked |
+
 ## Result file format
 
 Markdown, readable on a phone. Start with a one-paragraph "Bottom line", then the work. The dashboard renders headings, lists, checkboxes (`- [ ]`), tables, bold/italic, links, code and quotes. Keep it scannable; long is fine only when it's reference material (like a crash sheet).
