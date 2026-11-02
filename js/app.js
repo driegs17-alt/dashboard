@@ -49,10 +49,45 @@ const AGENT_TYPES = {
   },
   research: { label: "Research", hint: "Look things up and come back with a short, sourced answer or list." },
   draft: { label: "First draft", hint: "Write a first draft for you to edit: an email, a write-up, copy, an outline. Not for graded assignments." },
-  plan: { label: "Break it down", hint: "Turn a big task into small dated steps you can check off, with time estimates." },
+  plan: { label: "Break it down", hint: "Turn a big task into small dated steps you can check off, with time estimates. Claude can propose focus blocks for your calendar; they're only added after you say yes." },
+  advise: { label: "Advice", hint: "A straight recommendation: what to do, why, what you might be missing, and the next step. Looks at your deadlines, calendar and inbox." },
   custom: { label: "Something else", hint: "Describe exactly what you want below." },
 };
 const AGENT_LIVE = ["queued", "working", "needs-you"];
+
+// One-tap business jobs (Business tab). Each opens the hand-off dialog pre-filled.
+const BIZ_JOBS = [
+  {
+    id: "leads",
+    title: "Find 10 new Athens leads",
+    type: "research",
+    ask: "Find 10 Athens, GA bars, restaurants or small businesses that have no website or a weak one and aren't already in data/leads.csv or my Data_Catalog sheet. For each: name, area, type, website status, why they're a fit, and the best way to reach the owner. Add them to the Data_Catalog sheet as new rows marked 'added by Claude' with today's date.",
+  },
+  {
+    id: "outreach",
+    title: "Draft outreach to my 3 best leads",
+    type: "draft",
+    ask: "Pick the 3 strongest leads (no website, clearly active, good fit). Write a short, personal first message for each (email if there's an address, otherwise a DM or a walk-in script). Put emails in my Gmail drafts. Don't send anything.",
+  },
+  {
+    id: "pricing",
+    title: "Price my web design services",
+    type: "research",
+    ask: "Research what freelance web designers charge small restaurants and bars in Athens, GA and similar college towns. Recommend 3 packages (what's included, price, turnaround) for a student designer starting out, plus a one-paragraph pitch and how to handle 'can you do it cheaper?'.",
+  },
+  {
+    id: "product",
+    title: "Test my next product idea",
+    type: "research",
+    ask: "Take the top idea in data/products.json that hasn't been tested. Check demand (search trends, competitors, price points, reviews), suppliers and margins, then give a go / no-go and a first test I can run for $50 or less this week.",
+  },
+  {
+    id: "review",
+    title: "Weekly business review",
+    type: "advise",
+    ask: "Look at my Athens leads, product tests, recent Agents results and anything business-related in my inbox from the last week. What's working, what should I drop, and what's the one business move for this week that fits around school?",
+  },
+];
 
 const RESET_STEPS = [
   "Skim eLC announcements for anything the robot can't see (in-class changes, new instructions).",
@@ -1421,7 +1456,7 @@ function itemSnapshot(item) {
   };
 }
 
-function openHandoff(itemOrTitle) {
+function openHandoff(itemOrTitle, preset = null) {
   if (needsKey("Connect this device to hand tasks to Claude.")) return;
   const isItem = typeof itemOrTitle === "object";
   const item = isItem ? itemOrTitle : { id: `free-${Date.now().toString(36)}`, title: itemOrTitle, course: "" };
@@ -1434,9 +1469,9 @@ function openHandoff(itemOrTitle) {
     .filter(([key]) => !(isClass && key === "draft"))
     .map(([key, t]) => `<option value="${key}">${escapeHtml(t.label)}</option>`)
     .join("");
-  $("hand-type").value = isClass ? "prep" : "research";
+  $("hand-type").value = preset ? preset.type : isClass ? "prep" : "research";
   $("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint;
-  $("hand-ask").value = "";
+  $("hand-ask").value = preset ? preset.ask : "";
   $("hand-msg").textContent = "";
   const modal = $("hand-modal");
   if (typeof modal.showModal === "function") modal.showModal();
@@ -1472,6 +1507,45 @@ async function queueJob(event) {
   } finally {
     button.disabled = false;
   }
+}
+
+async function askClaude(event) {
+  event.preventDefault();
+  if (needsKey("Connect this device to ask Claude.")) return;
+  const text = $("ask-text").value.trim();
+  if (!text) return;
+  const title = text.length > 80 ? `${text.slice(0, 77).replace(/\s+\S*$/, "")}…` : text;
+  const job = {
+    id: `job-${Date.now().toString(36)}`,
+    type: "advise",
+    item: { id: `ask-${Date.now().toString(36)}`, title, course: "", due: null, url: "", note: "" },
+    ask: text,
+    status: "queued",
+    requested: new Date().toISOString(),
+  };
+  const button = event.target.querySelector("button[type=submit]");
+  button.disabled = true;
+  try {
+    state.agent = await updateJson("data/agent.json", (data) => ({ ...data, jobs: [...(data.jobs || []), job] }), `Ask Claude: ${title}`);
+    $("ask-text").value = "";
+    toast("Asked. The answer shows up in Agents within the hour.");
+    renderAll();
+  } catch (error) {
+    saveError(error);
+  } finally {
+    button.disabled = false;
+  }
+}
+
+function renderBizJobs() {
+  $("biz-jobs").innerHTML = BIZ_JOBS.map((j) => {
+    const job = (state.agent.jobs || []).find((x) => x.item && x.item.id === `biz-${j.id}` && AGENT_LIVE.includes(x.status));
+    return `<button type="button" class="biz-job" data-biz="${j.id}" ${job ? "disabled" : ""}>
+      <span class="biz-type">${escapeHtml(AGENT_TYPES[j.type].label)}</span>
+      <strong>${escapeHtml(j.title)}</strong>
+      <span class="biz-state">${job ? `Claude: ${escapeHtml(STATUS_TEXT[job.status])}` : "Queue it →"}</span>
+    </button>`;
+  }).join("");
 }
 
 async function changeJob(id, change, message, done) {
@@ -1746,6 +1820,7 @@ function renderAll() {
   renderDeadlines(c);
   renderApps();
   renderAgents();
+  renderBizJobs();
   if (state.courses.length) renderCourses(c);
 }
 
@@ -1807,6 +1882,15 @@ async function start() {
     }
     const g = e.target.closest("[data-gtab]");
     if (g) { state.gradeTab = g.dataset.gtab; renderGrades(); return; }
+    const bz = e.target.closest("[data-biz]");
+    if (bz) {
+      const preset = BIZ_JOBS.find((j) => j.id === bz.dataset.biz);
+      if (preset) {
+        openHandoff(preset.title, preset);
+        if (state.handTarget) state.handTarget.id = `biz-${preset.id}`;
+      }
+      return;
+    }
     const a = e.target.closest("[data-hand],[data-result],[data-cancel-job],[data-requeue],[data-archive]");
     if (a) {
       if (a.dataset.hand) {
@@ -1829,6 +1913,7 @@ async function start() {
   });
   $("add-task").addEventListener("submit", addTask);
   $("hand-form").addEventListener("submit", queueJob);
+  $("ask-form").addEventListener("submit", askClaude);
   $("grades-lock").addEventListener("submit", unlockGrades);
   $("ov-form").addEventListener("submit", (e) => { e.preventDefault(); saveOverride(false); });
   $("ov-clear").addEventListener("click", () => saveOverride(true));

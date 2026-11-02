@@ -7,7 +7,7 @@ The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Cla
 ```json
 {
   "id": "job-…",
-  "type": "prep | research | draft | plan | custom",
+  "type": "prep | research | draft | plan | advise | custom",
   "item": { "id": "…", "title": "…", "course": "ECON 2105", "due": "ISO date or null", "url": "eLC link", "note": "…", "parts": [{ "id": "…", "title": "…" }] },
   "ask": "Dylan's instructions (may be empty)",
   "replies": [{ "at": "ISO", "text": "Dylan's answer to an earlier question" }],
@@ -48,13 +48,25 @@ Before starting a job, the subagent loads the skills that fit (Skill tool) and u
 
 | Job | Skills | Connectors |
 |---|---|---|
-| Research (leads, products, competitors, jobs) | `deep-research`; `marketing:competitive-brief` for product/market questions | Google Sheets for the Athens leads / product trackers |
-| Lead outreach, application emails, instructor emails | `marketing:content-creation`, `marketing:email-sequence` | Gmail (drafts only, never sends) |
+| Advice ("Ask Claude" on Today, weekly business review) | `ease-os:sparring-partner` (pressure-test before recommending); `gia-chief-of-staff:ops-check` for "catch me up" questions | Google Calendar + Gmail (read) for context, Google Sheets for leads |
+| Research (leads, products, competitors, jobs) | `deep-research`; `marketing:competitive-brief`; Small Business `lead-finder` / Sales `account-research` if installed | Google Sheets for the Athens leads / product trackers |
+| Lead outreach, application emails, instructor emails | `marketing:content-creation`, `marketing:email-sequence`; Small Business `outreach-composer` / `proposal-builder` or Sales `draft-outreach` if installed | Gmail (drafts only, never sends) |
 | Plan / break it down | `productivity:task-management` | Google Calendar (proposes focus blocks; adds them only after Dylan says yes) |
 | Study prep | `xlsx`/`docx`/`pdf` only if a file helps | Google Drive for Dylan's own notes |
 | Portfolio, case studies, design feedback | `design:design-critique`, `design:ux-copy`, `design-superpowers:design-review` | Figma, Adobe |
 | E-commerce | `marketing:campaign-plan`, `liquid-dev:theme-dev` once a store exists | Shopify (once a store exists) |
 | Anything producing a spreadsheet, doc or deck | `xlsx`, `docx`, `pptx`, `pdf` | Google Drive to save it where Dylan asked |
+
+## Approvals (needs-you → yes)
+
+Some jobs stop to ask before doing something outside the dashboard. On a later run, when the job is back in the queue with a reply:
+- **Calendar:** if the result proposed focus blocks and the latest reply clearly says yes (or "yes except …"), create exactly those events in Google Calendar (title prefixed "Focus: ", 10-minute popup reminder), then mark the job done with a summary like "Added 5 focus blocks". Anything unclear → ask again.
+- **Gmail drafts:** Claude never sends. If Dylan replies "send it", answer: "Open Gmail → Drafts and hit send; I can't send for you." and mark done.
+- **Sheets:** edits a job asked for are part of the job; no extra approval needed, but never delete or overwrite Dylan's rows.
+
+## Private data
+
+Results are in a public repo. Advice and plans can use what's in Dylan's calendar and inbox, but the result file must not quote emails, name private contacts, or list his calendar events. Summarize ("you have two evening commitments Tuesday") and keep specifics in Gmail drafts or the push notification instead.
 
 ## Result file format
 
@@ -65,5 +77,6 @@ Markdown, readable on a phone. Start with a one-paragraph "Bottom line", then th
 - **prep**: Bottom line → key terms (one line each) → formulas/models with when to use them → 2–4 worked examples of the kind of problem the course tests (made up, not copied from the graded set) → common traps → a 5-question self-check with answers at the bottom → a suggested order and time box for the actual assignments.
 - **research**: Bottom line → findings (table if comparing) → recommended next step → Sources.
 - **draft**: Bottom line → the draft, ready to edit → notes on choices made. Never sent.
-- **plan**: Bottom line → steps as `- [ ]` checkboxes with dates and time estimates, working back from the due date → first 25-minute step.
+- **plan**: Bottom line → steps as `- [ ]` checkboxes with dates and time estimates, working back from the due date → first 25-minute step. If Google Calendar is connected, read his calendar and propose focus blocks in free time (a table: day, start–end, what), then set `needs-you` with "Add these N focus blocks to your calendar?" Don't add them yet.
+- **advise**: Executive-assistant tone, direct and warm, no hedging filler. Bottom line (the recommendation in one or two sentences) → why (3 bullets max, tied to his actual deadlines, grades counts he mentioned, calendar load, money) → what you might be missing (pressure-test it: risks, the strongest counter-argument, what would change the answer) → next step he can do in under 30 minutes → confidence (high / medium / low and why). If the question is really a decision only he can make (values, relationships), lay out the options and trade-offs instead of picking.
 - **custom**: follow `ask`; if unclear, ask one question via `needs-you`.

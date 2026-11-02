@@ -74,6 +74,21 @@
         </section>
       </div>
 
+      <form class="panel ask" id="ask-form" autocomplete="off">
+        <header class="panel-head">
+          <h2>Ask Claude</h2>
+          <p class="method">A decision, a plan, a "what should I do about…". Claude looks at your deadlines, calendar and inbox and answers on the Agents tab within the hour. For a quick back-and-forth, just chat in the Claude app.</p>
+        </header>
+        <label class="field">
+          <span class="sr-only">Your question</span>
+          <textarea id="ask-text" rows="3" maxlength="1500" placeholder="e.g. Should I take on a second web client this month or focus on finals?" required></textarea>
+        </label>
+        <div class="ask-row">
+          <span class="muted ask-note">Advice only. Nothing gets sent or booked without you.</span>
+          <button type="submit" class="btn solid">Ask</button>
+        </div>
+      </form>
+
       <form class="add-task" id="add-task" autocomplete="off">
         <p class="add-title">Capture a task</p>
         <div class="add-row">
@@ -198,6 +213,12 @@
         <h1 id="business-title" class="view-title">Business</h1>
         <p class="block-note">School comes first. Come here once Today's 3 is done and give it one focused block.</p>
       </header>
+
+      <section class="sub" aria-labelledby="biz-agents-title">
+        <h2 id="biz-agents-title" class="sub-title">Hand it to Claude</h2>
+        <p class="block-note">One tap queues the job. You can edit the instructions first. Results land in Agents; anything that goes out (emails, outreach) waits as a draft for your OK.</p>
+        <div class="biz-jobs" id="biz-jobs"></div>
+      </section>
 
       <section class="sub" aria-labelledby="shop-title">
         <h2 id="shop-title" class="sub-title">Products to test</h2>
