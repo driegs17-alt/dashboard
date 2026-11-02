@@ -27,7 +27,7 @@
         "note": ""
       },
       "ask": "i need an outline built for my oral history essay project from history class. ask for any necessary files and information required to complete this and follow Dr. Wolf's instructions as closely as possible.",
-      "status": "needs-you",
+      "status": "queued",
       "requested": "2026-11-02T20:26:23.986Z",
       "started": "2026-11-02T20:44:44.000Z",
       "asked": "2026-11-02T21:52:22.000Z",
@@ -40,6 +40,10 @@
           "at": "2026-11-02T21:48:42.530Z",
           "text": "(attached files)",
           "files": 1
+        },
+        {
+          "at": "2026-11-02T21:57:31.640Z",
+          "text": "find a better way to get the media."
         }
       ],
       "files": [
