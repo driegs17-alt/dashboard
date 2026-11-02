@@ -39,3 +39,9 @@ A daily operating system for school and side business. Live at https://driegs17-
 Install the **Live Server** extension in VS Code, then right-click `index.html` → **Open with Live Server**.
 
 > This repo and site are public. Don't put passwords, grades, or anything private in these files. (Grades only ever go in encrypted.)
+
+## Claude agents: instant runs, private files, live updates
+
+- **Instant start.** `.github/workflows/run-agents.yml` starts the "Dashboard agents" scheduled task as soon as a job is queued. It needs two repo secrets (Settings → Secrets and variables → Actions): `ROUTINE_FIRE_URL` and `ROUTINE_FIRE_TOKEN`, from the task's **API** trigger at claude.ai/code/routines (Add another trigger → API → Generate token). Without them, the hourly run still works.
+- **Private files and links.** Attachments are encrypted in the browser to `data/agent-files-key.json` (public half). The private half (`ak1-…`) goes only in the Dashboard agents task instructions, on the `AGENT_FILES_KEY=` line. Lost it? Run `python3 scripts/agent_files.py keygen`, commit the new public key, and paste the new private key into the task. Results of jobs with attachments are sealed to your grades key and open on any device where Grades is unlocked.
+- **Live.** While a job runs, the Agents tab refreshes every 20 s: progress, log, **Tell Claude** (redirect mid-run), **Stop**, and **Open live session** for instant runs. Live updates need this device connected (the Connect button).
