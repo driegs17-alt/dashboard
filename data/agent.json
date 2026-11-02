@@ -35,6 +35,29 @@
       "result": "agent/results/job-mvzplr3m.md",
       "summary": "Generic oral history outline template + era context bank is ready to fill in. Outline/Context is due Tue Nov 3, 2:55 PM ET.",
       "question": "I couldn't see Dr. Wolf's instructions: Google Drive is missing a permission and Gmail searches came back empty. Can you reconnect Google Drive (full read access) and put the assignment sheet/rubric plus your interview notes or transcript in a Drive folder named \"HIST 2112 Oral History\", or paste them in a reply? Also: who did you interview (first name or role), and what era did they talk about?"
+    },
+    {
+      "id": "job-mvzrp3o4",
+      "type": "prep",
+      "item": {
+        "id": "free-mvzrj7yg",
+        "title": "i need all of my macro assignments done by the deadlines and submitted with utmost accuracey. make sure every assignment recieves a 100%",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "complete all of the assignmetns attached to macroeconomics on the macmillan page.",
+      "status": "queued",
+      "requested": "2026-11-02T21:24:59.476Z",
+      "files": [
+        {
+          "path": "data/uploads/job-mvzrp3o4/01.enc.json",
+          "kind": "links",
+          "size": 92
+        }
+      ],
+      "private": true
     }
   ]
 }
