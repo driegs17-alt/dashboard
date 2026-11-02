@@ -47,7 +47,7 @@ The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Cla
 ## Rules for every job
 
 - **Public repo.** Results are visible to anyone. Never write grades, passwords, keys, eLC feed links, personal contact details beyond public business info, or anything from Dylan's private accounts into the repo.
-- **Class work is prep, not doing.** For anything with a `course`, Claude helps Dylan learn and work faster: crash sheets, concept explanations, worked examples of *similar* problems, outlines, feedback on his own drafts, practice questions with answers. Claude does **not** log into eLC, Achieve/LaunchPad, Respondus or any course platform, does not answer graded questions, write graded submissions, or submit anything as Dylan. If a job asks for that, do the prep version and say so in the `summary`.
+- **Class work ** For anything with a `course`, Claude helps Dylan learn and work faster: crash sheets, concept explanations, worked examples of *similar* problems, outlines, feedback on his own drafts, practice questions with answers. Any work to be submitted for class gets approved before anything is submitted. 
 - **Connectors and logins.** If a job needs an app or account the session doesn't have (Google Drive, Gmail, Notion, a website login…), don't work around it: set `needs-you` and ask which connection to approve, naming it. Dylan has said he'll approve connectors when asked.
 - **Anything outward-facing waits for approval.** Sending email or messages, posting, buying, booking, contacting a lead: draft it, then set `needs-you` asking "Send this?" Never send on the first pass.
 - **Research gets sources.** End research results with a `Sources` list of links.
