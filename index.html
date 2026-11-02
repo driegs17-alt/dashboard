@@ -31,6 +31,7 @@
         <a href="#week" data-tab="week">Week</a>
         <a href="#apply" data-tab="apply">Apply</a>
         <a href="#classes" data-tab="classes">Classes</a>
+        <a href="#grades" data-tab="grades">Grades<span class="tab-badge" id="grades-badge" hidden></span></a>
         <a href="#business" data-tab="business">Business</a>
         <a href="#agents" data-tab="agents">Agents<span class="tab-badge" id="agent-badge" hidden></span></a>
       </nav>
@@ -141,6 +142,33 @@
         <p class="block-note"><a href="https://uga.view.usg.edu/d2l/le/worktodo/view" target="_blank" rel="noopener">eLC due date tracker ↗</a> · <a href="https://uga.view.usg.edu/d2l/home" target="_blank" rel="noopener">eLC home ↗</a></p>
       </header>
       <div id="course-grid" class="course-grid"></div>
+    </section>
+
+    <!-- ===================== GRADES ===================== -->
+    <section class="view" id="view-grades" data-view="grades" aria-labelledby="grades-title" hidden>
+      <header class="view-head">
+        <p class="eyebrow">Fall 2026</p>
+        <h1 id="grades-title" class="view-title">Grades</h1>
+        <p class="block-note" id="grades-note">Pulled from eLC and encrypted, so only your devices can read them.</p>
+      </header>
+
+      <form class="panel grades-lock" id="grades-lock" autocomplete="off" hidden>
+        <header class="panel-head">
+          <h2>Unlock grades on this device</h2>
+          <p class="method">The site is public, so grades are stored encrypted. Paste your grades key once per device (it starts with <code>gk1-</code>). It stays on this device only.</p>
+        </header>
+        <div class="add-row">
+          <label class="field grow">
+            <span class="sr-only">Grades key</span>
+            <input id="grades-key-input" type="password" placeholder="gk1-…" spellcheck="false" autocomplete="off">
+          </label>
+          <button type="submit" class="btn solid">Unlock</button>
+        </div>
+        <p class="form-msg" id="grades-msg" role="status"></p>
+      </form>
+
+      <div class="chips grade-tabs" id="grade-tabs" role="tablist" aria-label="Classes"></div>
+      <div id="grades-body"></div>
     </section>
 
     <!-- ===================== BUSINESS ===================== -->

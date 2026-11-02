@@ -10,13 +10,17 @@ A daily operating system for school and side business. Live at https://driegs17-
 | **Week** | Two-week load strip, the Sunday weekly reset, and every deadline | GTD weekly review, plus Eisenhower-style triage: what's urgent now vs. what's handled for later |
 | **Apply** | One card per job/internship application: checklist with dates, how to send, notes, plus the master materials library | Treat applications like projects: one owner, dated steps, a clear finish line |
 | **Classes** | One card per course with its next deadline and an eLC link | Reference only |
+| **Grades** | Overall grade per class (from eLC's categories and weights), the best/worst-case range, and every missing, flagged or awaiting-grade item | Know where you stand before it's a surprise |
 | **Business** | Product tests and Athens web leads | Protect focus: school first, then one focused business block |
+| **Agents** | Hand any task to Claude (⇢ button). An hourly Claude run splits it across subagents and posts the result here | Delegate what doesn't need you |
 
 ## How it stays up to date
 
 - **eLC deadlines** sync automatically every 15 minutes (`.github/workflows/sync-elc.yml` → `data/deadlines.json`). Don't edit that file by hand.
 - **Check-offs, Today's 3 picks and new tasks** save from the site once a device is connected (Connect button, one-time GitHub key).
 - **Morning brief** arrives as a push notification each morning.
+- **Agents**: jobs queue in `data/agent.json`; a scheduled Claude run follows `agent/RUNNER.md` and writes results to `agent/results/`.
+- **Grades**: a Claude run reads your gradebook in eLC (`agent/GRADES.md`) and saves it **encrypted** in `data/grades.enc.json`. Unlock it once per device with your grades key (`gk1-…`). The math is in `scripts/build_grades.py`.
 
 ## Files you can edit (in VS Code or on GitHub)
 
@@ -34,4 +38,4 @@ A daily operating system for school and side business. Live at https://driegs17-
 
 Install the **Live Server** extension in VS Code, then right-click `index.html` → **Open with Live Server**.
 
-> This repo and site are public. Don't put passwords, grades, or anything private in these files.
+> This repo and site are public. Don't put passwords, grades, or anything private in these files. (Grades only ever go in encrypted.)

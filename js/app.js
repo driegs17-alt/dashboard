@@ -33,6 +33,7 @@ const REPO = "dashboard";
 const BRANCH = "main";
 const REFRESH_MS = 3 * 60 * 1000;
 const TOKEN_KEY = "dashboard.githubKey";
+const GRADES_KEY = "dashboard.gradesKey";
 const PENDING_KEY = "dashboard.pendingDone";
 const FOCUS_KEY = "dashboard.focusEnd";
 const FOCUS_MINUTES = 50;
@@ -78,6 +79,10 @@ const state = {
   courses: [],
   courseNames: {},
   agent: { jobs: [] },
+  gradesKey: storage.get(GRADES_KEY) || "",
+  grades: null,
+  gradesError: "",
+  gradeTab: "issues",
   handTarget: null,
   token: storage.get(TOKEN_KEY) || "",
 };
@@ -947,6 +952,200 @@ function tickFocus() {
 }
 
 
+
+/* ---------- Grades (encrypted; only devices with the key can read) ---------- */
+
+const b64uBytes = (s) => Uint8Array.from(atob(s.replace(/-/g, "+").replace(/_/g, "/").padEnd(Math.ceil(s.length / 4) * 4, "=")), (c) => c.charCodeAt(0));
+
+async function decryptGrades(enc, pubJwk, deviceKey) {
+  const d = deviceKey.trim().replace(/^gk1-/, "");
+  const ecdh = { name: "ECDH", namedCurve: "P-256" };
+  const priv = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: pubJwk.x, y: pubJwk.y, d, ext: true }, ecdh, false, ["deriveBits"]);
+  const epk = await crypto.subtle.importKey("jwk", { kty: "EC", crv: "P-256", x: enc.epk.x, y: enc.epk.y, ext: true }, ecdh, false, []);
+  const bits = await crypto.subtle.deriveBits({ name: "ECDH", public: epk }, priv, 256);
+  const hk = await crypto.subtle.importKey("raw", bits, "HKDF", false, ["deriveKey"]);
+  const aes = await crypto.subtle.deriveKey(
+    { name: "HKDF", hash: "SHA-256", salt: new Uint8Array(32), info: new TextEncoder().encode("dashboard-grades-v1") },
+    hk, { name: "AES-GCM", length: 256 }, false, ["decrypt"]
+  );
+  const plain = await crypto.subtle.decrypt({ name: "AES-GCM", iv: b64uBytes(enc.iv) }, aes, b64uBytes(enc.ct));
+  return JSON.parse(new TextDecoder().decode(plain));
+}
+
+async function loadGrades() {
+  if (!state.gradesKey) { state.grades = null; renderGrades(); return; }
+  try {
+    const [enc, pub] = await Promise.all([loadJson("data/grades.enc.json", null), loadJson("data/grades-key.json", null)]);
+    if (!enc || !enc.ct) { state.grades = { scraped: null, courses: [] }; state.gradesError = ""; }
+    else { state.grades = await decryptGrades(enc, pub, state.gradesKey); state.gradesError = ""; }
+  } catch (error) {
+    console.warn(error);
+    state.grades = null;
+    state.gradesError = "That key doesn't open these grades. Check you copied all of it.";
+  }
+  renderGrades();
+}
+
+async function unlockGrades(event) {
+  event.preventDefault();
+  const value = $("grades-key-input").value.trim();
+  if (!value) return;
+  state.gradesKey = value;
+  await loadGrades();
+  if (state.grades) {
+    storage.set(GRADES_KEY, value);
+    toast("Grades unlocked on this device.");
+  } else {
+    state.gradesKey = "";
+  }
+  renderGrades();
+}
+
+const GRADE_STATUS = {
+  flagged: { label: "Submitted, shows 0 / overdue", cls: "warn" },
+  missing: { label: "Missing", cls: "bad" },
+  check: { label: "No grade yet · check", cls: "warn" },
+  submitted: { label: "Submitted · awaiting grade", cls: "wait" },
+  upcoming: { label: "Not due yet", cls: "none" },
+  cleared: { label: "Done · eLC still says overdue", cls: "good" },
+  graded: { label: "Graded", cls: "good" },
+  info: { label: "Not graded yet", cls: "none" },
+};
+const ISSUE = ["flagged", "missing", "check"];
+
+function pctText(n) {
+  return n == null ? "–" : `${Number(n).toFixed(1)}%`;
+}
+
+function gradeRow(item, course) {
+  const s = GRADE_STATUS[item.status] || GRADE_STATUS.info;
+  const due = item.due ? new Date(item.due) : null;
+  const meta = [
+    course ? course.short : "",
+    item.category,
+    due ? `Due ${dayLabel(due)}` : "",
+    item.submittedAt ? `Submitted ${new Date(item.submittedAt).toLocaleDateString(undefined, { month: "short", day: "numeric" })}` : "",
+    item.feedback ? "Has feedback" : "",
+  ].filter(Boolean).join(" · ");
+  const hint =
+    item.status === "flagged" ? "You submitted this, but eLC shows a zero or still lists it as overdue. It may just need grading. If it stays like this, email your instructor." :
+    item.status === "check" ? "Done outside eLC (like Achieve or InQuizitive). eLC can't see whether you did it, so check there." :
+    item.status === "missing" ? "Past due and nothing turned in. Check whether late work is accepted." : "";
+  return `
+    <article class="grade-row is-${escapeHtml(item.status)}">
+      <span class="gstatus ${s.cls}">${escapeHtml(s.label)}</span>
+      <div>
+        <h3 class="task-title">${escapeHtml(item.name)}</h3>
+        ${meta ? `<p class="task-meta">${escapeHtml(meta)}</p>` : ""}
+        ${hint ? `<p class="grade-hint">${escapeHtml(hint)}</p>` : ""}
+      </div>
+      <span class="gscore">${escapeHtml(item.score || "–")}${item.pct != null ? `<small>${escapeHtml(Math.round(item.pct))}%</small>` : ""}</span>
+    </article>`;
+}
+
+function rangeBar(g) {
+  if (g.floor == null || g.ceiling == null) return "";
+  const pos = (n) => Math.max(0, Math.min(100, n));
+  return `
+    <div class="grade-range" role="img" aria-label="Final grade range ${pctText(g.floor)} to ${pctText(g.ceiling)}${g.current != null ? `, now ${pctText(g.current)}` : ""}">
+      <div class="track">
+        ${[60, 70, 80, 90].map((m) => `<span class="tick" style="left:${m}%"><i>${m}</i></span>`).join("")}
+        <span class="span" style="left:${pos(g.floor)}%;width:${pos(g.ceiling) - pos(g.floor)}%"></span>
+        ${g.current != null ? `<span class="now" style="left:${pos(g.current)}%"></span>` : ""}
+      </div>
+      <p class="range-note"><span>If nothing else is turned in: <b>${pctText(g.floor)}</b></span><span>If everything left is perfect: <b>${pctText(g.ceiling)}</b></span></p>
+    </div>`;
+}
+
+function gradeCardHtml(c) {
+  const g = c.grade || {};
+  const k = c.counts || {};
+  const issues = [k.missing ? `<b class="bad">${k.missing} missing</b>` : "", k.flagged ? `<b class="warn">${k.flagged} flagged</b>` : "", k.check ? `<b class="warn">${k.check} to check</b>` : "", k.submitted ? `${k.submitted} awaiting grade` : ""].filter(Boolean).join(" · ");
+  return `<button type="button" class="grade-card" data-gtab="${escapeHtml(c.code)}">
+    <span class="course-code">${escapeHtml(c.code)}</span>
+    <strong>${escapeHtml(c.short)}</strong>
+    <span class="grade-final">${g.current != null ? `${pctText(g.current)} <em>${escapeHtml(g.letter)}</em>` : "See eLC"}</span>
+    ${g.gradedShare != null ? `<span class="grade-share"><span style="width:${Math.min(100, g.gradedShare)}%"></span></span><span class="grade-counts">${Math.round(g.gradedShare)}% of the class graded so far</span>` : `<span class="grade-counts">Custom formula</span>`}
+    <span class="grade-counts">${issues || "Nothing missing"}</span>
+  </button>`;
+}
+
+function renderGrades() {
+  const locked = !state.gradesKey || !state.grades;
+  $("grades-lock").hidden = !locked;
+  $("grades-msg").textContent = state.gradesError;
+  $("grades-msg").className = `form-msg${state.gradesError ? " error-text" : ""}`;
+  const badge = $("grades-badge");
+  if (locked) {
+    $("grade-tabs").innerHTML = "";
+    $("grades-body").innerHTML = "";
+    badge.hidden = true;
+    return;
+  }
+  const courses = state.grades.courses || [];
+  $("grades-note").textContent = state.grades.scraped
+    ? `From eLC, checked ${ago(state.grades.scraped)}. Encrypted, so only your devices can read this.`
+    : "No grades pulled yet. The first eLC check fills this in.";
+  const issues = courses.flatMap((c) => c.items.filter((i) => ISSUE.includes(i.status)).map((i) => ({ i, c })));
+  badge.hidden = !issues.length;
+  badge.textContent = issues.length ? String(issues.length) : "";
+
+  const tabs = [{ id: "issues", label: "Overview" }, ...courses.map((c) => ({ id: c.code, label: c.short }))];
+  if (!tabs.some((t) => t.id === state.gradeTab)) state.gradeTab = "issues";
+  $("grade-tabs").innerHTML = tabs
+    .map((t) => `<button type="button" class="chip" role="tab" data-gtab="${escapeHtml(t.id)}" aria-selected="${t.id === state.gradeTab}" aria-pressed="${t.id === state.gradeTab}">${escapeHtml(t.label)}</button>`)
+    .join("");
+
+  if (state.gradeTab === "issues") {
+    $("grades-body").innerHTML = `
+      <div class="grade-cards">${courses.map(gradeCardHtml).join("")}</div>
+      <div class="group"><h3 class="group-title"><span>Needs attention</span> <span class="count">${issues.length}</span><span class="group-note">Missing, or submitted but eLC shows a zero or overdue.</span></h3>
+      ${issues.length ? issues.map(({ i, c }) => gradeRow(i, c)).join("") : `<p class="muted">Nothing missing. Nice.</p>`}</div>
+      <p class="block-note">Grades are worked out from each class's gradebook categories and weights in eLC, counting only what's been graded. Letters use UGA's standard plus/minus scale; your syllabus has the final say.</p>`;
+    return;
+  }
+  const c = courses.find((x) => x.code === state.gradeTab);
+  const g = c.grade || {};
+  const cats = (g.categories || []).length
+    ? `<div class="cat-table-wrap"><table class="cat-table">
+        <thead><tr><th scope="col">Category</th><th scope="col">Weight</th><th scope="col">Your score</th><th scope="col">Graded</th><th scope="col">Points toward final</th></tr></thead>
+        <tbody>${g.categories.map((k) => `
+          <tr>
+            <th scope="row">${escapeHtml(k.name)}${k.dropLow ? `<small>Lowest ${k.dropLow} dropped</small>` : ""}</th>
+            <td>${escapeHtml(k.weight)}%</td>
+            <td><span class="cat-bar"><span style="width:${k.pct ?? 0}%"></span></span>${pctText(k.pct)}</td>
+            <td>${k.graded} of ${k.total}</td>
+            <td>${k.earned != null ? `${Number(k.earned).toFixed(1)} / ${escapeHtml(k.weight)}` : "–"}</td>
+          </tr>`).join("")}</tbody></table></div>`
+    : "";
+  const groups = [
+    ["Needs attention", c.items.filter((i) => ISSUE.includes(i.status)), true],
+    ["Submitted, waiting on a grade", c.items.filter((i) => i.status === "submitted"), true],
+    ["Coming up", c.items.filter((i) => i.status === "upcoming"), true],
+    ["Graded", c.items.filter((i) => i.status === "graded"), false],
+    ["eLC says overdue, but it's done", c.items.filter((i) => i.status === "cleared"), false],
+    ["Not graded yet", c.items.filter((i) => i.status === "info"), false],
+  ];
+  $("grades-body").innerHTML = `
+    <div class="grade-head">
+      <div>
+        <p class="course-code">${escapeHtml(c.code)}</p>
+        <h2 class="grade-course">${escapeHtml(c.short)}</h2>
+        <p class="task-meta">${escapeHtml(g.note || "")}</p>
+      </div>
+      <div class="grade-final big">${g.current != null ? `${pctText(g.current)}<em>${escapeHtml(g.letter)}</em>` : "See eLC"}<small>${g.current != null ? `On graded work · ${Math.round(g.gradedShare)}% of class graded` : "Custom formula"}</small></div>
+    </div>
+    ${rangeBar(g)}
+    ${cats}
+    ${groups.map(([title, list, open]) => {
+      if (!list.length) return "";
+      const head = `<span>${title}</span> <span class="count">${list.length}</span>`;
+      const rows = list.map((i) => gradeRow(i)).join("");
+      return open ? `<div class="group"><h3 class="group-title">${head}</h3>${rows}</div>` : `<details class="group"><summary class="group-title">${head}</summary>${rows}</details>`;
+    }).join("")}
+    ${c.url ? `<p class="block-note"><a href="${escapeHtml(c.url)}" target="_blank" rel="noopener">Open grades in eLC ↗</a></p>` : ""}`;
+}
+
 /* ---------- Agents: hand tasks to Claude ---------- */
 
 function jobsFor(itemId) {
@@ -1278,7 +1477,7 @@ async function saveToken(event) {
 
 /* ---------- Tabs ---------- */
 
-const TABS = ["today", "week", "apply", "classes", "business", "agents"];
+const TABS = ["today", "week", "apply", "classes", "grades", "business", "agents"];
 
 function showTab() {
   const tab = TABS.includes(location.hash.slice(1)) ? location.hash.slice(1) : "today";
@@ -1356,6 +1555,8 @@ async function start() {
       }
       return;
     }
+    const g = e.target.closest("[data-gtab]");
+    if (g) { state.gradeTab = g.dataset.gtab; renderGrades(); return; }
     const a = e.target.closest("[data-hand],[data-result],[data-cancel-job],[data-requeue],[data-archive]");
     if (a) {
       if (a.dataset.hand) {
@@ -1378,6 +1579,7 @@ async function start() {
   });
   $("add-task").addEventListener("submit", addTask);
   $("hand-form").addEventListener("submit", queueJob);
+  $("grades-lock").addEventListener("submit", unlockGrades);
   $("hand-cancel").addEventListener("click", () => $("hand-modal").close());
   $("hand-type").addEventListener("change", () => ($("hand-hint").textContent = AGENT_TYPES[$("hand-type").value].hint));
   $("result-close").addEventListener("click", () => $("result-modal").close());
@@ -1415,7 +1617,8 @@ async function start() {
   if (leadsText) setupLeads(parseCsv(leadsText));
 
   await refresh();
-  setInterval(() => { if (!document.hidden) refresh(); }, REFRESH_MS);
+  loadGrades();
+  setInterval(() => { if (!document.hidden) { refresh(); loadGrades(); } }, REFRESH_MS);
   document.addEventListener("visibilitychange", () => { if (!document.hidden) refresh(); });
   setInterval(tickFocus, 1000);
   setInterval(renderAll, 60 * 1000); // keep countdowns honest
