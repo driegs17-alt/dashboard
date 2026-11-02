@@ -1,6 +1,6 @@
 # Agent runner: how Claude works the dashboard queue
 
-The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Claude task ("Dashboard agents") runs this file every hour, 8 AM to midnight ET. Any Claude session can also run it by hand ("work my dashboard queue").
+The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Claude task ("Dashboard agents") runs this file as soon as a job is queued (the GitHub Action `.github/workflows/run-agents.yml` starts it whenever `data/agent.json` gains a queued job) and also every hour, 8 AM to midnight ET, as a backup. Any Claude session can also run it by hand ("work my dashboard queue").
 
 ## Job shape (`data/agent.json`)
 

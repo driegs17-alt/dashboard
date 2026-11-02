@@ -1,0 +1,46 @@
+# Starts the "Dashboard agents" scheduled task the moment a job is queued.
+# Put this file in the repo at: .github/workflows/run-agents.yml
+# Needs two repo secrets: ROUTINE_FIRE_URL and ROUTINE_FIRE_TOKEN
+# (the token is private: it lives only in GitHub Secrets, never in the site or repo files).
+
+name: Run agent queue now
+
+on:
+  push:
+    branches: [main]
+    paths: ['data/agent.json']
+  workflow_dispatch: {}
+
+# One start at a time, so two quick hand-offs don't race each other.
+concurrency:
+  group: agent-queue
+  cancel-in-progress: false
+
+jobs:
+  fire:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # Only start a run if something is actually waiting. The agent's own
+      # commits (marking jobs working/done) leave nothing queued, so they
+      # don't set off another run.
+      - name: Any queued jobs?
+        id: check
+        run: |
+          n=$(jq '[.jobs[]? | select(.status == "queued")] | length' data/agent.json)
+          echo "Queued jobs: $n"
+          echo "queued=$n" >> "$GITHUB_OUTPUT"
+
+      - name: Start Dashboard agents now
+        if: steps.check.outputs.queued != '0'
+        env:
+          ROUTINE_FIRE_URL: ${{ secrets.ROUTINE_FIRE_URL }}
+          ROUTINE_FIRE_TOKEN: ${{ secrets.ROUTINE_FIRE_TOKEN }}
+        run: |
+          curl -fsS -X POST "$ROUTINE_FIRE_URL" \
+            -H "Authorization: Bearer $ROUTINE_FIRE_TOKEN" \
+            -H "anthropic-beta: experimental-cc-routine-2026-04-01" \
+            -H "anthropic-version: 2023-06-01" \
+            -H "Content-Type: application/json" \
+            -d '{}'
