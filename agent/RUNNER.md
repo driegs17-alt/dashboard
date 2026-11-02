@@ -22,6 +22,7 @@ The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Cla
   "question": "what Claude needs from Dylan (needs-you only)",
   "summary": "one or two lines shown on the card",
   "result": "agent/results/<id>.md  (or <id>.enc.json when private)",
+  "outputs": [{ "title": "Oral history outline", "kind": "doc | sheet | deck | pdf | file | draft | calendar | figma | link", "url": "https://… (Drive, Gmail drafts, Calendar, Figma)", "path": "agent/outputs/<id>/… (a file in the repo instead of a url)", "note": "optional one line" }],
   "agents": 3
 }
 ```
@@ -39,9 +40,10 @@ The dashboard's **Agents** tab writes jobs to `data/agent.json`. A scheduled Cla
 5. **Finish each job.**
    - Success → write `agent/results/<id>.md`, set `status: "done"`, `finished: now`, `result`, and a 1–2 line `summary` (what's in it, the one thing to do next).
    - **Private jobs** (`private: true`, i.e. Dylan attached files or links): write the Markdown to `/tmp/agent-files/<id>/result.md`, then `python3 scripts/agent_files.py seal-result <id> /tmp/agent-files/<id>/result.md`, which writes `agent/results/<id>.enc.json`, encrypted to Dylan's key. Set `result` to that path. Never commit the plain Markdown. Keep the `summary`, `question` and `log` free of anything from the attachments (they're public).
+   - **Outputs.** List every file or document the job made in `outputs` (the result report is shown automatically; don't list it). Google Doc/Sheet/Slides → its Drive `url`; Gmail drafts → `https://mail.google.com/mail/u/0/#drafts`; calendar events → the event's `htmlLink`; a file with no app home (a .docx, .xlsx, .pdf, image) → commit it to `agent/outputs/<id>/<name>` and set `path`, or, for private jobs, `python3 scripts/agent_files.py seal-output <id> <file>` and set `path` to the `.enc.json` it prints. Private jobs: keep output titles generic (no names or details from attachments).
    - Blocked → `status: "needs-you"`, `asked: now`, a short, specific `question` (what's needed and why, with a yes/no or a choice where possible). Write any partial work to the result file and set `result` too.
    - Broken → `status: "failed"` with a `summary` that says why in plain words.
-6. **Save.** Validate `data/agent.json` parses. Commit `Claude: finished N jobs` (pull --rebase first; the site and the eLC robot also write to this repo; retry up to 3 times). Only touch `data/agent.json` and `agent/results/`. Delete `/tmp/agent-files/<id>` when a job is done, failed or cancelled.
+6. **Save.** Validate `data/agent.json` parses. Commit `Claude: finished N jobs` (pull --rebase first; the site and the eLC robot also write to this repo; retry up to 3 times). Only touch `data/agent.json`, `agent/results/` and `agent/outputs/`. Delete `/tmp/agent-files/<id>` when a job is done, failed or cancelled.
 7. **Tell Dylan.** One push notification if anything finished or needs him: e.g. "2 Claude jobs done (Macro Ch. 11 crash sheet, Athens leads). 1 needs you: approve Google Drive?" Link: https://driegs17-alt.github.io/dashboard/#agents
 
 ## Rules for every job

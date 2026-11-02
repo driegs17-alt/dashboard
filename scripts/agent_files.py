@@ -15,6 +15,8 @@ Usage (run from the repo root):
       Decrypt the job's uploads into <out-dir> (keep it OUTSIDE the repo).
   python3 scripts/agent_files.py seal-result <job-id> <markdown-file>
       Encrypt a result to Dylan's key -> agent/results/<job-id>.enc.json
+  python3 scripts/agent_files.py seal-output <job-id> <file>
+      Encrypt a file Claude made to Dylan's key -> agent/outputs/<job-id>/NN.enc.json
   python3 scripts/agent_files.py keygen
       New agent key pair: writes the public half, prints the private half once.
 
@@ -24,6 +26,8 @@ Formats (shared with js/app.js):
           HKDF info "dashboard-agent-files-v1".
   result  {v, kid, epk, iv, ct}; plaintext = UTF-8 Markdown.
           HKDF info "dashboard-agent-result-v1".
+  output  {v, kid, epk, iv, ct}; plaintext packed like an upload (meta + bytes).
+          HKDF info "dashboard-agent-output-v1".
 """
 
 import base64
@@ -41,6 +45,7 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 
 FILES_INFO = b"dashboard-agent-files-v1"
 RESULT_INFO = b"dashboard-agent-result-v1"
+OUTPUT_INFO = b"dashboard-agent-output-v1"
 AGENT_PUB = Path("data/agent-files-key.json")
 DYLAN_PUB = Path("data/grades-key.json")
 
@@ -142,6 +147,22 @@ def cmd_seal_result(job_id: str, md_file: str) -> None:
     print(target)
 
 
+def cmd_seal_output(job_id: str, file: str) -> None:
+    jwk = json.loads(DYLAN_PUB.read_text())
+    if not jwk.get("x"):
+        sys.exit("data/grades-key.json has no key; Dylan needs to tap Grades -> Create key.")
+    src = Path(file)
+    body = src.read_bytes()
+    meta = json.dumps({"name": src.name, "type": "", "size": len(body), "kind": "file"}).encode()
+    enc = seal(len(meta).to_bytes(4, "big") + meta + body, jwk, OUTPUT_INFO)
+    folder = Path("agent/outputs") / job_id
+    folder.mkdir(parents=True, exist_ok=True)
+    n = len(list(folder.glob("*.enc.json"))) + 1
+    target = folder / f"{n:02d}.enc.json"
+    target.write_text(json.dumps(enc) + "\n")
+    print(target)
+
+
 def cmd_keygen() -> None:
     priv = ec.generate_private_key(ec.SECP256R1())
     n = priv.public_key().public_numbers()
@@ -159,6 +180,8 @@ if __name__ == "__main__":
         cmd_open(args[1], args[2])
     elif args[:1] == ["seal-result"] and len(args) == 3:
         cmd_seal_result(args[1], args[2])
+    elif args[:1] == ["seal-output"] and len(args) == 3:
+        cmd_seal_output(args[1], args[2])
     elif args == ["keygen"]:
         cmd_keygen()
     else:

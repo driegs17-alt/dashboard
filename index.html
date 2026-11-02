@@ -253,30 +253,40 @@
       <header class="view-head">
         <p class="eyebrow">Delegate</p>
         <h1 id="agents-title" class="view-title">Agents</h1>
-        <p class="block-note">Hand a task to Claude with the ⇢ button on any item in Week, or add one below. A Claude run starts within a minute, splits it across subagents and posts progress here as it goes. Attach files or links and Claude works from them. While it runs you can redirect it or stop it; if it needs a login, a connector or a decision, it asks you.</p>
+        <p class="block-note">Hand work to Claude with ⇢ on any item in Week, or type a job below. <b>Jobs</b> shows what's waiting on you and what's running; <b>Outputs</b> collects everything Claude made.</p>
       </header>
 
-      <form class="add-task agent-new" id="agent-new" autocomplete="off">
-        <p class="add-title">New job</p>
-        <div class="add-row">
-          <label class="field grow">
-            <span class="sr-only">What should Claude do?</span>
-            <input id="agent-new-title" type="text" placeholder="e.g. Find 10 Athens bars with no website" required maxlength="160">
-          </label>
-          <button type="submit" class="btn solid">Next</button>
-        </div>
-      </form>
+      <div class="chips agent-tabs" id="agent-tabs" role="tablist" aria-label="Agents view"></div>
 
-      <div id="agent-list" class="task-groups agent-list"></div>
+      <div id="agent-jobs" role="tabpanel">
+        <form class="add-task agent-new" id="agent-new" autocomplete="off">
+          <p class="add-title">New job</p>
+          <div class="add-row">
+            <label class="field grow">
+              <span class="sr-only">What should Claude do?</span>
+              <input id="agent-new-title" type="text" placeholder="e.g. Find 10 Athens bars with no website" required maxlength="160">
+            </label>
+            <button type="submit" class="btn solid">Next</button>
+          </div>
+        </form>
+
+        <div id="agent-list" class="task-groups agent-list"></div>
+      </div>
+
+      <div id="agent-outputs" role="tabpanel" hidden>
+        <div class="chips out-filter" id="out-filter" aria-label="Filter outputs"></div>
+        <div id="out-list" class="out-groups"></div>
+      </div>
 
       <details class="panel agent-how">
         <summary class="panel-head"><h2>How it works</h2></summary>
         <ul class="how-list">
-          <li><b>Queued</b>: saved to <code>data/agent.json</code>. A run starts within a minute or two (an hourly run, 8 AM to midnight, catches anything missed).</li>
+          <li><b>Queued</b>: saved to <code>data/agent.json</code>. Claude checks the queue at :44 past every hour, 7:44 AM to 11:44 PM.</li>
           <li><b>Working</b>: Claude has split it across subagents. Progress lines show up here live. <b>Tell Claude</b> redirects it before its next step; <b>Stop</b> makes it wrap up and save what it has; <b>Open live session</b> lets you watch or step in directly.</li>
           <li><b>Files &amp; links</b>: encrypted on your device before saving, so they stay private even though the repo is public. Results from jobs with files are private too.</li>
           <li><b>Needs you</b>: it hit a login, a connector to approve, or a choice only you can make. Answer here and it goes back in the queue. You also get a push notification.</li>
-          <li><b>Done</b>: tap Read to see the result. Results live in <code>agent/results/</code>.</li>
+          <li><b>Done</b>: the job's outputs show on its card and in <b>Outputs</b>.</li>
+          <li><b>Outputs</b>: every report, Google Doc or Sheet, Gmail draft, calendar event and file a job made, grouped by job, newest first. 🔒 means private: unlock it with your grades key (Grades tab). <b>Clear</b> only tidies the Jobs list; outputs stay here.</li>
           <li><b>Class work</b>: Claude preps you (crash sheets, outlines, feedback on your drafts, practice problems). It won't do graded work or submit anything as you.</li>
           <li>This repo is public. Titles, instructions, mid-run notes and results of jobs without files are public, so put anything private in a file or the links box. Never attach passwords.</li>
         </ul>

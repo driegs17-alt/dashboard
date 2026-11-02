@@ -124,6 +124,8 @@ const state = {
   grades: null,
   gradesError: "",
   gradeTab: "issues",
+  agentTab: storage.get("dashboard.agentTab") === "outputs" ? "outputs" : "jobs",
+  outKind: "all",
   handTarget: null,
   token: storage.get(TOKEN_KEY) || "",
 };
@@ -1602,7 +1604,7 @@ async function queueJob(event) {
     $("hand-modal").close();
     $("hand-files").value = "";
     $("hand-links").value = "";
-    toast("Queued. Claude starts on it within a minute or two.");
+    toast(`Queued. Claude picks it up at ${nextRunText()}.`);
     scheduleRefresh(true);
     renderAll();
   } catch (error) {
@@ -1693,7 +1695,7 @@ async function answerJob(id, form) {
         ...(attached.length ? { files: [...(j.files || []), ...attached], private: true } : {}),
       }),
       "Answer Claude's question",
-      "Sent. Claude picks it back up within a minute or two."
+      `Sent. Claude picks it back up at ${nextRunText()}.`
     );
     scheduleRefresh(true);
   } catch (error) {
@@ -1826,33 +1828,213 @@ function ago(iso) {
   return new Date(iso).toLocaleDateString(undefined, { month: "short", day: "numeric" });
 }
 
+/* ---------- Agent outputs: every report, doc, draft and file a job made ---------- */
+
+// kind → short label on the badge, longer label in text, filter group.
+const OUT_KINDS = {
+  report: { badge: "Report", label: "Report", group: "reports" },
+  doc: { badge: "Doc", label: "Document", group: "files" },
+  sheet: { badge: "Sheet", label: "Spreadsheet", group: "files" },
+  deck: { badge: "Deck", label: "Slides", group: "files" },
+  pdf: { badge: "PDF", label: "PDF", group: "files" },
+  file: { badge: "File", label: "File", group: "files" },
+  draft: { badge: "Draft", label: "Gmail draft", group: "drafts" },
+  calendar: { badge: "Event", label: "Calendar event", group: "drafts" },
+  figma: { badge: "Figma", label: "Figma file", group: "links" },
+  link: { badge: "Link", label: "Link", group: "links" },
+};
+const OUT_GROUPS = [
+  ["all", "All"],
+  ["reports", "Reports"],
+  ["files", "Docs & files"],
+  ["drafts", "Drafts & events"],
+  ["links", "Links"],
+];
+const OUTPUT_INFO = "dashboard-agent-output-v1";
+const AGENT_TAB_KEY = "dashboard.agentTab";
+
+const isWebUrl = (u) => /^https?:\/\//i.test(u || "");
+const isRepoPath = (p) => /^agent\/(outputs|results)\/[\w.\-\/]+$/.test(p || "") && !p.includes("..");
+
+function jobWhen(job) {
+  return job.finished || job.asked || job.started || job.requested;
+}
+
+// The job's result (if any) plus whatever it listed in `outputs`, normalised.
+function jobOutputs(job) {
+  const outs = [];
+  if (job.result) {
+    const partial = job.status !== "done";
+    outs.push({
+      i: -1,
+      kind: "report",
+      title: partial ? "Report so far" : "Report",
+      note: job.summary || "",
+      private: /\.enc\.json$/.test(job.result),
+      at: jobWhen(job),
+    });
+  }
+  (job.outputs || []).forEach((o, i) => {
+    if (!o || !(isWebUrl(o.url) || isRepoPath(o.path))) return;
+    const kind = OUT_KINDS[o.kind] ? o.kind : o.url ? "link" : "file";
+    outs.push({ i, kind, title: o.title || OUT_KINDS[kind].label, note: o.note || "", url: o.url, path: o.path, private: /\.enc\.json$/.test(o.path || ""), at: o.at || jobWhen(job) });
+  });
+  return outs;
+}
+
+function outKindBadge(kind) {
+  return `<span class="out-kind k-${escapeHtml(kind)}">${escapeHtml(OUT_KINDS[kind].badge)}</span>`;
+}
+
+// What clicking an output does: read it here, open it in its app, or download it.
+function outTarget(job, o) {
+  const id = escapeHtml(job.id);
+  if (o.kind === "report") return { tag: "button", attrs: `type="button" data-result="${id}"`, verb: "Read" };
+  if (o.url) return { tag: "a", attrs: `href="${escapeHtml(o.url)}" target="_blank" rel="noopener"`, verb: "Open ↗" };
+  if (o.private) return { tag: "button", attrs: `type="button" data-out-file="${id}" data-out-i="${o.i}"`, verb: "Unlock" };
+  if (/\.md$/i.test(o.path)) return { tag: "button", attrs: `type="button" data-out-md="${id}" data-out-i="${o.i}"`, verb: "Read" };
+  return { tag: "a", attrs: `href="${escapeHtml(o.path)}" download`, verb: "Download" };
+}
+
+function outChip(job, o) {
+  const t = outTarget(job, o);
+  return `<${t.tag} class="out-chip" ${t.attrs} title="${escapeHtml(`${t.verb.replace(" ↗", "")}: ${o.title}`)}">${outKindBadge(o.kind)}<span class="out-chip-title">${escapeHtml(o.title)}</span>${o.private ? `<span class="out-lock" aria-label="private">🔒</span>` : ""}</${t.tag}>`;
+}
+
+function outRow(job, o) {
+  const t = outTarget(job, o);
+  const meta = [OUT_KINDS[o.kind].label, o.private ? "private" : "", o.at ? ago(o.at) : ""].filter(Boolean).join(" · ");
+  return `<li class="out-row">
+      ${outKindBadge(o.kind)}
+      <div class="out-text">
+        <p class="out-title">${escapeHtml(o.title)}${o.private ? ` <span class="out-lock" aria-label="private">🔒</span>` : ""}</p>
+        ${o.note && o.kind !== "report" ? `<p class="out-note">${inlineMd(o.note)}</p>` : ""}
+        <p class="task-meta">${escapeHtml(meta)}</p>
+      </div>
+      <${t.tag} class="btn ${o.kind === "report" ? "solid" : ""}" ${t.attrs}>${escapeHtml(t.verb)}</${t.tag}>
+    </li>`;
+}
+
+function openModal(id) {
+  const modal = $(id);
+  if (typeof modal.showModal === "function") modal.showModal();
+  else modal.setAttribute("open", "");
+}
+
+// Public Markdown output → shown in the reader, like a report.
+async function openOutputMd(jobId, i) {
+  const job = (state.agent.jobs || []).find((j) => j.id === jobId);
+  const o = job && (job.outputs || [])[i];
+  if (!o || !isRepoPath(o.path)) return;
+  $("result-kind").textContent = `${OUT_KINDS[o.kind]?.label || "File"} · ${job.item.title}`;
+  $("result-title").textContent = o.title || "Output";
+  $("result-body").innerHTML = `<p class="muted">Loading…</p>`;
+  $("result-raw").href = `https://github.com/${OWNER}/${REPO}/blob/${BRANCH}/${o.path}`;
+  $("result-raw").hidden = false;
+  openModal("result-modal");
+  try {
+    $("result-body").innerHTML = renderMd(await readFile(o.path));
+  } catch {
+    $("result-body").innerHTML = `<p class="error-text">Couldn't load it yet. GitHub's copy can lag a minute; try again shortly.</p>`;
+  }
+}
+
+// Private output (sealed to Dylan's key by scripts/agent_files.py seal-output):
+// decrypt here, then show Markdown in the reader or download anything else.
+async function openOutputFile(jobId, i, button) {
+  const job = (state.agent.jobs || []).find((j) => j.id === jobId);
+  const o = job && (job.outputs || [])[i];
+  if (!o || !isRepoPath(o.path)) return;
+  if (!state.gradesKey || !state.gradesPub) {
+    toast("This file is private. Unlock it with your grades key in the Grades tab first.", true);
+    return;
+  }
+  const label = button ? button.textContent : "";
+  if (button) { button.disabled = true; button.textContent = "Unlocking…"; }
+  try {
+    const plain = await openSealed(JSON.parse(await readFile(o.path)), state.gradesPub, state.gradesKey, OUTPUT_INFO);
+    const len = new DataView(plain.buffer, plain.byteOffset).getUint32(0);
+    const meta = JSON.parse(new TextDecoder().decode(plain.subarray(4, 4 + len)));
+    const body = plain.subarray(4 + len);
+    const name = String(meta.name || "output").replace(/[\/\\]/g, "_");
+    if (/\.md$/i.test(name)) {
+      $("result-kind").textContent = `Private · ${job.item.title}`;
+      $("result-title").textContent = o.title || name;
+      $("result-body").innerHTML = renderMd(new TextDecoder().decode(body));
+      $("result-raw").hidden = true;
+      openModal("result-modal");
+      return;
+    }
+    const url = URL.createObjectURL(new Blob([body], { type: meta.type || "application/octet-stream" }));
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 30000);
+  } catch {
+    toast("Couldn't unlock that file. GitHub's copy can lag a minute; or this device has a different grades key.", true);
+  } finally {
+    if (button) { button.disabled = false; button.textContent = label; }
+  }
+}
+
+// Claude checks the queue at :44 past each hour, 7:44 AM to 11:44 PM (Eastern).
+function nextRunText() {
+  const now = new Date();
+  const et = new Date(now.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  let h = et.getMinutes() < 44 ? et.getHours() : et.getHours() + 1;
+  let day = "";
+  if (h < 7) h = 7;
+  if (h > 23) { h = 7; day = " tomorrow"; }
+  const ampm = h >= 12 ? "PM" : "AM";
+  return `${((h + 11) % 12) + 1}:44 ${ampm}${day}`;
+}
+
 function jobCard(job) {
+  const id = escapeHtml(job.id);
   const course = state.courseNames[job.item.course] || "";
   const type = AGENT_TYPES[job.type]?.label || job.type;
   const when =
     job.status === "done" ? `Finished ${ago(job.finished)}` :
     job.status === "working" ? `Started ${ago(job.started)}` :
     job.status === "needs-you" ? `Asked ${ago(job.asked || job.started)}` :
-    `Queued ${ago(job.requested)}`;
+    job.status === "queued" ? `Queued ${ago(job.requested)}` :
+    ago(jobWhen(job));
+  const attach = attachmentNote(job.files);
+  const meta = [type, job.agents ? plural(job.agents, "subagent") : "", attach ? `📎 ${attach}` : "", job.stop && job.status === "working" ? "stopping…" : ""].filter(Boolean).join(" · ");
+  const run = runFor(job);
+
+  // What you asked, plus the back-and-forth, folded away so the card stays short.
   const replies = (job.replies || []).map((r) => `<p class="job-reply"><b>You:</b> ${escapeHtml(r.text)}${r.files ? ` <span class="muted">· 📎 ${plural(r.files, "attachment")}</span>` : ""}</p>`).join("");
   const steers = (job.steer || []).slice(-3).map((r) => `<p class="job-reply"><b>You, mid-run:</b> ${escapeHtml(r.text)}${r.seen ? ` <span class="muted">· seen</span>` : ""}</p>`).join("");
-  const attach = attachmentNote(job.files);
-  const run = runFor(job);
-  const live = ["queued", "working"].includes(job.status)
-    ? `<div class="job-live">
-         ${logLines(job)}
-         ${job.status === "working" ? `<form class="job-steer" data-steer="${escapeHtml(job.id)}">
-           <label class="sr-only" for="steer-${escapeHtml(job.id)}">Tell Claude while it works</label>
-           <input id="steer-${escapeHtml(job.id)}" type="text" maxlength="500" placeholder="Redirect it: “skip X”, “focus on Y”…">
-           <button type="submit" class="btn">Tell Claude</button>
-         </form>` : ""}
-       </div>`
-    : logLines(job);
+  const talk = (job.replies || []).length + Math.min((job.steer || []).length, 3);
+  const history = job.ask || talk
+    ? `<details class="job-more"><summary>Your request${talk ? ` · ${plural(talk, "reply", "replies")}` : ""}</summary>${job.ask ? `<p class="job-ask">“${escapeHtml(job.ask)}”</p>` : ""}${replies}${steers}</details>`
+    : "";
+
+  const logCount = (job.log || []).length;
+  const live =
+    job.status === "working"
+      ? `<div class="job-live">
+           ${job.progress ? `<p class="job-progress"><span class="pulse" aria-hidden="true"></span>${inlineMd(job.progress)}</p>` : ""}
+           ${logCount ? `<details class="job-more" open><summary>Progress log · ${logCount}</summary>${logLines(job)}</details>` : ""}
+           <form class="job-steer" data-steer="${id}">
+             <label class="sr-only" for="steer-${id}">Tell Claude while it works</label>
+             <input id="steer-${id}" type="text" maxlength="500" placeholder="Redirect it: “skip X”, “focus on Y”…">
+             <button type="submit" class="btn">Tell Claude</button>
+           </form>
+         </div>`
+      : job.status === "queued"
+        ? `<p class="job-progress muted">Waiting for the next run at ${nextRunText()}.</p>`
+        : logCount ? `<details class="job-more"><summary>Progress log · ${logCount}</summary>${logLines(job)}</details>` : "";
+
   const question = job.status === "needs-you" && job.question
-    ? `<div class="job-question"><p><b>Claude asks:</b> ${inlineMd(job.question)}</p>
-         <form class="job-answer" data-answer="${escapeHtml(job.id)}">
-           <label class="sr-only" for="ans-${escapeHtml(job.id)}">Your answer</label>
-           <textarea id="ans-${escapeHtml(job.id)}" rows="2" placeholder="Answer, or say “approved”…"></textarea>
+    ? `<div class="job-question"><p class="job-q-label">Claude needs from you</p><p>${inlineMd(job.question)}</p>
+         <form class="job-answer" data-answer="${id}">
+           <label class="sr-only" for="ans-${id}">Your answer</label>
+           <textarea id="ans-${id}" rows="2" placeholder="Answer, or say “approved”…"></textarea>
            <div class="job-attach">
              <label class="file-pick"><span>📎 Attach files</span><input type="file" multiple></label>
              <input type="text" data-links maxlength="2000" placeholder="Private links (kept encrypted)">
@@ -1860,42 +2042,116 @@ function jobCard(job) {
            <button type="submit" class="btn solid">Send</button>
          </form></div>`
     : "";
+
+  const outs = jobOutputs(job);
+  const outputs = outs.length
+    ? `<div class="job-outs"><p class="job-outs-label">Outputs</p><div class="out-chips">${outs.map((o) => outChip(job, o)).join("")}</div></div>`
+    : "";
+
   const actions = [
-    job.result ? `<button type="button" class="btn ${job.status === "done" ? "solid" : ""}" data-result="${escapeHtml(job.id)}">Read</button>` : "",
-    job.status === "queued" ? `<button type="button" class="btn" data-cancel-job="${escapeHtml(job.id)}">Cancel</button>` : "",
+    job.status === "queued" ? `<button type="button" class="btn" data-cancel-job="${id}">Cancel</button>` : "",
     run && ["working", "needs-you", "queued"].includes(job.status) ? `<a class="btn" href="${escapeHtml(run.url)}" target="_blank" rel="noopener">Open live session ↗</a>` : "",
-    job.status === "working" && !job.stop ? `<button type="button" class="btn" data-stop-job="${escapeHtml(job.id)}">Stop</button>` : "",
-    ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-requeue="${escapeHtml(job.id)}">Run again</button>` : "",
-    ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-archive="${escapeHtml(job.id)}">Clear</button>` : "",
+    job.status === "working" && !job.stop ? `<button type="button" class="btn" data-stop-job="${id}">Stop</button>` : "",
+    ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-requeue="${id}">Run again</button>` : "",
+    ["done", "failed", "cancelled"].includes(job.status) ? `<button type="button" class="btn" data-archive="${id}" title="Removes it from Jobs. Its outputs stay in Outputs.">Clear</button>` : "",
   ].join("");
+
   return `
     <article class="job is-${escapeHtml(job.status)}">
-      <span class="job-status">${escapeHtml(STATUS_TEXT[job.status] || job.status)}</span>
-      <div class="job-body">
-        <h3 class="task-title">${course ? `<span class="tag">${escapeHtml(course)}</span>` : ""}${escapeHtml(job.item.title)}</h3>
-        <p class="task-meta">${escapeHtml(type)} · ${escapeHtml(when)}${job.agents ? ` · ${plural(job.agents, "subagent")}` : ""}${attach ? ` · 📎 ${escapeHtml(attach)}` : ""}${job.stop && job.status === "working" ? " · stopping…" : ""}</p>
-        ${job.progress && job.status === "working" ? `<p class="job-progress">${inlineMd(job.progress)}</p>` : ""}
-        ${job.ask ? `<p class="job-ask">“${escapeHtml(job.ask)}”</p>` : ""}
-        ${replies}${steers}
-        ${live}
-        ${job.summary ? `<p class="job-summary">${inlineMd(job.summary)}</p>` : ""}
-        ${question}
-        ${actions ? `<div class="job-actions">${actions}</div>` : ""}
-      </div>
+      <header class="job-head">
+        <span class="job-pill">${escapeHtml(STATUS_TEXT[job.status] || job.status)}</span>
+        <span class="job-when">${escapeHtml(when)}</span>
+      </header>
+      <h3 class="task-title">${course ? `<span class="tag">${escapeHtml(course)}</span>` : ""}${escapeHtml(job.item.title)}</h3>
+      <p class="task-meta">${escapeHtml(meta)}</p>
+      ${job.summary ? `<p class="job-summary">${inlineMd(job.summary)}</p>` : ""}
+      ${question}
+      ${live}
+      ${outputs}
+      ${history}
+      ${actions ? `<div class="job-actions">${actions}</div>` : ""}
     </article>`;
 }
 
+function renderAgentJobs(needs, live, finished) {
+  const section = (title, list, note = "", fold = false) => {
+    if (!list.length) return "";
+    const head = `<span>${title}</span> <span class="count">${list.length}</span>${note ? `<span class="group-note">${note}</span>` : ""}`;
+    if (!fold) return `<div class="group"><h3 class="group-title">${head}</h3><div class="job-grid">${list.map(jobCard).join("")}</div></div>`;
+    // Done: newest few up front, the rest folded.
+    const shown = list.slice(0, 4);
+    const rest = list.slice(4);
+    return `<div class="group"><h3 class="group-title">${head}</h3><div class="job-grid">${shown.map(jobCard).join("")}</div>${
+      rest.length ? `<details class="group job-older"><summary class="group-title"><span>${plural(rest.length, "older job")}</span></summary><div class="job-grid">${rest.map(jobCard).join("")}</div></details>` : ""
+    }</div>`;
+  };
+  $("agent-list").innerHTML =
+    [
+      section("Needs you", needs, "Answer and it goes straight back to work."),
+      section("In progress", live, `Next run ${nextRunText()}`),
+      section("Done", finished, "", true),
+    ].join("") ||
+    `<div class="agent-empty"><p><b>No jobs yet.</b></p><p class="muted">Tap ⇢ on any task in Week, or type one above.</p></div>`;
+}
+
+function renderAgentOutputs(all) {
+  const rows = all
+    .map((job) => ({ job, outs: jobOutputs(job) }))
+    .filter((x) => x.outs.length)
+    .sort((a, b) => new Date(jobWhen(b.job)) - new Date(jobWhen(a.job)));
+  const counts = { all: 0, reports: 0, files: 0, drafts: 0, links: 0 };
+  rows.forEach((x) => x.outs.forEach((o) => { counts.all++; counts[OUT_KINDS[o.kind].group]++; }));
+  if (!counts[state.outKind]) state.outKind = "all";
+
+  $("out-filter").innerHTML = counts.all
+    ? OUT_GROUPS.filter(([g]) => g === "all" || counts[g])
+        .map(([g, label]) => `<button type="button" class="chip" data-okind="${g}" aria-pressed="${g === state.outKind}">${label} <span class="chip-count">${counts[g]}</span></button>`)
+        .join("")
+    : "";
+
+  const pick = (o) => state.outKind === "all" || OUT_KINDS[o.kind].group === state.outKind;
+  const groups = rows
+    .map(({ job, outs }) => ({ job, outs: outs.filter(pick) }))
+    .filter((x) => x.outs.length)
+    .map(({ job, outs }) => {
+      const course = state.courseNames[job.item.course] || "";
+      const status = job.status === "archived" ? "Cleared" : STATUS_TEXT[job.status] || job.status;
+      return `<section class="out-group is-${escapeHtml(job.status)}">
+          <header class="out-head">
+            <h3 class="task-title">${course ? `<span class="tag">${escapeHtml(course)}</span>` : ""}${escapeHtml(job.item.title)}</h3>
+            <p class="task-meta">${escapeHtml([AGENT_TYPES[job.type]?.label || job.type, status, ago(jobWhen(job))].filter(Boolean).join(" · "))}</p>
+          </header>
+          <ul class="out-list">${outs.map((o) => outRow(job, o)).join("")}</ul>
+        </section>`;
+    });
+  $("out-list").innerHTML =
+    groups.join("") ||
+    `<div class="agent-empty"><p><b>Nothing here yet.</b></p><p class="muted">Reports, Google Docs and Sheets, Gmail drafts, calendar events and files that Claude makes for any job collect here, newest first.</p></div>`;
+  return counts.all;
+}
+
 function renderAgents() {
-  const jobs = (state.agent.jobs || []).filter((j) => j.status !== "archived");
-  const by = (s) => jobs.filter((j) => s.includes(j.status)).sort((a, b) => new Date(b.finished || b.requested) - new Date(a.finished || a.requested));
+  const all = state.agent.jobs || [];
+  const jobs = all.filter((j) => j.status !== "archived");
+  const by = (s) => jobs.filter((j) => s.includes(j.status)).sort((a, b) => new Date(jobWhen(b)) - new Date(jobWhen(a)));
   const needs = by(["needs-you"]);
   const live = by(["working", "queued"]);
   const finished = by(["done", "failed", "cancelled"]);
-  const section = (title, list, note = "") =>
-    list.length ? `<div class="group"><h3 class="group-title"><span>${title}</span> <span class="count">${list.length}</span>${note ? `<span class="group-note">${note}</span>` : ""}</h3>${list.map(jobCard).join("")}</div>` : "";
-  $("agent-list").innerHTML =
-    [section("Needs you", needs), section("In progress", live, "Starts within a minute; live updates every 20 s."), section("Done", finished)].join("") ||
-    `<p class="muted">Nothing handed off yet. Tap ⇢ on any task in Week.</p>`;
+
+  renderAgentJobs(needs, live, finished);
+  const outCount = renderAgentOutputs(all);
+
+  // Jobs / Outputs switch
+  const tab = state.agentTab === "outputs" ? "outputs" : "jobs";
+  const active = needs.length + live.length;
+  $("agent-tabs").innerHTML = [
+    ["jobs", "Jobs", active ? `${active} active` : String(jobs.length)],
+    ["outputs", "Outputs", String(outCount)],
+  ]
+    .map(([id, label, n]) => `<button type="button" class="chip" role="tab" data-atab="${id}" aria-selected="${id === tab}" aria-pressed="${id === tab}" aria-controls="agent-${id}">${label} <span class="chip-count">${escapeHtml(n)}</span>${id === "jobs" && needs.length ? `<span class="chip-dot" aria-label="needs you"></span>` : ""}</button>`)
+    .join("");
+  $("agent-jobs").hidden = tab !== "jobs";
+  $("agent-outputs").hidden = tab !== "outputs";
 
   const badge = $("agent-badge");
   badge.hidden = !needs.length;
@@ -1910,7 +2166,14 @@ function renderAgents() {
   ].filter(Boolean);
   strip.hidden = !bits.length;
   strip.classList.toggle("is-needs", Boolean(needs.length));
+  strip.dataset.goto = needs.length || live.length ? "jobs" : "outputs";
   strip.textContent = bits.length ? `Claude: ${bits.join(" · ")} →` : "";
+}
+
+function setAgentTab(tab) {
+  state.agentTab = tab;
+  storage.set(AGENT_TAB_KEY, tab);
+  renderAgents();
 }
 
 /* ---------- Connect (GitHub key) ---------- */
@@ -2095,6 +2358,16 @@ async function start() {
     }
     const g = e.target.closest("[data-gtab]");
     if (g) { state.gradeTab = g.dataset.gtab; renderGrades(); return; }
+    const at = e.target.closest("[data-atab]");
+    if (at) { setAgentTab(at.dataset.atab); return; }
+    const ok = e.target.closest("[data-okind]");
+    if (ok) { state.outKind = ok.dataset.okind; renderAgents(); return; }
+    const of = e.target.closest("[data-out-file]");
+    if (of) { openOutputFile(of.dataset.outFile, Number(of.dataset.outI), of); return; }
+    const om = e.target.closest("[data-out-md]");
+    if (om) { openOutputMd(om.dataset.outMd, Number(om.dataset.outI)); return; }
+    const gs = e.target.closest("#agent-strip");
+    if (gs && gs.dataset.goto) { state.agentTab = gs.dataset.goto; storage.set(AGENT_TAB_KEY, gs.dataset.goto); renderAgents(); }
     const bz = e.target.closest("[data-biz]");
     if (bz) {
       const preset = BIZ_JOBS.find((j) => j.id === bz.dataset.biz);
