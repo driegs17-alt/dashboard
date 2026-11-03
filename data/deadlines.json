@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-03T16:10:54Z",
+  "synced": "2026-11-03T21:44:09Z",
   "items": [
     {
       "id": "elc-6637-22573400",
@@ -211,6 +211,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22579855/detailsview?ou=3990441#22579855",
       "firstSeen": "2026-10-28T19:52:25Z"
+    },
+    {
+      "id": "elc-6637-21874624",
+      "title": "Collab. Pub. Design Process (Progress 1)",
+      "course": "ARGD 3060",
+      "due": "2026-11-09T04:59:59Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/21874624/detailsview?ou=3949559#21874624",
+      "firstSeen": "2026-11-03T21:44:09Z"
     },
     {
       "id": "elc-6637-22598694",
