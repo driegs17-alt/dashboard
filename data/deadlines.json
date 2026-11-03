@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-02T18:37:22Z",
+  "synced": "2026-11-03T16:10:54Z",
   "items": [
     {
       "id": "elc-6637-22573400",
@@ -231,6 +231,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22571808/detailsview?ou=3953780#22571808",
       "firstSeen": "2026-10-27T13:44:23Z"
+    },
+    {
+      "id": "elc-6637-22601455",
+      "title": "Final Binder Review",
+      "course": "ARGD 4115",
+      "due": "2026-11-19T16:30:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22601455/detailsview?ou=3953780#22601455",
+      "firstSeen": "2026-11-03T16:10:54Z"
     },
     {
       "id": "elc-6637-22060525",
