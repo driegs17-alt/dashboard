@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-04T07:59:32Z",
+  "synced": "2026-11-04T21:45:08Z",
   "items": [
-    {
-      "id": "elc-6637-22568376",
-      "title": "3-3 Generative Design",
-      "course": "ARGD 4160",
-      "due": "2026-11-02T20:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22568376/detailsview?ou=3990441#22568376",
-      "firstSeen": "2026-10-26T19:39:22Z"
-    },
     {
       "id": "elc-6637-21901767",
       "title": "Ch 11. LearningCurve: Unemployment",
@@ -251,6 +241,126 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3960738/event/22060525/detailsview?ou=3960738#22060525",
       "firstSeen": null
+    },
+    {
+      "id": "elc-6637-21901799",
+      "title": "Ch. 18 Decision Point: Linking Interest Rates and Total Expenditure",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901799/detailsview?ou=3957191#21901799",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901765",
+      "title": "Ch. 18 Graded Homework: Linking Interest Rates and Output Using IS-MP Analysis",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901765/detailsview?ou=3957191#21901765",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901766",
+      "title": "Ch. 18 LearningCurve: IS-MP",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901766/detailsview?ou=3957191#21901766",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901798",
+      "title": "Ch. 18 Podcast Assignment: IS-MP",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901798/detailsview?ou=3957191#21901798",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901802",
+      "title": "Ch. 18 Problem Video Walkthrough: IS-MP",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901802/detailsview?ou=3957191#21901802",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901800",
+      "title": "Ch. 19 Decision Point: Your Bonus and Inflation",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901800/detailsview?ou=3957191#21901800",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901770",
+      "title": "Ch. 19 Graded Homework: The Phillips Curve and Inflation",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901770/detailsview?ou=3957191#21901770",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901772",
+      "title": "Ch. 19 LearningCurve: Phillips Curve",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901772/detailsview?ou=3957191#21901772",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901804",
+      "title": "Ch. 19 Podcast Assignment: Phillips Curve",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901804/detailsview?ou=3957191#21901804",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-21901803",
+      "title": "Ch. 19 Problem Video Walkthrough: Phillips Curve",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/21901803/detailsview?ou=3957191#21901803",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-22187112",
+      "title": "Guided Reading: Chapter 18 Linking Interest Rates and Output Using IS-MP Analysis",
+      "course": "ECON 2105",
+      "due": "2026-11-21T04:59:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/22187112/detailsview?ou=3957191#22187112",
+      "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-22608903",
+      "title": "Project 3 Final",
+      "course": "ARGD 4160",
+      "due": "2026-11-30T20:00:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22608903/detailsview?ou=3990441#22608903",
+      "firstSeen": "2026-11-04T21:45:08Z"
     }
   ]
 }
