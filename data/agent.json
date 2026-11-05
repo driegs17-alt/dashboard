@@ -188,10 +188,10 @@
       },
       "ask": "Take the top idea in data/products.json that hasn't been tested. Check demand (search trends, competitors, price points, reviews), suppliers and margins, then give a go / no-go and a first test I can run for $50 or less this week.",
       "deliver": "auto",
-      "status": "working",
+      "status": "done",
       "requested": "2026-11-05T02:07:02.030Z",
       "started": "2026-11-05T02:44:57Z",
-      "progress": "Research done (competitors, prices, suppliers, margins). Building your Sheet and go/no-go memo",
+      "progress": "Done",
       "agents": 1,
       "log": [
         {
@@ -201,6 +201,35 @@
         {
           "at": "2026-11-05T02:49:15Z",
           "msg": "Research done: 9 competitors, supplier costs, Etsy fees, local markets"
+        },
+        {
+          "at": "2026-11-05T02:55:58Z",
+          "msg": "Memo Doc and margins Sheet saved to Drive \u203a Business. Verdict: GO (test)"
+        }
+      ],
+      "finished": "2026-11-05T02:55:58Z",
+      "result": "agent/results/job-mw2wnij2.md",
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X",
+        "driveId": "1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X"
+      },
+      "summary": "GO on Athens poster prints, as a $50 preorder test: 3 designs, $35 screenprint preorders on a free Big Cartel store, print only at 10+ orders. Memo + margin Sheet in Drive.",
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X"
+        },
+        {
+          "title": "Go/no-go memo + $50 test plan",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1w7Z7-t3EXoBWCgnJYEhrjq7FNJEIgoT80C20hpZRgCU/edit?usp=drivesdk"
+        },
+        {
+          "title": "Research, costs & margins",
+          "kind": "sheet",
+          "url": "https://docs.google.com/spreadsheets/d/1Uc6JSDPnCmjcjDLY1ewhoIHteb55oP4e5d6RpXF9p8g/edit?usp=drivesdk",
+          "note": "Margins tab has live formulas"
         }
       ]
     }
