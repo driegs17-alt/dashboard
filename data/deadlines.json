@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-05T16:51:16Z",
+  "synced": "2026-11-05T22:27:32Z",
   "items": [
-    {
-      "id": "elc-6637-22060528",
-      "title": "Outline/Context",
-      "course": "HIST 2112",
-      "due": "2026-11-03T19:55:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3960738/event/22060528/detailsview?ou=3960738#22060528",
-      "firstSeen": null
-    },
     {
       "id": "elc-6637-22579855",
       "title": "3-4 Data Sketch",
