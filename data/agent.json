@@ -191,12 +191,16 @@
       "status": "working",
       "requested": "2026-11-05T02:07:02.030Z",
       "started": "2026-11-05T02:44:57Z",
-      "progress": "Starting: picked \"Athens poster prints\" (top untested idea)",
+      "progress": "Research done (competitors, prices, suppliers, margins). Building your Sheet and go/no-go memo",
       "agents": 1,
       "log": [
         {
           "at": "2026-11-05T02:44:57Z",
           "msg": "Claimed. Testing the top untested idea: Athens poster prints"
+        },
+        {
+          "at": "2026-11-05T02:49:15Z",
+          "msg": "Research done: 9 competitors, supplier costs, Etsy fees, local markets"
         }
       ]
     }
