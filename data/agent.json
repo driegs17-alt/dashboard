@@ -174,6 +174,22 @@
       "agents": 1,
       "result": "agent/results/job-mvzsekqp.md",
       "summary": "Keep doing Macro. Spend 5 min replying on the Pro Practices and History cards with the briefs + your Figma link/interview details, and I'll work on both while you finish."
+    },
+    {
+      "id": "job-mw2wnij2",
+      "type": "research",
+      "item": {
+        "id": "biz-product",
+        "title": "Test my next product idea",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "Take the top idea in data/products.json that hasn't been tested. Check demand (search trends, competitors, price points, reviews), suppliers and margins, then give a go / no-go and a first test I can run for $50 or less this week.",
+      "deliver": "auto",
+      "status": "queued",
+      "requested": "2026-11-05T02:07:02.030Z"
     }
   ]
 }
