@@ -232,6 +232,25 @@
           "note": "Margins tab has live formulas"
         }
       ]
+    },
+    {
+      "id": "job-sunday-20261108",
+      "type": "plan",
+      "item": {
+        "id": "sunday-plan-2026-11-08",
+        "title": "Week of Nov 9: your plan",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "status": "needs-you",
+      "requested": "2026-11-08T21:43:06Z",
+      "asked": "2026-11-08T21:43:06Z",
+      "question": "Add these 9 focus blocks to your calendar? Reply yes, or tell me what to change.",
+      "summary": "Clear 3 design-class deadlines and get a full Oral History draft by Thu; riskiest: Oral History Paper (Thu 11/19), which lands with Binder Review and 12 Macro items. Calendar couldn't be read, so check the blocks for clashes.",
+      "result": "agent/results/job-sunday-20261108.md",
+      "agents": 1
     }
   ]
 }
