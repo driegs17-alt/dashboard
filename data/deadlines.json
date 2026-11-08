@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-05T22:27:32Z",
+  "synced": "2026-11-08T23:16:27Z",
   "items": [
-    {
-      "id": "elc-6637-22579855",
-      "title": "3-4 Data Sketch",
-      "course": "ARGD 4160",
-      "due": "2026-11-06T20:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22579855/detailsview?ou=3990441#22579855",
-      "firstSeen": "2026-10-28T19:52:25Z"
-    },
     {
       "id": "elc-6637-21874624",
       "title": "Collab. Pub. Design Process (Progress 1)",
