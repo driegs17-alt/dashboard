@@ -267,6 +267,22 @@
       "deliver": "auto",
       "status": "queued",
       "requested": "2026-11-09T17:16:35.143Z"
+    },
+    {
+      "id": "job-mw9jvamw",
+      "type": "research",
+      "item": {
+        "id": "free-mw9jutcb",
+        "title": "me and my buddy have a business idea for a line of lamps with built in irrigation technology but designed in an art deco/art noevue manner",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "save this idea and help do market research on this concept",
+      "deliver": "auto",
+      "status": "queued",
+      "requested": "2026-11-09T17:43:33.272Z"
     }
   ]
 }
