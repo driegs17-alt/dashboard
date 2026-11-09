@@ -244,7 +244,7 @@
         "url": "",
         "note": ""
       },
-      "status": "queued",
+      "status": "working",
       "requested": "2026-11-08T21:43:06Z",
       "asked": "2026-11-08T21:43:06Z",
       "question": "Add these 9 focus blocks to your calendar? Reply yes, or tell me what to change.",
@@ -255,6 +255,14 @@
         {
           "at": "2026-11-09T17:47:55.959Z",
           "text": "sure just add it"
+        }
+      ],
+      "started": "2026-11-09T18:45:41Z",
+      "progress": "Adding your approved focus blocks to Google Calendar",
+      "log": [
+        {
+          "at": "2026-11-09T18:45:41Z",
+          "msg": "Got your yes. Adding the focus blocks to your calendar."
         }
       ]
     },
@@ -382,8 +390,16 @@
       },
       "ask": "a nice bar modeled after il solco from cortona italy that gives people the neighborhood cozy feels while still experiencing a vibrant and refreshing environment.",
       "deliver": "auto",
-      "status": "queued",
-      "requested": "2026-11-09T18:32:05.569Z"
+      "status": "working",
+      "requested": "2026-11-09T18:32:05.569Z",
+      "started": "2026-11-09T18:45:41Z",
+      "progress": "Starting: researching Athens bar market and Il Solco",
+      "log": [
+        {
+          "at": "2026-11-09T18:45:41Z",
+          "msg": "Started. Researching the Athens market, Il Solco and comparable bars."
+        }
+      ]
     }
   ]
 }
