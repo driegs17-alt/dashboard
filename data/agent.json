@@ -271,16 +271,48 @@
       },
       "ask": "Pick the 3 strongest leads (no website, clearly active, good fit). Write a short, personal first message for each (email if there's an address, otherwise a DM or a walk-in script). Put emails in my Gmail drafts. Don't send anything.",
       "deliver": "auto",
-      "status": "working",
+      "status": "needs-you",
       "requested": "2026-11-09T17:16:35.143Z",
       "started": "2026-11-09T17:44:49Z",
-      "progress": "Starting: picking the 3 strongest leads",
+      "progress": "",
       "log": [
         {
           "at": "2026-11-09T17:44:49Z",
           "msg": "Claimed. Reading your leads list."
+        },
+        {
+          "at": "2026-11-09T17:59:14Z",
+          "msg": "Done: 3 messages in Drive. Gmail draft blocked (connector)."
         }
-      ]
+      ],
+      "asked": "2026-11-09T17:59:14Z",
+      "result": "agent/results/job-mw9iwm2v.md",
+      "agents": 1,
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/1m4tWV-4UamX9trSdNYSpAloWd7O91iFx",
+        "driveId": "1m4tWV-4UamX9trSdNYSpAloWd7O91iFx"
+      },
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/1m4tWV-4UamX9trSdNYSpAloWd7O91iFx"
+        },
+        {
+          "title": "Outreach drafts – 3 best leads",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1uDI8TyGjUyCuUmHBL8oeq3xkrZUn9iMLvFR32kvedjY/edit?usp=drivesdk",
+          "note": "Email, DM and walk-in script, ready to use"
+        },
+        {
+          "title": "Lead check – website & activity",
+          "kind": "sheet",
+          "url": "https://docs.google.com/spreadsheets/d/1cdra6UdWtJLBkDT0nshC75W98ZUhIlZiloeK9O--_Ts/edit?usp=drivesdk",
+          "note": "13 leads checked"
+        }
+      ],
+      "summary": "Picked Hi-Lo Lounge (email), Manhattan Cafe (IG DM) and Normal Bar (walk-in): no site of their own, all clearly active. Messages are in the Drive Doc. Nothing sent.",
+      "question": "All 3 messages are in the Drive Doc, but Gmail refused to make the draft ('Mail service not enabled'). Paste the Hi-Lo email into Gmail and send it yourself, or reconnect Gmail for Claude (claude.ai → Settings → Connectors) and reply 'retry' for a draft."
     },
     {
       "id": "job-mw9jvamw",
@@ -295,16 +327,47 @@
       },
       "ask": "save this idea and help do market research on this concept",
       "deliver": "auto",
-      "status": "working",
+      "status": "done",
       "requested": "2026-11-09T17:43:33.272Z",
       "started": "2026-11-09T17:44:49Z",
-      "progress": "Starting: market research on deco/nouveau irrigation lamps",
+      "progress": "",
       "log": [
         {
           "at": "2026-11-09T17:44:49Z",
           "msg": "Claimed. Starting market research."
+        },
+        {
+          "at": "2026-11-09T17:59:14Z",
+          "msg": "Done: research Doc + competitor/cost Sheet in Drive."
         }
-      ]
+      ],
+      "finished": "2026-11-09T17:59:14Z",
+      "result": "agent/results/job-mw9jvamw.md",
+      "agents": 1,
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW",
+        "driveId": "12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW"
+      },
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW"
+        },
+        {
+          "title": "Deco irrigation lamp – idea & market research",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1HCH_6w651SgO-Yv1Q5Nbe0ObHmPDiz-uYmT1Un49IEc/edit?usp=drivesdk",
+          "note": "Idea saved + verdict, safety, 3-week test plan"
+        },
+        {
+          "title": "Competitors & pricing",
+          "kind": "sheet",
+          "url": "https://docs.google.com/spreadsheets/d/1ox4L0iHIjvyAWswWw2HTmxRxtIWGaVIu9y5SF6U16fU/edit?usp=drivesdk",
+          "note": "19 competitors; unit-cost tab has live formulas"
+        }
+      ],
+      "summary": "Idea saved + researched. Verdict: TEST (medium). No Deco self-watering grow lamp exists, but ~$183/unit makes margins thin. Run a 3-week waitlist + $25 deposit test first."
     }
   ]
 }
