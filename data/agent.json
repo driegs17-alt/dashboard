@@ -244,13 +244,19 @@
         "url": "",
         "note": ""
       },
-      "status": "needs-you",
+      "status": "queued",
       "requested": "2026-11-08T21:43:06Z",
       "asked": "2026-11-08T21:43:06Z",
       "question": "Add these 9 focus blocks to your calendar? Reply yes, or tell me what to change.",
       "summary": "Clear 3 design-class deadlines and get a full Oral History draft by Thu; riskiest: Oral History Paper (Thu 11/19), which lands with Binder Review and 12 Macro items. Calendar couldn't be read, so check the blocks for clashes.",
       "result": "agent/results/job-sunday-20261108.md",
-      "agents": 1
+      "agents": 1,
+      "replies": [
+        {
+          "at": "2026-11-09T17:47:55.959Z",
+          "text": "sure just add it"
+        }
+      ]
     },
     {
       "id": "job-mw9iwm2v",
