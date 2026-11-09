@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-08T23:16:27Z",
+  "synced": "2026-11-09T21:03:28Z",
   "items": [
     {
       "id": "elc-6637-21874624",
@@ -61,6 +61,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3960738/event/22060525/detailsview?ou=3960738#22060525",
       "firstSeen": null
+    },
+    {
+      "id": "elc-6637-22405345",
+      "title": "Case Study Final",
+      "course": "ARGD 4115",
+      "due": "2026-11-20T14:00:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22405345/detailsview?ou=3953780#22405345",
+      "firstSeen": "2026-11-09T21:03:28Z"
     },
     {
       "id": "elc-6637-21901799",
@@ -206,7 +216,7 @@
       "id": "elc-6637-22614273",
       "title": "Podcast ReBrand Final Deliverables",
       "course": "ARGD 3060",
-      "due": "2026-12-04T04:59:00Z",
+      "due": "2026-12-04T04:59:59Z",
       "hasTime": true,
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/22614273/detailsview?ou=3949559#22614273",
