@@ -368,6 +368,22 @@
         }
       ],
       "summary": "Idea saved + researched. Verdict: TEST (medium). No Deco self-watering grow lamp exists, but ~$183/unit makes margins thin. Run a 3-week waitlist + $25 deposit test first."
+    },
+    {
+      "id": "job-mw9llps0",
+      "type": "research",
+      "item": {
+        "id": "free-mw9lk1ox",
+        "title": "make a full market research pitch for a bar named \"Furrow\" for athens georgia. it is modeled after the bar il solco in cortona italy, as well as the restaurants",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "a nice bar modeled after il solco from cortona italy that gives people the neighborhood cozy feels while still experiencing a vibrant and refreshing environment.",
+      "deliver": "auto",
+      "status": "queued",
+      "requested": "2026-11-09T18:32:05.569Z"
     }
   ]
 }
