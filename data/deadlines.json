@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-09T21:03:28Z",
+  "synced": "2026-11-10T18:50:40Z",
   "items": [
     {
       "id": "elc-6637-21874624",
@@ -221,6 +221,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/22614273/detailsview?ou=3949559#22614273",
       "firstSeen": "2026-11-05T16:51:16Z"
+    },
+    {
+      "id": "elc-6637-22631166",
+      "title": "Final Project: Final Submission",
+      "course": "ARGD 4115",
+      "due": "2026-12-10T16:30:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22631166/detailsview?ou=3953780#22631166",
+      "firstSeen": "2026-11-10T18:50:40Z"
     }
   ]
 }
