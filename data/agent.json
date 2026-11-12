@@ -400,6 +400,22 @@
           "msg": "Started. Researching the Athens market, Il Solco and comparable bars."
         }
       ]
+    },
+    {
+      "id": "job-mwd48tfz",
+      "type": "research",
+      "item": {
+        "id": "free-mwd48qyb",
+        "title": "After obtaining more contracts and having more experience change the \"recent works\" title into \"notable works\" to show highest quality projecs",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "",
+      "deliver": "auto",
+      "status": "queued",
+      "requested": "2026-11-12T05:37:15.023Z"
     }
   ]
 }
