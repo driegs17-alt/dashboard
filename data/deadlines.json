@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-12T01:08:34Z",
+  "synced": "2026-11-12T16:55:26Z",
   "items": [
-    {
-      "id": "elc-6637-22571808",
-      "title": "Reading assignment and Quiz: Freelance and Business and Stuff",
-      "course": "ARGD 4115",
-      "due": "2026-11-10T14:30:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22571808/detailsview?ou=3953780#22571808",
-      "firstSeen": "2026-10-27T13:44:23Z"
-    },
     {
       "id": "elc-6637-22614274",
       "title": "Collab. Pub. Design (Progress 2: cover, etc.)",
