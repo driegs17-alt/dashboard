@@ -414,8 +414,17 @@
       },
       "ask": "",
       "deliver": "auto",
-      "status": "queued",
-      "requested": "2026-11-12T05:37:15.023Z"
+      "status": "working",
+      "requested": "2026-11-12T05:37:15.023Z",
+      "started": "2026-11-12T12:45:29Z",
+      "progress": "Starting",
+      "agents": 1,
+      "log": [
+        {
+          "at": "2026-11-12T12:45:29Z",
+          "msg": "Started. Preparing your Recent → Notable Works switch kit."
+        }
+      ]
     }
   ]
 }
