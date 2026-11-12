@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-11T11:27:38Z",
+  "synced": "2026-11-12T01:08:34Z",
   "items": [
-    {
-      "id": "elc-6637-22598694",
-      "title": "3-5 Autonomous Systems",
-      "course": "ARGD 4160",
-      "due": "2026-11-09T20:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3990441/event/22598694/detailsview?ou=3990441#22598694",
-      "firstSeen": "2026-11-02T18:37:22Z"
-    },
     {
       "id": "elc-6637-22571808",
       "title": "Reading assignment and Quiz: Freelance and Business and Stuff",
