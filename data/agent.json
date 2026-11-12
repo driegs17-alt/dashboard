@@ -414,15 +414,40 @@
       },
       "ask": "",
       "deliver": "auto",
-      "status": "working",
+      "status": "needs-you",
       "requested": "2026-11-12T05:37:15.023Z",
       "started": "2026-11-12T12:45:29Z",
-      "progress": "Starting",
+      "progress": "Waiting on you",
       "agents": 1,
       "log": [
         {
           "at": "2026-11-12T12:45:29Z",
           "msg": "Started. Preparing your Recent → Notable Works switch kit."
+        },
+        {
+          "at": "2026-11-12T12:47:00Z",
+          "msg": "Switch kit Doc saved to Drive › Portfolio & Design."
+        }
+      ],
+      "asked": "2026-11-12T12:47:00Z",
+      "question": "Your switch kit is in Drive. Once you've landed the contracts, reply with your portfolio link (and what it's built on) plus 'switch now', and I'll draft the Notable Works section.",
+      "summary": "Keep 'Recent Works' until you have ~3 strong client pieces; the Doc has the checklist, a rubric to pick the best 4–6, and the copy for the switch.",
+      "result": "agent/results/job-mwd48tfz.md",
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0",
+        "driveId": "1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0"
+      },
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0"
+        },
+        {
+          "title": "Notable Works – when to switch & how",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1yP12I7IFPyZJMsGf4yewDRrnUbtop1oZondBnoLj2KQ/edit?usp=drivesdk",
+          "note": "Checklist, rubric, tracker and copy"
         }
       ]
     }
