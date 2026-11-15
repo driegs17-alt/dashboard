@@ -450,6 +450,25 @@
           "note": "Checklist, rubric, tracker and copy"
         }
       ]
+    },
+    {
+      "id": "job-sunday-20261115",
+      "type": "plan",
+      "item": {
+        "id": "sunday-plan-2026-11-15",
+        "title": "Week of Nov 16: your plan",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "status": "needs-you",
+      "requested": "2026-11-15T21:43:36Z",
+      "asked": "2026-11-15T21:43:36Z",
+      "question": "Add these 10 focus blocks to your calendar? Reply yes, or tell me what to change.",
+      "summary": "Crunch week: 5 deadlines stack Thu–Fri, so the paper, case study and binder get done by Wed night; riskiest: Oral History Paper (Thu 11/19, 2:55 PM). Calendar couldn't be read again, so check the blocks for clashes and reconnect it before saying yes.",
+      "result": "agent/results/job-sunday-20261115.md",
+      "agents": 1
     }
   ]
 }
