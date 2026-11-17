@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-12T16:55:26Z",
+  "synced": "2026-11-17T20:50:58Z",
   "items": [
     {
       "id": "elc-6637-22614274",
@@ -153,16 +153,6 @@
       "firstSeen": "2026-11-04T21:45:08Z"
     },
     {
-      "id": "elc-6637-21874623",
-      "title": "Final files for Collab Publication",
-      "course": "ARGD 3060",
-      "due": "2026-11-23T04:59:59Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/21874623/detailsview?ou=3949559#21874623",
-      "firstSeen": "2026-11-05T16:51:16Z"
-    },
-    {
       "id": "elc-6637-22608903",
       "title": "Project 3 Final",
       "course": "ARGD 4160",
@@ -173,13 +163,13 @@
       "firstSeen": "2026-11-04T21:45:08Z"
     },
     {
-      "id": "elc-6637-21874625",
-      "title": "Final Magic Booklet (pdf)",
+      "id": "elc-6637-21874623",
+      "title": "Final files for Collab Publication (Personal Design Submission)",
       "course": "ARGD 3060",
-      "due": "2026-12-04T04:59:00Z",
+      "due": "2026-12-04T04:59:59Z",
       "hasTime": true,
       "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/21874625/detailsview?ou=3949559#21874625",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3949559/event/21874623/detailsview?ou=3949559#21874623",
       "firstSeen": "2026-11-05T16:51:16Z"
     },
     {
