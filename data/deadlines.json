@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-19T08:43:29Z",
+  "synced": "2026-11-19T23:48:29Z",
   "items": [
     {
       "id": "elc-6637-22601455",
@@ -151,6 +151,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/22187112/detailsview?ou=3957191#22187112",
       "firstSeen": "2026-11-04T21:45:08Z"
+    },
+    {
+      "id": "elc-6637-22670502",
+      "title": "Bonus Assignment",
+      "course": "ECON 2105",
+      "due": "2026-11-30T04:59:59Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/22670502/detailsview?ou=3957191#22670502",
+      "firstSeen": "2026-11-19T23:48:29Z"
     },
     {
       "id": "elc-6637-22608903",
