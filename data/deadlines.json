@@ -1,6 +1,6 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-18T10:43:02Z",
+  "synced": "2026-11-19T08:43:29Z",
   "items": [
     {
       "id": "elc-6637-22601455",
@@ -31,6 +31,16 @@
       "kind": "due",
       "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22405345/detailsview?ou=3953780#22405345",
       "firstSeen": "2026-11-09T21:03:28Z"
+    },
+    {
+      "id": "elc-6637-22670533",
+      "title": "Practice for Final- Requires Respondus LockDown Browser",
+      "course": "ECON 2105",
+      "due": "2026-11-21T01:00:00Z",
+      "hasTime": true,
+      "kind": "due",
+      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/22670533/detailsview?ou=3957191#22670533",
+      "firstSeen": "2026-11-19T08:43:29Z"
     },
     {
       "id": "elc-6637-21901799",
