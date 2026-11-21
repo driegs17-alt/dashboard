@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-21T17:42:15Z",
+  "synced": "2026-11-21T22:23:33Z",
   "items": [
-    {
-      "id": "elc-6637-22060525",
-      "title": "Oral History Paper",
-      "course": "HIST 2112",
-      "due": "2026-11-19T19:55:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3960738/event/22060525/detailsview?ou=3960738#22060525",
-      "firstSeen": null
-    },
     {
       "id": "elc-6637-22405345",
       "title": "Case Study Final",
