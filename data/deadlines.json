@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-21T22:23:33Z",
+  "synced": "2026-11-22T17:39:40Z",
   "items": [
-    {
-      "id": "elc-6637-22405345",
-      "title": "Case Study Final",
-      "course": "ARGD 4115",
-      "due": "2026-11-20T14:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22405345/detailsview?ou=3953780#22405345",
-      "firstSeen": "2026-11-09T21:03:28Z"
-    },
     {
       "id": "elc-6637-22670533",
       "title": "Practice for Final- Requires Respondus LockDown Browser",
