@@ -1,493 +1,493 @@
 {
- "jobs": [
-  {
-   "id": "job-mvzpdnrq",
-   "type": "custom",
-   "item": {
-    "id": "free-mvzpa2i9",
-    "title": "alright i need to have these macro assignments completed by the end of the day. make it happen",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "https://achieve.macmillanlearning.com/courses/9c588f34-da71-4a42-b0c0-807690472829/mycourse. this is the website logged into my account with all of the upcoming due assignments.  I need all of these assignments done as soon as possible",
-   "status": "archived",
-   "requested": "2026-11-02T20:20:06.422Z"
-  },
-  {
-   "id": "job-mvzplr3m",
-   "type": "draft",
-   "item": {
-    "id": "free-mvzpkq93",
-    "title": "Ok i need to write or complete this outline for my history essay. tell me what files and info you need from me and get this done.",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "i need an outline built for my oral history essay project from history class. ask for any necessary files and information required to complete this and follow Dr. Wolf's instructions as closely as possible.",
-   "status": "done",
-   "requested": "2026-11-02T20:26:23.986Z",
-   "started": "2026-11-02T22:17:28.000Z",
-   "asked": "2026-11-02T22:10:00.000Z",
-   "agents": 1,
-   "result": "agent/results/job-mvzplr3m.enc.json",
-   "summary": "Full Outline/Context draft from your interview notes: field notes, research question + reflection, sharper thesis options, 4 context paragraphs, paper outline, sources. Next: paste Dr. Wolf’s prompt to check the parts, add real quotes, rewrite in your voice. Due Tue 2:55 PM.",
-   "replies": [
+  "jobs": [
     {
-     "at": "2026-11-02T21:48:42.530Z",
-     "text": "(attached files)",
-     "files": 1
+      "id": "job-mvzpdnrq",
+      "type": "custom",
+      "item": {
+        "id": "free-mvzpa2i9",
+        "title": "alright i need to have these macro assignments completed by the end of the day. make it happen",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "https://achieve.macmillanlearning.com/courses/9c588f34-da71-4a42-b0c0-807690472829/mycourse. this is the website logged into my account with all of the upcoming due assignments.  I need all of these assignments done as soon as possible",
+      "status": "archived",
+      "requested": "2026-11-02T20:20:06.422Z"
     },
     {
-     "at": "2026-11-02T21:57:31.640Z",
-     "text": "find a better way to get the media."
+      "id": "job-mvzplr3m",
+      "type": "draft",
+      "item": {
+        "id": "free-mvzpkq93",
+        "title": "Ok i need to write or complete this outline for my history essay. tell me what files and info you need from me and get this done.",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "i need an outline built for my oral history essay project from history class. ask for any necessary files and information required to complete this and follow Dr. Wolf's instructions as closely as possible.",
+      "status": "done",
+      "requested": "2026-11-02T20:26:23.986Z",
+      "started": "2026-11-02T22:17:28.000Z",
+      "asked": "2026-11-02T22:10:00.000Z",
+      "agents": 1,
+      "result": "agent/results/job-mvzplr3m.enc.json",
+      "summary": "Full Outline/Context draft from your interview notes: field notes, research question + reflection, sharper thesis options, 4 context paragraphs, paper outline, sources. Next: paste Dr. Wolf’s prompt to check the parts, add real quotes, rewrite in your voice. Due Tue 2:55 PM.",
+      "replies": [
+        {
+          "at": "2026-11-02T21:48:42.530Z",
+          "text": "(attached files)",
+          "files": 1
+        },
+        {
+          "at": "2026-11-02T21:57:31.640Z",
+          "text": "find a better way to get the media."
+        },
+        {
+          "at": "2026-11-02T22:11:48.049Z",
+          "text": "My name is Dylan Riegert interviewing Scott Riegert, my father. It is October 12th, 2026. This is for UGA Hist2112, and the Oral history assignment. Scott was in his home office in atlanta, and I was in my apartment. The interview was friendly and conversational about the relative topics of digitization of media, and the effects that had on the work force and basic human interaction. I was definitely nervous to conduct such a lengthy interview, but I think that truly it went well and a lot of material of substance was produced.\n\nSummary: \n\nIntroduction and Childhood media;\nConsent for interview and introduction as stated in field notes. My father has worked for CNN for 40 years, and has seen how media has directly impacted the global access to information. This includes the shift to colored television, vcr, radio, records, magazines, and newspapers. \nPersonal media consumption continued:\nMy father would listen to the twins games(baseball) on the radio with his friends on the block corner and share radios. Additionally he would keep a smaller radio under his pillow and fall asleep listening to sports broadcasts as a kid. \n\nAdditionally people would hear music on the radio, and it was more of an advertisement for records and physical sales. You’d hear a song and go down to the record store, ask to hear a song or album, and the worker would play it for you. Mr. Riegert went as far as to explain they’d take the plastic off the albums and play them brand new so customers could sample the albums. Usually, you’d like it and buy it, according to my father, but I wondered what would happen if they had to replace it on the rack as far as rewrapping, and if it showed scratches from use. \n\nScott Riegert had a walkman with cassettes which represents the physical handheld device/media one had to carry on their person to listen to music. This later progressed to smaller discs and CDs. \n\nQuestion of the value of media \n\nI asked my father if people value media less now since they are not required to carry around physical objects or means to acquire said media (smartphones). Additionally I asked about availability of media potentially ruining the novelty of it.  The mass availability of media has without a doubt changed how we listen to and receive any form of media.\n\nTo the contrary, saving a large amount of songs in a playlist online is a great example of how technology has made our lives easier in this context. \n\nGrowing up around media (my grandfather)\nScott’s father was a news anchor and DJ. At 12 years old my father was able to learn about the workings of a proper studio in California under the supervision of my grandfather Lou Waters. On set in San Diego, Mr. Riegert learned to shoot and splice real film. This is a great example of older methods of media, and there was a lot of great discourse surrounding the nature of older film manipulation and use. \n\nAnother thing we discussed was the nature of older graphics for the show being made. \n\nStarting in media \nMy dad started at CNN after dropping out of community college. His start was right around 1984. He went into great detail about the process of the business with this era’s tech as well as contrasted it with more present norms. \n\n\nThen versus now\nWe then discussed the major differences between when he was just starting versus how new technology changed his industry as well as the way people perceived media. \n\n\n2. \nYour central research question(s) and reflections on how the interview contributes (or fails to contribute) to your understanding of those questions. Update your historical context paragraphs to analyze how your narrator fits into it.\n\n\nMy central research question is how has digitization changed the way Americans access, own, collect, preserve, and share media such as music, films, photographs, books, games, news, and visual design?\n\nThis interview greatly increased my understanding of the progression that occurred with technology. This was someone’s first hand experience growing up with media becoming digitized, and his answered showed. \n\nThesis statement:\n\nScott Riegert’s career at CNN, from being a teleprompter to head director, shows that the digitization of American media and news did not replace physical media with faster, more efficient means. \n\nIt simply relocated labor and changed the means that american citizens acquire their media."
+        }
+      ],
+      "files": [],
+      "private": true,
+      "log": [
+        {
+          "at": "2026-11-02T21:52:22.000Z",
+          "msg": "Got your file, but I can't open attachments yet (agent key not set)."
+        },
+        {
+          "at": "2026-11-02T22:17:28.000Z",
+          "msg": "Got your notes and thesis: building the outline now"
+        },
+        {
+          "at": "2026-11-02T22:21:02.000Z",
+          "msg": "Done: outline, context paragraphs and sources ready"
+        }
+      ],
+      "progress": "Done",
+      "finished": "2026-11-02T22:21:02.000Z"
     },
     {
-     "at": "2026-11-02T22:11:48.049Z",
-     "text": "My name is Dylan Riegert interviewing Scott Riegert, my father. It is October 12th, 2026. This is for UGA Hist2112, and the Oral history assignment. Scott was in his home office in atlanta, and I was in my apartment. The interview was friendly and conversational about the relative topics of digitization of media, and the effects that had on the work force and basic human interaction. I was definitely nervous to conduct such a lengthy interview, but I think that truly it went well and a lot of material of substance was produced.\n\nSummary: \n\nIntroduction and Childhood media;\nConsent for interview and introduction as stated in field notes. My father has worked for CNN for 40 years, and has seen how media has directly impacted the global access to information. This includes the shift to colored television, vcr, radio, records, magazines, and newspapers. \nPersonal media consumption continued:\nMy father would listen to the twins games(baseball) on the radio with his friends on the block corner and share radios. Additionally he would keep a smaller radio under his pillow and fall asleep listening to sports broadcasts as a kid. \n\nAdditionally people would hear music on the radio, and it was more of an advertisement for records and physical sales. You’d hear a song and go down to the record store, ask to hear a song or album, and the worker would play it for you. Mr. Riegert went as far as to explain they’d take the plastic off the albums and play them brand new so customers could sample the albums. Usually, you’d like it and buy it, according to my father, but I wondered what would happen if they had to replace it on the rack as far as rewrapping, and if it showed scratches from use. \n\nScott Riegert had a walkman with cassettes which represents the physical handheld device/media one had to carry on their person to listen to music. This later progressed to smaller discs and CDs. \n\nQuestion of the value of media \n\nI asked my father if people value media less now since they are not required to carry around physical objects or means to acquire said media (smartphones). Additionally I asked about availability of media potentially ruining the novelty of it.  The mass availability of media has without a doubt changed how we listen to and receive any form of media.\n\nTo the contrary, saving a large amount of songs in a playlist online is a great example of how technology has made our lives easier in this context. \n\nGrowing up around media (my grandfather)\nScott’s father was a news anchor and DJ. At 12 years old my father was able to learn about the workings of a proper studio in California under the supervision of my grandfather Lou Waters. On set in San Diego, Mr. Riegert learned to shoot and splice real film. This is a great example of older methods of media, and there was a lot of great discourse surrounding the nature of older film manipulation and use. \n\nAnother thing we discussed was the nature of older graphics for the show being made. \n\nStarting in media \nMy dad started at CNN after dropping out of community college. His start was right around 1984. He went into great detail about the process of the business with this era’s tech as well as contrasted it with more present norms. \n\n\nThen versus now\nWe then discussed the major differences between when he was just starting versus how new technology changed his industry as well as the way people perceived media. \n\n\n2. \nYour central research question(s) and reflections on how the interview contributes (or fails to contribute) to your understanding of those questions. Update your historical context paragraphs to analyze how your narrator fits into it.\n\n\nMy central research question is how has digitization changed the way Americans access, own, collect, preserve, and share media such as music, films, photographs, books, games, news, and visual design?\n\nThis interview greatly increased my understanding of the progression that occurred with technology. This was someone’s first hand experience growing up with media becoming digitized, and his answered showed. \n\nThesis statement:\n\nScott Riegert’s career at CNN, from being a teleprompter to head director, shows that the digitization of American media and news did not replace physical media with faster, more efficient means. \n\nIt simply relocated labor and changed the means that american citizens acquire their media."
+      "id": "job-mvzrp3o4",
+      "type": "prep",
+      "item": {
+        "id": "free-mvzrj7yg",
+        "title": "i need all of my macro assignments done by the deadlines and submitted with utmost accuracey. make sure every assignment recieves a 100%",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "complete all of the assignmetns attached to macroeconomics on the macmillan page.",
+      "status": "archived",
+      "requested": "2026-11-02T21:24:59.476Z",
+      "files": [
+        {
+          "path": "data/uploads/job-mvzrp3o4/01.enc.json",
+          "kind": "links",
+          "size": 92
+        }
+      ],
+      "private": true
+    },
+    {
+      "id": "job-propractice-1103",
+      "type": "plan",
+      "item": {
+        "id": "elc-6637-22490956",
+        "title": "Final Project First Draft!",
+        "course": "ARGD 4115",
+        "due": "2026-11-03T14:30:00.000Z",
+        "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22490956/detailsview?ou=3953780#22490956",
+        "note": ""
+      },
+      "ask": "First draft is due Tue 9:30 AM. Get me to a solid first draft tonight: (1) find the final project brief/rubric (Google Drive) or ask me for it right away, plus a link to whatever I've started (Figma or files); (2) break the draft into steps with time boxes for tonight, working back from 9:30 AM, and propose focus blocks around my calendar; (3) once you have my work, give specific design feedback against the rubric (what's missing, what to fix first). I make and submit the draft myself.",
+      "status": "needs-you",
+      "requested": "2026-11-02T21:41:06.000Z",
+      "started": "2026-11-02T22:17:28.000Z",
+      "progress": "Waiting on your Figma link",
+      "log": [
+        {
+          "at": "2026-11-02T21:45:18.000Z",
+          "msg": "Picked up: looking for your brief and drafts"
+        },
+        {
+          "at": "2026-11-02T21:52:11.000Z",
+          "msg": "Drive and Calendar refused access; Figma works. Wrote tonight's plan."
+        },
+        {
+          "at": "2026-11-02T22:17:28.000Z",
+          "msg": "Got the brief: building a rubric checklist + content plan"
+        },
+        {
+          "at": "2026-11-02T22:21:02.000Z",
+          "msg": "Plan + slide copy ready; need your Figma link for feedback"
+        }
+      ],
+      "asked": "2026-11-02T22:21:02.000Z",
+      "agents": 1,
+      "result": "agent/results/job-propractice-1103.enc.json",
+      "summary": "Rubric checklist, 10-slide structure, starter copy, design spec and a time-boxed plan around Macro. Drive worked (found the class links sheet); Calendar still blocked.",
+      "replies": [
+        {
+          "at": "2026-11-02T21:56:56.835Z",
+          "text": "(attached files)",
+          "files": 1
+        },
+        {
+          "at": "2026-11-02T22:12:44.746Z",
+          "text": "ARGD4115 Design Professional Practices Fall 2026 60272\nFor your final project, please compile facts and resourced from this class to create an instagram carousel. Here's the original presentation I showed the first day of class.\n\nSubmit all slides to elc as jpegs:\n\nDesign in InDesign, Figma, or Afinity\n\nSpecs: 1080 x 1350 pixels\n\nResolution to 72 PPI\n\nColor mode to RGB.\n\nExport as JPEG, quality High.\n\nContent: \n\nYour carousel should include 10 slides (minimum) and at least one of the following:\n\nadvice from a designer (one you've met)\ntips for finding a job\nadvice for young designers (from you)\nResources young designers can access\nYou will have multiples of these (because 10 total) you can title your carousel based on who you are speaking to \"advice for young designers\" \"Graphic design tips\" .. etc.\n\nThe draft should show that you have chosen your content and you are developing a cohesive collection of slides that are written in the intended tone. \n\nDraft must have all specs correct and have all written copy complete. the \"draft\" part is that the design should be present but doesn't need to be 100% resolved yet."
+        }
+      ],
+      "files": [],
+      "private": true,
+      "question": "Reply with a Figma view link to your carousel file (even empty frames) so I can give slide-by-slide feedback against the brief before your 7:30 AM polish block."
+    },
+    {
+      "id": "job-mvzsekqp",
+      "type": "advise",
+      "item": {
+        "id": "ask-mvzsekqp",
+        "title": "alright i need the outline and final project draft to be worked on while im…",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "alright i need the outline and final project draft to be worked on while im doing macro homework. get whatever you need from me and then get to work while im doing these assignments.",
+      "status": "done",
+      "requested": "2026-11-02T21:44:48.001Z",
+      "started": "2026-11-02T21:45:18.000Z",
+      "progress": "Done",
+      "log": [
+        {
+          "at": "2026-11-02T21:45:18.000Z",
+          "msg": "Picked up: looking for your brief and drafts"
+        },
+        {
+          "at": "2026-11-02T21:52:11.000Z",
+          "msg": "Both projects blocked on the same missing briefs; wrote the 5-minute ask."
+        }
+      ],
+      "finished": "2026-11-02T21:52:11.000Z",
+      "agents": 1,
+      "result": "agent/results/job-mvzsekqp.md",
+      "summary": "Keep doing Macro. Spend 5 min replying on the Pro Practices and History cards with the briefs + your Figma link/interview details, and I'll work on both while you finish."
+    },
+    {
+      "id": "job-mw2wnij2",
+      "type": "research",
+      "item": {
+        "id": "biz-product",
+        "title": "Test my next product idea",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "Take the top idea in data/products.json that hasn't been tested. Check demand (search trends, competitors, price points, reviews), suppliers and margins, then give a go / no-go and a first test I can run for $50 or less this week.",
+      "deliver": "auto",
+      "status": "done",
+      "requested": "2026-11-05T02:07:02.030Z",
+      "started": "2026-11-05T02:44:57Z",
+      "progress": "Done",
+      "agents": 1,
+      "log": [
+        {
+          "at": "2026-11-05T02:44:57Z",
+          "msg": "Claimed. Testing the top untested idea: Athens poster prints"
+        },
+        {
+          "at": "2026-11-05T02:49:15Z",
+          "msg": "Research done: 9 competitors, supplier costs, Etsy fees, local markets"
+        },
+        {
+          "at": "2026-11-05T02:55:58Z",
+          "msg": "Memo Doc and margins Sheet saved to Drive › Business. Verdict: GO (test)"
+        }
+      ],
+      "finished": "2026-11-05T02:55:58Z",
+      "result": "agent/results/job-mw2wnij2.md",
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X",
+        "driveId": "1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X"
+      },
+      "summary": "GO on Athens poster prints, as a $50 preorder test: 3 designs, $35 screenprint preorders on a free Big Cartel store, print only at 10+ orders. Memo + margin Sheet in Drive.",
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X"
+        },
+        {
+          "title": "Go/no-go memo + $50 test plan",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1w7Z7-t3EXoBWCgnJYEhrjq7FNJEIgoT80C20hpZRgCU/edit?usp=drivesdk"
+        },
+        {
+          "title": "Research, costs & margins",
+          "kind": "sheet",
+          "url": "https://docs.google.com/spreadsheets/d/1Uc6JSDPnCmjcjDLY1ewhoIHteb55oP4e5d6RpXF9p8g/edit?usp=drivesdk",
+          "note": "Margins tab has live formulas"
+        }
+      ]
+    },
+    {
+      "id": "job-sunday-20261108",
+      "type": "plan",
+      "item": {
+        "id": "sunday-plan-2026-11-08",
+        "title": "Week of Nov 9: your plan",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "status": "working",
+      "requested": "2026-11-08T21:43:06Z",
+      "asked": "2026-11-08T21:43:06Z",
+      "question": "Add these 9 focus blocks to your calendar? Reply yes, or tell me what to change.",
+      "summary": "Clear 3 design-class deadlines and get a full Oral History draft by Thu; riskiest: Oral History Paper (Thu 11/19), which lands with Binder Review and 12 Macro items. Calendar couldn't be read, so check the blocks for clashes.",
+      "result": "agent/results/job-sunday-20261108.md",
+      "agents": 1,
+      "replies": [
+        {
+          "at": "2026-11-09T17:47:55.959Z",
+          "text": "sure just add it"
+        }
+      ],
+      "started": "2026-11-09T18:45:41Z",
+      "progress": "Adding your approved focus blocks to Google Calendar",
+      "log": [
+        {
+          "at": "2026-11-09T18:45:41Z",
+          "msg": "Got your yes. Adding the focus blocks to your calendar."
+        }
+      ]
+    },
+    {
+      "id": "job-mw9iwm2v",
+      "type": "draft",
+      "item": {
+        "id": "biz-outreach",
+        "title": "Draft outreach to my 3 best leads",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "Pick the 3 strongest leads (no website, clearly active, good fit). Write a short, personal first message for each (email if there's an address, otherwise a DM or a walk-in script). Put emails in my Gmail drafts. Don't send anything.",
+      "deliver": "auto",
+      "status": "needs-you",
+      "requested": "2026-11-09T17:16:35.143Z",
+      "started": "2026-11-09T17:44:49Z",
+      "progress": "",
+      "log": [
+        {
+          "at": "2026-11-09T17:44:49Z",
+          "msg": "Claimed. Reading your leads list."
+        },
+        {
+          "at": "2026-11-09T17:59:14Z",
+          "msg": "Done: 3 messages in Drive. Gmail draft blocked (connector)."
+        }
+      ],
+      "asked": "2026-11-09T17:59:14Z",
+      "result": "agent/results/job-mw9iwm2v.md",
+      "agents": 1,
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/1m4tWV-4UamX9trSdNYSpAloWd7O91iFx",
+        "driveId": "1m4tWV-4UamX9trSdNYSpAloWd7O91iFx"
+      },
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/1m4tWV-4UamX9trSdNYSpAloWd7O91iFx"
+        },
+        {
+          "title": "Outreach drafts – 3 best leads",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1uDI8TyGjUyCuUmHBL8oeq3xkrZUn9iMLvFR32kvedjY/edit?usp=drivesdk",
+          "note": "Email, DM and walk-in script, ready to use"
+        },
+        {
+          "title": "Lead check – website & activity",
+          "kind": "sheet",
+          "url": "https://docs.google.com/spreadsheets/d/1cdra6UdWtJLBkDT0nshC75W98ZUhIlZiloeK9O--_Ts/edit?usp=drivesdk",
+          "note": "13 leads checked"
+        }
+      ],
+      "summary": "Picked Hi-Lo Lounge (email), Manhattan Cafe (IG DM) and Normal Bar (walk-in): no site of their own, all clearly active. Messages are in the Drive Doc. Nothing sent.",
+      "question": "All 3 messages are in the Drive Doc, but Gmail refused to make the draft ('Mail service not enabled'). Paste the Hi-Lo email into Gmail and send it yourself, or reconnect Gmail for Claude (claude.ai → Settings → Connectors) and reply 'retry' for a draft."
+    },
+    {
+      "id": "job-mw9jvamw",
+      "type": "research",
+      "item": {
+        "id": "free-mw9jutcb",
+        "title": "me and my buddy have a business idea for a line of lamps with built in irrigation technology but designed in an art deco/art noevue manner",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "save this idea and help do market research on this concept",
+      "deliver": "auto",
+      "status": "done",
+      "requested": "2026-11-09T17:43:33.272Z",
+      "started": "2026-11-09T17:44:49Z",
+      "progress": "",
+      "log": [
+        {
+          "at": "2026-11-09T17:44:49Z",
+          "msg": "Claimed. Starting market research."
+        },
+        {
+          "at": "2026-11-09T17:59:14Z",
+          "msg": "Done: research Doc + competitor/cost Sheet in Drive."
+        }
+      ],
+      "finished": "2026-11-09T17:59:14Z",
+      "result": "agent/results/job-mw9jvamw.md",
+      "agents": 1,
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW",
+        "driveId": "12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW"
+      },
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW"
+        },
+        {
+          "title": "Deco irrigation lamp – idea & market research",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1HCH_6w651SgO-Yv1Q5Nbe0ObHmPDiz-uYmT1Un49IEc/edit?usp=drivesdk",
+          "note": "Idea saved + verdict, safety, 3-week test plan"
+        },
+        {
+          "title": "Competitors & pricing",
+          "kind": "sheet",
+          "url": "https://docs.google.com/spreadsheets/d/1ox4L0iHIjvyAWswWw2HTmxRxtIWGaVIu9y5SF6U16fU/edit?usp=drivesdk",
+          "note": "19 competitors; unit-cost tab has live formulas"
+        }
+      ],
+      "summary": "Idea saved + researched. Verdict: TEST (medium). No Deco self-watering grow lamp exists, but ~$183/unit makes margins thin. Run a 3-week waitlist + $25 deposit test first."
+    },
+    {
+      "id": "job-mw9llps0",
+      "type": "research",
+      "item": {
+        "id": "free-mw9lk1ox",
+        "title": "make a full market research pitch for a bar named \"Furrow\" for athens georgia. it is modeled after the bar il solco in cortona italy, as well as the restaurants",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "a nice bar modeled after il solco from cortona italy that gives people the neighborhood cozy feels while still experiencing a vibrant and refreshing environment.",
+      "deliver": "auto",
+      "status": "working",
+      "requested": "2026-11-09T18:32:05.569Z",
+      "started": "2026-11-09T18:45:41Z",
+      "progress": "Starting: researching Athens bar market and Il Solco",
+      "log": [
+        {
+          "at": "2026-11-09T18:45:41Z",
+          "msg": "Started. Researching the Athens market, Il Solco and comparable bars."
+        }
+      ]
+    },
+    {
+      "id": "job-mwd48tfz",
+      "type": "research",
+      "item": {
+        "id": "free-mwd48qyb",
+        "title": "After obtaining more contracts and having more experience change the \"recent works\" title into \"notable works\" to show highest quality projecs",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "ask": "",
+      "deliver": "auto",
+      "status": "needs-you",
+      "requested": "2026-11-12T05:37:15.023Z",
+      "started": "2026-11-12T12:45:29Z",
+      "progress": "Waiting on you",
+      "agents": 1,
+      "log": [
+        {
+          "at": "2026-11-12T12:45:29Z",
+          "msg": "Started. Preparing your Recent → Notable Works switch kit."
+        },
+        {
+          "at": "2026-11-12T12:47:00Z",
+          "msg": "Switch kit Doc saved to Drive › Portfolio & Design."
+        }
+      ],
+      "asked": "2026-11-12T12:47:00Z",
+      "question": "Your switch kit is in Drive. Once you've landed the contracts, reply with your portfolio link (and what it's built on) plus 'switch now', and I'll draft the Notable Works section.",
+      "summary": "Keep 'Recent Works' until you have ~3 strong client pieces; the Doc has the checklist, a rubric to pick the best 4–6, and the copy for the switch.",
+      "result": "agent/results/job-mwd48tfz.md",
+      "folder": {
+        "drive": "https://drive.google.com/drive/folders/1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0",
+        "driveId": "1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0"
+      },
+      "outputs": [
+        {
+          "title": "Job folder",
+          "kind": "folder",
+          "url": "https://drive.google.com/drive/folders/1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0"
+        },
+        {
+          "title": "Notable Works – when to switch & how",
+          "kind": "doc",
+          "url": "https://docs.google.com/document/d/1yP12I7IFPyZJMsGf4yewDRrnUbtop1oZondBnoLj2KQ/edit?usp=drivesdk",
+          "note": "Checklist, rubric, tracker and copy"
+        }
+      ]
+    },
+    {
+      "id": "job-sunday-20261115",
+      "type": "plan",
+      "item": {
+        "id": "sunday-plan-2026-11-15",
+        "title": "Week of Nov 16: your plan",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "status": "needs-you",
+      "requested": "2026-11-15T21:43:36Z",
+      "asked": "2026-11-15T21:43:36Z",
+      "question": "Add these 10 focus blocks to your calendar? Reply yes, or tell me what to change.",
+      "summary": "Crunch week: 5 deadlines stack Thu–Fri, so the paper, case study and binder get done by Wed night; riskiest: Oral History Paper (Thu 11/19, 2:55 PM). Calendar couldn't be read again, so check the blocks for clashes and reconnect it before saying yes.",
+      "result": "agent/results/job-sunday-20261115.md",
+      "agents": 1
+    },
+    {
+      "id": "job-sunday-20261122",
+      "type": "plan",
+      "item": {
+        "id": "sunday-plan-2026-11-22",
+        "title": "Week of Nov 23: your plan",
+        "course": "",
+        "due": null,
+        "url": "",
+        "note": ""
+      },
+      "status": "needs-you",
+      "requested": "2026-11-22T21:42:39Z",
+      "asked": "2026-11-22T21:42:39Z",
+      "question": "Add these 9 focus blocks to your calendar? Reply yes, or tell me what to change.",
+      "summary": "Light Thanksgiving week (only Macro Bonus due Sun), so get ahead on the finals right after; riskiest: Data Viz Project 3 Final (Mon 11/30, 3 PM). Calendar and Gmail couldn't be read, so reconnect Calendar before saying yes.",
+      "result": "agent/results/job-sunday-20261122.md",
+      "agents": 1
     }
-   ],
-   "files": [],
-   "private": true,
-   "log": [
-    {
-     "at": "2026-11-02T21:52:22.000Z",
-     "msg": "Got your file, but I can't open attachments yet (agent key not set)."
-    },
-    {
-     "at": "2026-11-02T22:17:28.000Z",
-     "msg": "Got your notes and thesis: building the outline now"
-    },
-    {
-     "at": "2026-11-02T22:21:02.000Z",
-     "msg": "Done: outline, context paragraphs and sources ready"
-    }
-   ],
-   "progress": "Done",
-   "finished": "2026-11-02T22:21:02.000Z"
-  },
-  {
-   "id": "job-mvzrp3o4",
-   "type": "prep",
-   "item": {
-    "id": "free-mvzrj7yg",
-    "title": "i need all of my macro assignments done by the deadlines and submitted with utmost accuracey. make sure every assignment recieves a 100%",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "complete all of the assignmetns attached to macroeconomics on the macmillan page.",
-   "status": "archived",
-   "requested": "2026-11-02T21:24:59.476Z",
-   "files": [
-    {
-     "path": "data/uploads/job-mvzrp3o4/01.enc.json",
-     "kind": "links",
-     "size": 92
-    }
-   ],
-   "private": true
-  },
-  {
-   "id": "job-propractice-1103",
-   "type": "plan",
-   "item": {
-    "id": "elc-6637-22490956",
-    "title": "Final Project First Draft!",
-    "course": "ARGD 4115",
-    "due": "2026-11-03T14:30:00.000Z",
-    "url": "https://uga.view.usg.edu/d2l/le/calendar/3953780/event/22490956/detailsview?ou=3953780#22490956",
-    "note": ""
-   },
-   "ask": "First draft is due Tue 9:30 AM. Get me to a solid first draft tonight: (1) find the final project brief/rubric (Google Drive) or ask me for it right away, plus a link to whatever I've started (Figma or files); (2) break the draft into steps with time boxes for tonight, working back from 9:30 AM, and propose focus blocks around my calendar; (3) once you have my work, give specific design feedback against the rubric (what's missing, what to fix first). I make and submit the draft myself.",
-   "status": "needs-you",
-   "requested": "2026-11-02T21:41:06.000Z",
-   "started": "2026-11-02T22:17:28.000Z",
-   "progress": "Waiting on your Figma link",
-   "log": [
-    {
-     "at": "2026-11-02T21:45:18.000Z",
-     "msg": "Picked up: looking for your brief and drafts"
-    },
-    {
-     "at": "2026-11-02T21:52:11.000Z",
-     "msg": "Drive and Calendar refused access; Figma works. Wrote tonight's plan."
-    },
-    {
-     "at": "2026-11-02T22:17:28.000Z",
-     "msg": "Got the brief: building a rubric checklist + content plan"
-    },
-    {
-     "at": "2026-11-02T22:21:02.000Z",
-     "msg": "Plan + slide copy ready; need your Figma link for feedback"
-    }
-   ],
-   "asked": "2026-11-02T22:21:02.000Z",
-   "agents": 1,
-   "result": "agent/results/job-propractice-1103.enc.json",
-   "summary": "Rubric checklist, 10-slide structure, starter copy, design spec and a time-boxed plan around Macro. Drive worked (found the class links sheet); Calendar still blocked.",
-   "replies": [
-    {
-     "at": "2026-11-02T21:56:56.835Z",
-     "text": "(attached files)",
-     "files": 1
-    },
-    {
-     "at": "2026-11-02T22:12:44.746Z",
-     "text": "ARGD4115 Design Professional Practices Fall 2026 60272\nFor your final project, please compile facts and resourced from this class to create an instagram carousel. Here's the original presentation I showed the first day of class.\n\nSubmit all slides to elc as jpegs:\n\nDesign in InDesign, Figma, or Afinity\n\nSpecs: 1080 x 1350 pixels\n\nResolution to 72 PPI\n\nColor mode to RGB.\n\nExport as JPEG, quality High.\n\nContent: \n\nYour carousel should include 10 slides (minimum) and at least one of the following:\n\nadvice from a designer (one you've met)\ntips for finding a job\nadvice for young designers (from you)\nResources young designers can access\nYou will have multiples of these (because 10 total) you can title your carousel based on who you are speaking to \"advice for young designers\" \"Graphic design tips\" .. etc.\n\nThe draft should show that you have chosen your content and you are developing a cohesive collection of slides that are written in the intended tone. \n\nDraft must have all specs correct and have all written copy complete. the \"draft\" part is that the design should be present but doesn't need to be 100% resolved yet."
-    }
-   ],
-   "files": [],
-   "private": true,
-   "question": "Reply with a Figma view link to your carousel file (even empty frames) so I can give slide-by-slide feedback against the brief before your 7:30 AM polish block."
-  },
-  {
-   "id": "job-mvzsekqp",
-   "type": "advise",
-   "item": {
-    "id": "ask-mvzsekqp",
-    "title": "alright i need the outline and final project draft to be worked on while im…",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "alright i need the outline and final project draft to be worked on while im doing macro homework. get whatever you need from me and then get to work while im doing these assignments.",
-   "status": "done",
-   "requested": "2026-11-02T21:44:48.001Z",
-   "started": "2026-11-02T21:45:18.000Z",
-   "progress": "Done",
-   "log": [
-    {
-     "at": "2026-11-02T21:45:18.000Z",
-     "msg": "Picked up: looking for your brief and drafts"
-    },
-    {
-     "at": "2026-11-02T21:52:11.000Z",
-     "msg": "Both projects blocked on the same missing briefs; wrote the 5-minute ask."
-    }
-   ],
-   "finished": "2026-11-02T21:52:11.000Z",
-   "agents": 1,
-   "result": "agent/results/job-mvzsekqp.md",
-   "summary": "Keep doing Macro. Spend 5 min replying on the Pro Practices and History cards with the briefs + your Figma link/interview details, and I'll work on both while you finish."
-  },
-  {
-   "id": "job-mw2wnij2",
-   "type": "research",
-   "item": {
-    "id": "biz-product",
-    "title": "Test my next product idea",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "Take the top idea in data/products.json that hasn't been tested. Check demand (search trends, competitors, price points, reviews), suppliers and margins, then give a go / no-go and a first test I can run for $50 or less this week.",
-   "deliver": "auto",
-   "status": "done",
-   "requested": "2026-11-05T02:07:02.030Z",
-   "started": "2026-11-05T02:44:57Z",
-   "progress": "Done",
-   "agents": 1,
-   "log": [
-    {
-     "at": "2026-11-05T02:44:57Z",
-     "msg": "Claimed. Testing the top untested idea: Athens poster prints"
-    },
-    {
-     "at": "2026-11-05T02:49:15Z",
-     "msg": "Research done: 9 competitors, supplier costs, Etsy fees, local markets"
-    },
-    {
-     "at": "2026-11-05T02:55:58Z",
-     "msg": "Memo Doc and margins Sheet saved to Drive › Business. Verdict: GO (test)"
-    }
-   ],
-   "finished": "2026-11-05T02:55:58Z",
-   "result": "agent/results/job-mw2wnij2.md",
-   "folder": {
-    "drive": "https://drive.google.com/drive/folders/1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X",
-    "driveId": "1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X"
-   },
-   "summary": "GO on Athens poster prints, as a $50 preorder test: 3 designs, $35 screenprint preorders on a free Big Cartel store, print only at 10+ orders. Memo + margin Sheet in Drive.",
-   "outputs": [
-    {
-     "title": "Job folder",
-     "kind": "folder",
-     "url": "https://drive.google.com/drive/folders/1kPbDvPTD9O3J-tt7kBA_iEC7U8iVI84X"
-    },
-    {
-     "title": "Go/no-go memo + $50 test plan",
-     "kind": "doc",
-     "url": "https://docs.google.com/document/d/1w7Z7-t3EXoBWCgnJYEhrjq7FNJEIgoT80C20hpZRgCU/edit?usp=drivesdk"
-    },
-    {
-     "title": "Research, costs & margins",
-     "kind": "sheet",
-     "url": "https://docs.google.com/spreadsheets/d/1Uc6JSDPnCmjcjDLY1ewhoIHteb55oP4e5d6RpXF9p8g/edit?usp=drivesdk",
-     "note": "Margins tab has live formulas"
-    }
-   ]
-  },
-  {
-   "id": "job-sunday-20261108",
-   "type": "plan",
-   "item": {
-    "id": "sunday-plan-2026-11-08",
-    "title": "Week of Nov 9: your plan",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "status": "working",
-   "requested": "2026-11-08T21:43:06Z",
-   "asked": "2026-11-08T21:43:06Z",
-   "question": "Add these 9 focus blocks to your calendar? Reply yes, or tell me what to change.",
-   "summary": "Clear 3 design-class deadlines and get a full Oral History draft by Thu; riskiest: Oral History Paper (Thu 11/19), which lands with Binder Review and 12 Macro items. Calendar couldn't be read, so check the blocks for clashes.",
-   "result": "agent/results/job-sunday-20261108.md",
-   "agents": 1,
-   "replies": [
-    {
-     "at": "2026-11-09T17:47:55.959Z",
-     "text": "sure just add it"
-    }
-   ],
-   "started": "2026-11-09T18:45:41Z",
-   "progress": "Adding your approved focus blocks to Google Calendar",
-   "log": [
-    {
-     "at": "2026-11-09T18:45:41Z",
-     "msg": "Got your yes. Adding the focus blocks to your calendar."
-    }
-   ]
-  },
-  {
-   "id": "job-mw9iwm2v",
-   "type": "draft",
-   "item": {
-    "id": "biz-outreach",
-    "title": "Draft outreach to my 3 best leads",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "Pick the 3 strongest leads (no website, clearly active, good fit). Write a short, personal first message for each (email if there's an address, otherwise a DM or a walk-in script). Put emails in my Gmail drafts. Don't send anything.",
-   "deliver": "auto",
-   "status": "needs-you",
-   "requested": "2026-11-09T17:16:35.143Z",
-   "started": "2026-11-09T17:44:49Z",
-   "progress": "",
-   "log": [
-    {
-     "at": "2026-11-09T17:44:49Z",
-     "msg": "Claimed. Reading your leads list."
-    },
-    {
-     "at": "2026-11-09T17:59:14Z",
-     "msg": "Done: 3 messages in Drive. Gmail draft blocked (connector)."
-    }
-   ],
-   "asked": "2026-11-09T17:59:14Z",
-   "result": "agent/results/job-mw9iwm2v.md",
-   "agents": 1,
-   "folder": {
-    "drive": "https://drive.google.com/drive/folders/1m4tWV-4UamX9trSdNYSpAloWd7O91iFx",
-    "driveId": "1m4tWV-4UamX9trSdNYSpAloWd7O91iFx"
-   },
-   "outputs": [
-    {
-     "title": "Job folder",
-     "kind": "folder",
-     "url": "https://drive.google.com/drive/folders/1m4tWV-4UamX9trSdNYSpAloWd7O91iFx"
-    },
-    {
-     "title": "Outreach drafts – 3 best leads",
-     "kind": "doc",
-     "url": "https://docs.google.com/document/d/1uDI8TyGjUyCuUmHBL8oeq3xkrZUn9iMLvFR32kvedjY/edit?usp=drivesdk",
-     "note": "Email, DM and walk-in script, ready to use"
-    },
-    {
-     "title": "Lead check – website & activity",
-     "kind": "sheet",
-     "url": "https://docs.google.com/spreadsheets/d/1cdra6UdWtJLBkDT0nshC75W98ZUhIlZiloeK9O--_Ts/edit?usp=drivesdk",
-     "note": "13 leads checked"
-    }
-   ],
-   "summary": "Picked Hi-Lo Lounge (email), Manhattan Cafe (IG DM) and Normal Bar (walk-in): no site of their own, all clearly active. Messages are in the Drive Doc. Nothing sent.",
-   "question": "All 3 messages are in the Drive Doc, but Gmail refused to make the draft ('Mail service not enabled'). Paste the Hi-Lo email into Gmail and send it yourself, or reconnect Gmail for Claude (claude.ai → Settings → Connectors) and reply 'retry' for a draft."
-  },
-  {
-   "id": "job-mw9jvamw",
-   "type": "research",
-   "item": {
-    "id": "free-mw9jutcb",
-    "title": "me and my buddy have a business idea for a line of lamps with built in irrigation technology but designed in an art deco/art noevue manner",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "save this idea and help do market research on this concept",
-   "deliver": "auto",
-   "status": "done",
-   "requested": "2026-11-09T17:43:33.272Z",
-   "started": "2026-11-09T17:44:49Z",
-   "progress": "",
-   "log": [
-    {
-     "at": "2026-11-09T17:44:49Z",
-     "msg": "Claimed. Starting market research."
-    },
-    {
-     "at": "2026-11-09T17:59:14Z",
-     "msg": "Done: research Doc + competitor/cost Sheet in Drive."
-    }
-   ],
-   "finished": "2026-11-09T17:59:14Z",
-   "result": "agent/results/job-mw9jvamw.md",
-   "agents": 1,
-   "folder": {
-    "drive": "https://drive.google.com/drive/folders/12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW",
-    "driveId": "12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW"
-   },
-   "outputs": [
-    {
-     "title": "Job folder",
-     "kind": "folder",
-     "url": "https://drive.google.com/drive/folders/12Ky27_P4DeRdsV6Qiy29rsUtkh0STcjW"
-    },
-    {
-     "title": "Deco irrigation lamp – idea & market research",
-     "kind": "doc",
-     "url": "https://docs.google.com/document/d/1HCH_6w651SgO-Yv1Q5Nbe0ObHmPDiz-uYmT1Un49IEc/edit?usp=drivesdk",
-     "note": "Idea saved + verdict, safety, 3-week test plan"
-    },
-    {
-     "title": "Competitors & pricing",
-     "kind": "sheet",
-     "url": "https://docs.google.com/spreadsheets/d/1ox4L0iHIjvyAWswWw2HTmxRxtIWGaVIu9y5SF6U16fU/edit?usp=drivesdk",
-     "note": "19 competitors; unit-cost tab has live formulas"
-    }
-   ],
-   "summary": "Idea saved + researched. Verdict: TEST (medium). No Deco self-watering grow lamp exists, but ~$183/unit makes margins thin. Run a 3-week waitlist + $25 deposit test first."
-  },
-  {
-   "id": "job-mw9llps0",
-   "type": "research",
-   "item": {
-    "id": "free-mw9lk1ox",
-    "title": "make a full market research pitch for a bar named \"Furrow\" for athens georgia. it is modeled after the bar il solco in cortona italy, as well as the restaurants",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "a nice bar modeled after il solco from cortona italy that gives people the neighborhood cozy feels while still experiencing a vibrant and refreshing environment.",
-   "deliver": "auto",
-   "status": "working",
-   "requested": "2026-11-09T18:32:05.569Z",
-   "started": "2026-11-09T18:45:41Z",
-   "progress": "Starting: researching Athens bar market and Il Solco",
-   "log": [
-    {
-     "at": "2026-11-09T18:45:41Z",
-     "msg": "Started. Researching the Athens market, Il Solco and comparable bars."
-    }
-   ]
-  },
-  {
-   "id": "job-mwd48tfz",
-   "type": "research",
-   "item": {
-    "id": "free-mwd48qyb",
-    "title": "After obtaining more contracts and having more experience change the \"recent works\" title into \"notable works\" to show highest quality projecs",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "ask": "",
-   "deliver": "auto",
-   "status": "needs-you",
-   "requested": "2026-11-12T05:37:15.023Z",
-   "started": "2026-11-12T12:45:29Z",
-   "progress": "Waiting on you",
-   "agents": 1,
-   "log": [
-    {
-     "at": "2026-11-12T12:45:29Z",
-     "msg": "Started. Preparing your Recent → Notable Works switch kit."
-    },
-    {
-     "at": "2026-11-12T12:47:00Z",
-     "msg": "Switch kit Doc saved to Drive › Portfolio & Design."
-    }
-   ],
-   "asked": "2026-11-12T12:47:00Z",
-   "question": "Your switch kit is in Drive. Once you've landed the contracts, reply with your portfolio link (and what it's built on) plus 'switch now', and I'll draft the Notable Works section.",
-   "summary": "Keep 'Recent Works' until you have ~3 strong client pieces; the Doc has the checklist, a rubric to pick the best 4–6, and the copy for the switch.",
-   "result": "agent/results/job-mwd48tfz.md",
-   "folder": {
-    "drive": "https://drive.google.com/drive/folders/1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0",
-    "driveId": "1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0"
-   },
-   "outputs": [
-    {
-     "title": "Job folder",
-     "kind": "folder",
-     "url": "https://drive.google.com/drive/folders/1_lwSc8QRVIuHk_NAorb_khP37a-uUUZ0"
-    },
-    {
-     "title": "Notable Works – when to switch & how",
-     "kind": "doc",
-     "url": "https://docs.google.com/document/d/1yP12I7IFPyZJMsGf4yewDRrnUbtop1oZondBnoLj2KQ/edit?usp=drivesdk",
-     "note": "Checklist, rubric, tracker and copy"
-    }
-   ]
-  },
-  {
-   "id": "job-sunday-20261115",
-   "type": "plan",
-   "item": {
-    "id": "sunday-plan-2026-11-15",
-    "title": "Week of Nov 16: your plan",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "status": "needs-you",
-   "requested": "2026-11-15T21:43:36Z",
-   "asked": "2026-11-15T21:43:36Z",
-   "question": "Add these 10 focus blocks to your calendar? Reply yes, or tell me what to change.",
-   "summary": "Crunch week: 5 deadlines stack Thu–Fri, so the paper, case study and binder get done by Wed night; riskiest: Oral History Paper (Thu 11/19, 2:55 PM). Calendar couldn't be read again, so check the blocks for clashes and reconnect it before saying yes.",
-   "result": "agent/results/job-sunday-20261115.md",
-   "agents": 1
-  },
-  {
-   "id": "job-sunday-20261122",
-   "type": "plan",
-   "item": {
-    "id": "sunday-plan-2026-11-22",
-    "title": "Week of Nov 23: your plan",
-    "course": "",
-    "due": null,
-    "url": "",
-    "note": ""
-   },
-   "status": "needs-you",
-   "requested": "2026-11-22T21:42:39Z",
-   "asked": "2026-11-22T21:42:39Z",
-   "question": "Add these 9 focus blocks to your calendar? Reply yes, or tell me what to change.",
-   "summary": "Light Thanksgiving week (only Macro Bonus due Sun), so get ahead on the finals right after; riskiest: Data Viz Project 3 Final (Mon 11/30, 3 PM). Calendar and Gmail couldn't be read, so reconnect Calendar before saying yes.",
-   "result": "agent/results/job-sunday-20261122.md",
-   "agents": 1
-  }
- ]
+  ]
 }
