@@ -1,17 +1,7 @@
 {
   "source": "eLC calendar feed",
-  "synced": "2026-11-22T17:39:40Z",
+  "synced": "2026-11-23T03:21:39Z",
   "items": [
-    {
-      "id": "elc-6637-22670533",
-      "title": "Practice for Final- Requires Respondus LockDown Browser",
-      "course": "ECON 2105",
-      "due": "2026-11-21T01:00:00Z",
-      "hasTime": true,
-      "kind": "due",
-      "url": "https://uga.view.usg.edu/d2l/le/calendar/3957191/event/22670533/detailsview?ou=3957191#22670533",
-      "firstSeen": "2026-11-19T08:43:29Z"
-    },
     {
       "id": "elc-6637-21901799",
       "title": "Ch. 18 Decision Point: Linking Interest Rates and Total Expenditure",
